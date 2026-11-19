@@ -3,24 +3,54 @@
 # Corre ADENTRO del contenedor del curso. Uso:  prepara 01
 #
 # Es un comando aparte de «verifica», a propósito: verifica solo mira; prepara
-# crea y BORRA. Lo único que toca es la carpeta de esa lección (~/practica/01/
-# para la 01). Si la carpeta ya existe, avisa que la va a borrar y pide que
-# escribas  si  antes de hacerlo. Tus respuestas viven en ~/practica/respuestas/,
-# que este comando no toca.
+# crea y BORRA. Toca dos cosas y nada más:
+#   · la carpeta de esa lección (/home/alumno/practica/01 para la 01). Si ya
+#     existe, avisa que la va a borrar y pide que escribas  si  antes de hacerlo;
+#   · tu hoja de respuestas (/home/alumno/practica/respuestas/01.md): la crea
+#     con sus cuatro claves vacías SOLO si no existe. Si ya existe, no la toca.
 #
-# El laberinto de la 01 sale igual en todas las computadoras: no hay azar. Los
-# nombres, los tamaños y las fechas vienen de una lista fija, la misma que lee
-# verifica: /usr/local/share/curso-terminal/01-laberinto.txt
+# La carpeta de práctica está escrita completa, /home/alumno/practica, y no se
+# arma con la variable HOME: así, lo que se borra no depende de una variable.
+# Antes de borrar o crear nada se comprueba que esa carpeta, la de la lección y
+# la de las respuestas sean carpetas de verdad y no enlaces a otro lugar. Con un
+# enlace, «borra practica/01» borraría la carpeta a la que el enlace apunta.
+#
+# El laberinto de la 01 no tiene azar. Los nombres, los tamaños y las fechas
+# vienen de una lista fija, la misma que lee verifica:
+# /usr/local/share/curso-terminal/01-laberinto.txt
 set -u
 
 LISTAS="/usr/local/share/curso-terminal"
+PRACTICA="/home/alumno/practica"
 
 revisar_lugar() {
-  if [ "$(id -un)" != "alumno" ] || [ -z "${HOME:-}" ] || [ ! -d "$HOME/practica" ]; then
-    echo "❌ prepara corre dentro de la terminal de práctica, como alumno y con ~/practica conectada"
-    echo "   (medí: id -un, y que ~/practica exista como carpeta). Sal y entra con ./practicar"
+  local fisica
+  if [ "$(id -un)" != "alumno" ]; then
+    echo "❌ prepara corre dentro de la terminal de práctica, como alumno (medí: id -un)."
+    echo "   Sal y entra con ./practicar"
     exit 1
   fi
+  fisica=$(realpath -e -P -- "$PRACTICA" 2>/dev/null)
+  if [ -L "$PRACTICA" ] || [ ! -d "$PRACTICA" ] || [ "$fisica" != "$PRACTICA" ]; then
+    echo "❌ No preparo nada: $PRACTICA debe ser tu carpeta de práctica, y no un enlace a otro lugar"
+    echo "   (medí: que exista como carpeta, que no sea un enlace y que su ruta real sea esa misma)."
+    echo "   Sal y entra con ./practicar"
+    exit 1
+  fi
+}
+
+# Se niega a seguir si algo de lo que va a tocar es un enlace. No borra el enlace:
+# lo dice y se detiene.
+sin_enlaces() {
+  local cosa
+  for cosa in "$@"; do
+    if [ -L "$cosa" ]; then
+      echo "❌ No preparo nada: $cosa es un enlace a otro lugar, no una carpeta ni un archivo tuyo"
+      echo "   (medí: que no sea un enlace). No lo sigo ni lo borro. Quítalo tú, o sal y corre"
+      echo "   ./practicar desde-cero"
+      exit 1
+    fi
+  done
 }
 
 # Si la carpeta de la lección ya existe, se borra solo con tu «si».
@@ -29,7 +59,7 @@ confirmar_borrado() {
   [ -e "$carpeta" ] || return 0
   echo "Ya existe $carpeta."
   echo "Para armarla de nuevo hay que BORRARLA, con todo lo que tenga adentro. No se puede deshacer."
-  echo "No se borra nada más: tus respuestas de ~/practica/respuestas/ se quedan."
+  echo "No se borra nada más: tu hoja de respuestas se queda como está."
   printf "Para confirmar, escribe  si  y presiona Enter: "
   read -r respuesta || respuesta=""
   case "$respuesta" in
@@ -37,6 +67,19 @@ confirmar_borrado() {
     *) echo "No se borró nada. Tu carpeta sigue como estaba."; exit 0 ;;
   esac
   rm -rf -- "$carpeta"
+}
+
+# La hoja de respuestas nace con sus claves vacías. Si ya existe, no se toca.
+dejar_hoja() {
+  local carpeta="$PRACTICA/respuestas" hoja="$PRACTICA/respuestas/$1.md"
+  shift
+  if [ -e "$hoja" ]; then
+    echo "   Tu hoja de respuestas ya existía y no la toqué: $hoja"
+    return 0
+  fi
+  [ -d "$carpeta" ] || mkdir "$carpeta" || { echo "❌ No pude crear $carpeta."; exit 1; }
+  printf '%s:\n' "$@" > "$hoja" || { echo "❌ No pude crear $hoja."; exit 1; }
+  echo "   Te dejé la hoja de respuestas, con sus claves vacías: $hoja"
 }
 
 # Un archivo de relleno de exactamente N bytes: el mismo renglón repetido y
@@ -51,7 +94,7 @@ rellenar() {
 }
 
 prepara_01() {
-  local lista="$LISTAS/01-laberinto.txt" raiz="$HOME/practica/01"
+  local lista="$LISTAS/01-laberinto.txt" raiz="$PRACTICA/01"
   local tipo ruta fecha bytes carpetas=0 archivos=0 mal=0 real
 
   if [ ! -r "$lista" ]; then
@@ -59,6 +102,7 @@ prepara_01() {
     echo "   Tu imagen es de antes de esta lección. Sal y corre  ./practicar reconstruir"
     exit 1
   fi
+  sin_enlaces "$raiz" "$PRACTICA/respuestas" "$PRACTICA/respuestas/01.md"
   confirmar_borrado "$raiz"
   mkdir "$raiz" || { echo "❌ No pude crear $raiz. Sal y corre ./practicar desde-cero"; exit 1; }
 
@@ -107,6 +151,7 @@ LEEME
     exit 1
   fi
   echo "✅ Laberinto listo en $raiz (medí: $carpetas carpetas y $archivos archivos, cada archivo con su tamaño)."
+  dejar_hoja 01 mas-grande oculto ruta-absoluta ruta-relativa
   echo "   Empieza por ahí:  cd ~/practica/01"
 }
 

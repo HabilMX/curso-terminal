@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# anota — escribe una respuesta en tu hoja de respuestas, o te la muestra.
+# Corre ADENTRO del contenedor del curso. Uso:
+#   anota 01                        muestra tu hoja de la lección 01
+#   anota 01 mas-grande marzo.log   anota (o corrige) la respuesta «mas-grande»
+#
+# Existe para que puedas llenar la hoja antes de conocer un editor de texto, que
+# llega en la lección 07. Solo toca un archivo: /home/alumno/practica/respuestas/NN.md.
+# No revisa si tu respuesta es correcta: eso lo hace «verifica».
+#
+# La hoja es texto simple, un renglón por respuesta:   clave: valor
+# anota deja un solo renglón por clave: si ya había uno, lo cambia.
+set -u
+
+PRACTICA="/home/alumno/practica"
+
+claves_de() {
+  case "$1" in
+    01) echo "mas-grande oculto ruta-absoluta ruta-relativa" ;;
+    *)  return 1 ;;
+  esac
+}
+
+uso() {
+  echo "Uso: anota NN                 muestra tu hoja de respuestas de la lección NN"
+  echo "     anota NN clave valor     anota una respuesta. Por ejemplo:  anota 01 oculto nombre-del-archivo"
+  exit 2
+}
+
+[ $# -ge 1 ] || uso
+leccion="$1"; shift
+if ! claves=$(claves_de "$leccion"); then
+  echo "Todavía no hay hoja de respuestas para la lección «$leccion». Por ahora existe: anota 01"
+  exit 2
+fi
+carpeta="$PRACTICA/respuestas"
+hoja="$carpeta/$leccion.md"
+
+# La misma cautela que prepara: no se escribe a través de un enlace.
+if [ "$(realpath -e -P -- "$PRACTICA" 2>/dev/null)" != "$PRACTICA" ] || [ -L "$carpeta" ] || [ -L "$hoja" ]; then
+  echo "❌ No anoto nada: tu carpeta de práctica, la de las respuestas o la hoja es un enlace a otro lugar"
+  echo "   (medí: que ninguna de las tres sea un enlace). Sal y entra con ./practicar"
+  exit 1
+fi
+if [ ! -f "$hoja" ]; then
+  echo "❌ Todavía no existe tu hoja, $hoja (medí: que el archivo exista)."
+  echo "   La crea  prepara $leccion"
+  exit 1
+fi
+
+if [ $# -eq 0 ]; then
+  cat -- "$hoja"
+  exit 0
+fi
+
+clave="$1"; shift
+valor="$*"
+case " $claves " in
+  *" $clave "*) ;;
+  *) echo "❌ No conozco la clave «$clave». Las de la lección $leccion son: $claves"
+     exit 2 ;;
+esac
+if [ -z "$valor" ]; then
+  echo "❌ Falta la respuesta. Va después de la clave:  anota $leccion $clave tu-respuesta"
+  exit 2
+fi
+
+# Se arma la hoja nueva aparte y solo al final se pasa a la hoja: el renglón de
+# esa clave cambia (el primero; si había repetidos, se quitan) y lo demás queda igual.
+nueva=$(CLAVE="$clave" VALOR="$valor" awk '
+  BEGIN { clave = ENVIRON["CLAVE"]; valor = ENVIRON["VALOR"] }
+  {
+    renglon = $0; sub(/\r$/, "", renglon); sub(/^[ \t]+/, "", renglon)
+    corte = index(renglon, ":")
+    k = (corte > 0) ? tolower(substr(renglon, 1, corte - 1)) : ""
+    gsub(/[ \t]+$/, "", k); gsub(/á|Á/, "a", k)
+    if (corte > 0 && k == clave) { if (!puesta) { print clave ": " valor; puesta = 1 } next }
+    print
+  }
+  END { if (!puesta) print clave ": " valor }
+' "$hoja") || { echo "❌ No pude leer $hoja."; exit 1; }
+if ! printf '%s\n' "$nueva" > "$hoja"; then
+  echo "❌ No pude escribir en $hoja."
+  exit 1
+fi
+echo "Anotado. Tu hoja quedó así:"
+cat -- "$hoja"

@@ -75,7 +75,7 @@ Si lo pruebas en uno de éstos, cuéntanos cómo te fue.
 
 | Cifra | Cómo se midió |
 |---|---|
-| Construir la imagen: 42 segundos | Mac con Apple silicon, 18-nov-2026, con `time ./practicar reconstruir`: sin caché y con la imagen de Ubuntu ya descargada |
+| Construir la imagen: 42 segundos | Mac con Apple silicon, 18-nov-2026, con `time ./practicar reconstruir`, que ese día construía sin caché (hoy eso lo hace `./practicar reconstruir-limpio`), y con la imagen de Ubuntu ya descargada |
 | Construir la imagen: 1 minuto 38 segundos | La misma Mac, 18-nov-2026, con `docker build --no-cache`, sobre una versión anterior del Dockerfile |
 | Construir la imagen: unos 90 segundos | Linux Mint 22.3 (x86_64), 19-nov-2026, con `./practicar` |
 | Tamaño: 221 MB | Linux Mint, 18-nov-2026, con `docker image inspect` |
@@ -461,6 +461,7 @@ primer grupo que tome el curso.
 | `❌ No encuentro el comando «docker» en esta computadora.` | Docker no está instalado | «Antes de empezar», según tu sistema |
 | `❌ Docker está instalado, pero no pude hablar con él.` | Lo más común: Docker está apagado, o tu usuario no tiene permiso. Puede ser otra cosa | Corre `docker info` y sigue el error exacto que te dé |
 | `no such file or directory: ./practicar` | No estás en la carpeta del curso | `cd curso-terminal` y repite |
+| La primera construcción lleva muchos minutos y salen renglones que empiezan con `Ign:` | Los servidores de paquetes de Ubuntu responden lento. Pasó el 19-nov-2026: la misma construcción tardó 8 minutos, con 3 renglones `Ign:`, contra minuto y medio el 18-nov | Déjala correr. `Ign:` no es un error: apt vuelve a intentar. Si al final sale `❌ No se pudo construir la imagen.`, sigue el renglón de abajo |
 | `❌ No se pudo construir la imagen.` | La red, el espacio en disco, los permisos de Docker o el material del curso | Lee el **primer** error que salió arriba del mensaje, arréglalo y corre `./practicar` otra vez |
 | `❌ ./practicar abre una terminal interactiva…` | Lo corriste con una tubería o una redirección | Córrelo solo: `./practicar` |
 | `command not found: verifica` | Corriste `verifica` en tu computadora, no adentro | Entra con `./practicar`; el indicador debe decir `alumno@practica` |

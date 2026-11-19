@@ -3,7 +3,10 @@
 #
 #   ./practicar              entra a la terminal (la primera vez construye la imagen)
 #   ./practicar desde-cero   borra tu carpeta de práctica, con confirmación
-#   ./practicar reconstruir  vuelve a construir la imagen (cuando el curso se actualiza)
+#   ./practicar reconstruir  actualiza la imagen cuando el curso trae una lección nueva;
+#                            reutiliza lo que ya estaba construido
+#   ./practicar reconstruir-limpio   la construye otra vez desde cero: vuelve a bajar
+#                            Ubuntu y los paquetes. Solo si quieres renovar la base
 #
 # Corre en macOS (también con el bash 3.2 que trae) y en Linux. Necesita Docker.
 #
@@ -43,7 +46,8 @@ revisar_docker() {
 }
 
 construir() {
-  echo "Construyendo la imagen «${IMAGEN}». Descarga Ubuntu y unos paquetes: tarda un par de minutos."
+  echo "Construyendo la imagen «${IMAGEN}». Lo que falte se descarga (Ubuntu y unos paquetes) y puede"
+  echo "tardar varios minutos; lo que ya estaba construido se reutiliza."
   if ! docker build ${1+"$@"} -t "$IMAGEN" "$AQUI/imagen"; then
     echo "❌ No se pudo construir la imagen. Lee el PRIMER error de arriba: puede ser la red,"
     echo "   el espacio en disco, los permisos de Docker o el material del curso."
@@ -204,6 +208,14 @@ case "${1:-}" in
     fi
     ;;
   reconstruir)
+    # La actualización de todos los días: Docker reutiliza los pasos que no cambiaron
+    # (Ubuntu y los paquetes) y solo repite desde el primer archivo distinto.
+    revisar_docker
+    construir
+    ;;
+  reconstruir-limpio)
+    # Desde cero: --pull vuelve a pedir la imagen de Ubuntu y --no-cache repite todos
+    # los pasos, también la instalación de paquetes. Necesita red y tarda más.
     revisar_docker
     construir --pull --no-cache
     ;;
@@ -211,7 +223,8 @@ case "${1:-}" in
     echo "No conozco «$1». Uso:"
     echo "  ./practicar              entra a tu terminal de práctica"
     echo "  ./practicar desde-cero   borra tu carpeta de práctica (pide confirmación)"
-    echo "  ./practicar reconstruir  vuelve a construir la imagen"
+    echo "  ./practicar reconstruir  actualiza la imagen con lo nuevo del curso (reutiliza lo ya construido)"
+    echo "  ./practicar reconstruir-limpio   la construye desde cero (vuelve a descargar todo)"
     exit 2
     ;;
 esac
