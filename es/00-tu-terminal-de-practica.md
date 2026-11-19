@@ -65,9 +65,11 @@ Esta lección te da esas cuatro cosas en una máquina hecha para equivocarse: la
 |---|---|---|
 | Linux Mint 22.3 (x86_64), Docker Engine 29.10.0 | Probado el 19-nov-2026 | `./practicar` construyó la imagen en unos 90 segundos, `verifica 00` dio sus cinco marcas en verde y `./practicar desde-cero` borró la carpeta. Ojo: Docker no da soporte oficial a Linux Mint; su guía dice que «puede funcionar» |
 | Mac con Apple silicon, Docker 29.2.1 corriendo con Colima | Probado el 18 y el 19-nov-2026 | Todo lo de esta lección: entrar, salir, volver, `verifica 00`, `desde-cero` y las pantallas que ves aquí |
-| Ubuntu | Sin probar | Docker sí le da soporte oficial. `[pendiente: medir en Ubuntu]` |
-| Mac con Docker Desktop | Sin probar | Instrucciones de la guía oficial. `[pendiente: medir en Mac con Docker Desktop]` |
-| Windows con Docker Desktop y WSL 2 | Sin probar | Instrucciones de las guías oficiales. `[pendiente: medir en Windows con Docker Desktop y WSL2]` |
+| Ubuntu | Sin probar todavía | Docker sí le da soporte oficial; la instalación es la de su guía |
+| Mac con Docker Desktop | Sin probar todavía | La instalación es la de la guía oficial de Docker Desktop |
+| Windows con Docker Desktop y WSL 2 | Sin probar todavía | La instalación es la de las guías oficiales de Microsoft y de Docker |
+
+Si lo pruebas en uno de éstos, cuéntanos cómo te fue.
 
 **Las cifras de esta lección, y cómo se midieron:**
 
