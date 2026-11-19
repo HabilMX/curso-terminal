@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # verifica — revisa el ESTADO de tu terminal de práctica y te dice qué falta.
-# Corre ADENTRO del contenedor del curso. Uso:  verifica 00   ·   verifica 01
+# Corre ADENTRO del contenedor del curso. Uso:  verifica 00
 # Solo revisa cómo están las cosas: no califica predicciones ni explicaciones;
 # esas las comparas tú con «Compara tus respuestas» de la lección.
-# En la 00 escribe solo dos cosas, y las dos se dicen en su marca: para saber si
-# ~/practica se puede escribir, crea un archivo vacío y lo borra enseguida; y para
-# saber si saliste y volviste, anota en ~/practica/00/.sesion-verifica en qué sesión
-# vio tu marca por primera vez. En la 01 no escribe nada: solo lee.
+# Escribe solo dos cosas, y las dos se dicen en su marca: para saber si ~/practica
+# se puede escribir, crea un archivo vacío y lo borra enseguida; y para saber si
+# saliste y volviste, anota en ~/practica/00/.sesion-verifica en qué sesión vio tu
+# marca por primera vez.
 set -uo pipefail
 
 falta=0
@@ -74,166 +74,10 @@ verifica_00() {
   fi
 }
 
-# --- Lección 01 -------------------------------------------------------------------
-# El laberinto tiene una sola definición: la lista que también lee «prepara 01».
-LISTA_01="/usr/local/share/curso-terminal/01-laberinto.txt"
-
-# Los renglones útiles de la lista: sin comentarios ni renglones vacíos.
-lista_01() { grep -Ev '^[[:space:]]*(#|$)' "$LISTA_01"; }
-
-# Lee de tus respuestas el valor de una clave («clave: valor»). Si la clave está
-# varias veces, vale la última. Sale con 1 si no hay ningún renglón con esa clave.
-# Tolera espacios de más, mayúsculas en la clave y «más» con acento.
-respuesta_01() {
-  awk -v clave="$1" '
-    { sub(/\r$/, "") }
-    {
-      renglon = $0
-      sub(/^[ \t]+/, "", renglon)
-      corte = index(renglon, ":")
-      if (corte == 0) next
-      k = tolower(substr(renglon, 1, corte - 1))
-      gsub(/[ \t]+$/, "", k); gsub(/á|Á/, "a", k)
-      if (k != clave) next
-      v = substr(renglon, corte + 1)
-      gsub(/^[ \t]+|[ \t]+$/, "", v)
-      valor = v; hay = 1
-    }
-    END { if (!hay) exit 1; print valor }
-  ' "$HOME/practica/respuestas/01.md"
-}
-
-verifica_01() {
-  local raiz="$HOME/practica/01" hoja="$HOME/practica/respuestas/01.md"
-  local tipo ruta fecha bytes real malo="" cuantos=0
-  local grande="" grande_bytes=-1 oculto="" inicio="" destino=""
-  local dicho nombre que_es llego meta   # que_es: qué es lo anotado, según la lista
-
-  if [ ! -r "$LISTA_01" ]; then
-    no "No encuentro la lista del laberinto (medí: que $LISTA_01 se pueda leer). Tu imagen es de antes de esta lección: sal y corre  ./practicar reconstruir"
-    return
-  fi
-
-  # De la lista salen las respuestas correctas: el archivo de más bytes, el que
-  # tiene un nombre que empieza con punto, y las carpetas de inicio y de destino.
-  while read -r tipo ruta fecha bytes; do
-    case "$tipo" in
-      inicio)  inicio="$raiz/$ruta" ;;
-      destino) destino="$raiz/$ruta" ;;
-      archivo)
-        if [ "$bytes" -gt "$grande_bytes" ]; then grande_bytes=$bytes; grande=${ruta##*/}; fi
-        case "${ruta##*/}" in .*) oculto=${ruta##*/} ;; esac ;;
-    esac
-  done < <(lista_01)
-
-  # --- El laberinto está completo --------------------------------------------------
-  while read -r tipo ruta fecha bytes; do
-    case "$tipo" in
-      carpeta) [ -d "$raiz/$ruta" ] || { malo=${malo:-$ruta}; continue; } ;;
-      texto)   [ -f "$raiz/$ruta" ] || { malo=${malo:-$ruta}; continue; } ;;
-      archivo)
-        real=$(stat -c %s "$raiz/$ruta" 2>/dev/null)
-        [ -f "$raiz/$ruta" ] && [ "${real:-x}" = "$bytes" ] || { malo=${malo:-$ruta}; continue; } ;;
-      *) continue ;;
-    esac
-    cuantos=$((cuantos + 1))
-  done < <(lista_01)
-  if [ -z "$malo" ]; then
-    si "Tu laberinto está completo (medí: las $cuantos carpetas y archivos de la lista existen en ~/practica/01, cada archivo con su tamaño)"
-  else
-    no "Tu laberinto no está completo: falta o cambió «$malo» (medí: cada carpeta y archivo de la lista contra ~/practica/01, con su tamaño). Ármalo de nuevo con  prepara 01"
-  fi
-
-  # --- Tu hoja de respuestas -------------------------------------------------------
-  if [ ! -f "$hoja" ]; then
-    no "Falta tu hoja de respuestas, ~/practica/respuestas/01.md (medí: que el archivo exista). Créala con el paso 5 de la lección. Sin ella no puedo revisar tus cuatro respuestas"
-    return
-  fi
-
-  # --- 1.2 · El archivo más grande -------------------------------------------------
-  if ! dicho=$(respuesta_01 "mas-grande"); then
-    no "No encontré tu respuesta «mas-grande» (medí: busqué en respuestas/01.md un renglón que empiece con  mas-grande: )"
-  elif [ -z "$dicho" ]; then
-    no "Tu renglón «mas-grande:» está vacío (medí: lo que hay después de los dos puntos)"
-  else
-    nombre=${dicho##*/}
-    # ¿Qué es en la lista lo que anotaste? «archivo», «texto», «carpeta» o nada.
-    que_es=$(lista_01 | awk -v n="$nombre" '{ m = $2; sub(/.*\//, "", m) } m == n && $1 != "inicio" && $1 != "destino" { print $1; exit }')
-    if [ "$nombre" = "$grande" ]; then
-      si "«$nombre» es el archivo más grande del laberinto (medí: comparé los bytes de cada archivo de la lista del laberinto)"
-    elif [ "$que_es" = "carpeta" ]; then
-      no "«$nombre» es una carpeta, no un archivo (medí: qué es ese nombre en la lista del laberinto). En  ls -l , el renglón de una carpeta empieza con d; el de un archivo, con un guion"
-    elif [ -n "$que_es" ]; then
-      no "«$nombre» no es el archivo más grande del laberinto (medí: comparé sus bytes contra los de los demás archivos de la lista; hay uno con más). Vuelve a leer la columna del tamaño con  ls -lh : fíjate en la letra, no solo en el número"
-    else
-      no "«$nombre» no es un archivo del laberinto (medí: busqué ese nombre tal cual, con sus mayúsculas, minúsculas y puntos, en la lista del laberinto). Anota solo el nombre, como lo escribe ls"
-    fi
-  fi
-
-  # --- 1.2 · El archivo oculto -----------------------------------------------------
-  if ! dicho=$(respuesta_01 "oculto"); then
-    no "No encontré tu respuesta «oculto» (medí: busqué en respuestas/01.md un renglón que empiece con  oculto: )"
-  elif [ -z "$dicho" ]; then
-    no "Tu renglón «oculto:» está vacío (medí: lo que hay después de los dos puntos)"
-  else
-    nombre=${dicho##*/}
-    if [ "$nombre" = "$oculto" ]; then
-      si "«$nombre» es el archivo oculto del laberinto (medí: es el único archivo de la lista con un nombre que empieza con punto)"
-    elif [ ".$nombre" = "$oculto" ]; then
-      no "Anotaste «$nombre», sin el punto del principio (medí: comparé tu respuesta, letra por letra, con el nombre del archivo oculto). El punto es parte del nombre: anótalo como lo escribe  ls -a"
-    else
-      no "«$nombre» no es el archivo oculto del laberinto (medí: comparé tu respuesta con el único archivo de la lista con un nombre que empieza con punto). Búscalo con  ls -a  en la carpeta de las bitácoras"
-    fi
-  fi
-
-  meta=$(cd -- "$destino" 2>/dev/null && pwd -P)
-
-  # --- 1.3 · La ruta absoluta ------------------------------------------------------
-  if ! dicho=$(respuesta_01 "ruta-absoluta"); then
-    no "No encontré tu respuesta «ruta-absoluta» (medí: busqué en respuestas/01.md un renglón que empiece con  ruta-absoluta: )"
-  elif [ -z "$dicho" ]; then
-    no "Tu renglón «ruta-absoluta:» está vacío (medí: lo que hay después de los dos puntos)"
-  elif [ "${dicho#/}" = "$dicho" ]; then
-    no "«$dicho» no es una ruta absoluta (medí: que empiece con / ). Una ruta absoluta empieza en la raíz; «~» es una abreviatura, no la raíz"
-  elif [ ! -d "$dicho" ]; then
-    no "Tu ruta absoluta «$dicho» no existe o no es una carpeta (medí: que exista como carpeta). Compruébala con  cd  y  pwd  antes de anotarla"
-  else
-    llego=$(cd -- "$dicho" 2>/dev/null && pwd -P)
-    if [ -n "$meta" ] && [ "$llego" = "$meta" ]; then
-      si "Tu ruta absoluta lleva a la carpeta destino (medí: empieza con /, existe, y entrando por ella se llega a $destino)"
-    else
-      no "Tu ruta absoluta «$dicho» existe, pero no lleva a la carpeta destino (medí: entré por ella y llegué a «${llego:-ningún lado}», no a la carpeta que pide el ejercicio 1.3)"
-    fi
-  fi
-
-  # --- 1.3 · La ruta relativa ------------------------------------------------------
-  if ! dicho=$(respuesta_01 "ruta-relativa"); then
-    no "No encontré tu respuesta «ruta-relativa» (medí: busqué en respuestas/01.md un renglón que empiece con  ruta-relativa: )"
-  elif [ -z "$dicho" ]; then
-    no "Tu renglón «ruta-relativa:» está vacío (medí: lo que hay después de los dos puntos)"
-  elif [ "${dicho#/}" != "$dicho" ] || [ "${dicho#\~}" != "$dicho" ]; then
-    no "«$dicho» no es una ruta relativa (medí: que NO empiece con / ni con ~ ). Una ruta relativa sale de la carpeta donde estás parado"
-  elif [ ! -d "$inicio" ]; then
-    no "No pude probar tu ruta relativa: falta la carpeta de salida, $inicio (medí: que exista como carpeta). Arma el laberinto con  prepara 01"
-  else
-    # El «./» por delante hace que tu ruta se lea siempre como ruta: sin él, un
-    # guion solo («-») le diría a cd «regresa a la carpeta anterior».
-    llego=$(unset CDPATH; cd -- "$inicio" 2>/dev/null && cd -- "./$dicho" 2>/dev/null && pwd -P)
-    if [ -z "$llego" ]; then
-      no "Tu ruta relativa «$dicho» no existe saliendo de $inicio (medí: me paré en esa carpeta y traté de entrar por tu ruta). Compruébala parado ahí, con  cd  y  pwd"
-    elif [ -n "$meta" ] && [ "$llego" = "$meta" ]; then
-      si "Tu ruta relativa lleva a la carpeta destino (medí: no empieza con / ni con ~, y saliendo de $inicio se llega por ella a $destino)"
-    else
-      no "Tu ruta relativa «$dicho» existe, pero no lleva a la carpeta destino (medí: saliendo de $inicio llegué a «$llego», no a la carpeta que pide el ejercicio 1.3)"
-    fi
-  fi
-}
-
 case "${1:-}" in
   00) verifica_00 ;;
-  01) verifica_01 ;;
-  '') echo "Uso: verifica NN    (NN es el número de la lección; por ejemplo: verifica 01)"; exit 2 ;;
-  *)  echo "Todavía no hay verifica para la lección «$1». Por ahora existen: verifica 00 y verifica 01"; exit 2 ;;
+  '') echo "Uso: verifica NN    (NN es el número de la lección; por ejemplo: verifica 00)"; exit 2 ;;
+  *)  echo "Todavía no hay verifica para la lección «$1». Por ahora existe: verifica 00"; exit 2 ;;
 esac
 
 echo
