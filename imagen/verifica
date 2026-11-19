@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # verifica — revisa el ESTADO de tu terminal de práctica y te dice qué falta.
-# Corre ADENTRO del contenedor del curso. Uso:  verifica 00   ·   verifica 01
+# Corre ADENTRO del contenedor del curso. Uso:  verifica 00   ·   verifica 01   ·   verifica 02
 # Solo revisa cómo están las cosas: no califica predicciones ni explicaciones;
 # esas las comparas tú con «Compara tus respuestas» de la lección.
 # En la 00 escribe solo dos cosas, y las dos se dicen en su marca: para saber si
 # ~/practica se puede escribir, crea un archivo vacío y lo borra enseguida; y para
 # saber si saliste y volviste, anota en ~/practica/00/.sesion-verifica en qué sesión
-# vio tu marca por primera vez. En la 01 no escribe nada: solo lee.
+# vio tu marca por primera vez. En la 01 y en la 02 no escribe nada: solo lee.
 # Las respuestas las escribes tú, con «anota».
 set -uo pipefail
 
@@ -272,11 +272,320 @@ verifica_01() {
   fi
 }
 
+# --- Lección 02 -------------------------------------------------------------------
+# El taller también tiene una sola definición: la lista que lee «prepara 02». De ahí
+# salen el contenido de cada archivo y lo que pide cada ejercicio.
+LISTA_02="/usr/local/share/curso-terminal/02-taller.txt"
+PRACTICA_02="/home/alumno/practica"
+RAIZ_02="$PRACTICA_02/02"
+
+lista_02() { grep -Ev '^[[:space:]]*(#|$)' "$LISTA_02"; }
+
+# El contenido que prepara le pone a un archivo de la lista. Se lee igual que lo lee
+# prepara (con read), para que los dos entiendan el renglón de la misma manera.
+contenido_02() {
+  local tipo ruta fecha contenido
+  while read -r tipo ruta fecha contenido; do
+    if [ "$tipo" = "archivo" ] && [ "$ruta" = "$1" ]; then printf '%s\n' "$contenido"; return 0; fi
+  done < <(lista_02)
+  return 1
+}
+
+# ¿Qué es esa ruta en la lista? «carpeta», «archivo» o nada.
+tipo_02() { lista_02 | R="$1" awk '($1 == "carpeta" || $1 == "archivo") && $2 == ENVIRON["R"] { print $1; exit }'; }
+
+# Una ruta es «de verdad» si existe y su ruta real, siguiendo los enlaces, es ella
+# misma. Si algún tramo es un enlace, la ruta real sale distinta.
+real_02() { [ -e "$1" ] && [ "$(realpath -e -P -- "$1" 2>/dev/null)" = "$1" ]; }
+
+# Es un enlace, o se llega a ella pasando por un enlace.
+enlazada_02() { [ -L "$1" ] || { [ -e "$1" ] && ! real_02 "$1"; }; }
+
+# Ya no existe: ni como archivo o carpeta, ni como enlace. Y su carpeta, si sigue
+# ahí, es de verdad: si fuera un enlace, «no está» no diría nada de tu carpeta.
+ausente_02() {
+  local padre="${1%/*}"
+  [ ! -e "$1" ] && [ ! -L "$1" ] || return 1
+  if [ -e "$padre" ] || [ -L "$padre" ]; then real_02 "$padre"; fi
+}
+
+# El archivo es de verdad y tiene el contenido que la lista le da a «rel».
+contiene_02() { [ -f "$1" ] && real_02 "$1" && cmp -s -- "$1" <(contenido_02 "$2"); }
+
+# Lee de tu hoja el valor de una clave; si está varias veces, vale la última.
+respuesta_02() {
+  awk -v clave="$1" '
+    { sub(/\r$/, "") }
+    {
+      renglon = $0
+      sub(/^[ \t]+/, "", renglon)
+      corte = index(renglon, ":")
+      if (corte == 0) next
+      k = tolower(substr(renglon, 1, corte - 1))
+      gsub(/[ \t]+$/, "", k); gsub(/á|Á/, "a", k); gsub(/ó|Ó/, "o", k)
+      if (k != clave) next
+      v = substr(renglon, corte + 1)
+      gsub(/^[ \t]+|[ \t]+$/, "", v)
+      valor = v; hay = 1
+    }
+    END { if (!hay) exit 1; print valor }
+  ' "$PRACTICA_02/respuestas/02.md"
+}
+
+# Los renglones de un tipo de tarea: «tipo uno dos».
+tareas_02() { lista_02 | T="$1" awk '$1 == ENVIRON["T"] { print $2, $3 }'; }
+
+# --- 2.1 · El árbol que creas tú ---------------------------------------------------
+marca_arbol_02() {
+  local tipo ruta resto p hueco="" enlace="" mal_tipo="" sobra="" pedidos=" " carpetas=0 archivos=0 n
+  while read -r tipo ruta resto; do
+    case "$tipo" in crea-carpeta|crea-archivo) ;; *) continue ;; esac
+    pedidos="$pedidos$ruta "
+    p="$RAIZ_02/$ruta"
+    if enlazada_02 "$p"; then enlace=${enlace:-$ruta}
+    elif [ ! -e "$p" ]; then hueco=${hueco:-$ruta}
+    elif [ "$tipo" = "crea-carpeta" ] && [ ! -d "$p" ]; then mal_tipo=${mal_tipo:-"$ruta|un archivo|una carpeta"}
+    elif [ "$tipo" = "crea-archivo" ] && [ ! -f "$p" ]; then mal_tipo=${mal_tipo:-"$ruta|una carpeta|un archivo"}
+    elif [ "$tipo" = "crea-carpeta" ]; then carpetas=$((carpetas + 1))
+    else archivos=$((archivos + 1)); fi
+  done < <(lista_02)
+  # Lo que hay de más adentro de guardia: find no sigue enlaces, así que un enlace
+  # aparece con su propio nombre.
+  if real_02 "$RAIZ_02/guardia" && [ -d "$RAIZ_02/guardia" ]; then
+    while IFS= read -r n; do
+      case "$pedidos" in *" guardia/$n "*) ;; *) sobra=${sobra:-"guardia/$n"} ;; esac
+    done < <(find "$RAIZ_02/guardia" -mindepth 1 -printf '%P\n' | sort)
+  fi
+  if [ -n "$enlace" ]; then
+    no "2.1 · «$enlace» es un enlace, o se llega a él pasando por un enlace (medí: la ruta real de cada carpeta y archivo pedido). Créalo con mkdir o con touch"
+  elif [ -n "$hueco" ]; then
+    no "2.1 · Falta «$hueco» (medí: cada carpeta y archivo pedido, en ~/practica/02). Revisa el nombre letra por letra con  ls"
+  elif [ -n "$mal_tipo" ]; then
+    IFS='|' read -r ruta resto n <<< "$mal_tipo"
+    no "2.1 · «$ruta» existe, pero es $resto y se pedía $n (medí: el tipo de cada cosa pedida). mkdir crea carpetas; touch, archivos"
+  elif [ -n "$sobra" ]; then
+    no "2.1 · Adentro de guardia hay algo que no se pidió: «$sobra» (medí: todo lo que hay en guardia contra lo pedido). ¿Un error de dedo? Lo quitas con lo que ves en el paso 4"
+  else
+    si "2.1 · El árbol de guardia está tal cual (medí: las $carpetas carpetas y los $archivos archivos pedidos existen, cada uno de su tipo, ninguno es un enlace y no hay nada de más en guardia)"
+  fi
+}
+
+# --- 2.2 · Una copia sobre un archivo que ya existía ---------------------------------
+marca_copia_02() {
+  local o d
+  read -r o d < <(tareas_02 copia)
+  if enlazada_02 "$RAIZ_02/$d"; then
+    no "2.2 · $d es un enlace, no una copia (medí: la ruta real de $d). Un enlace muestra el mismo contenido, pero no es un respaldo: si cambia el original, cambia él. Copia con cp"
+  elif [ ! -f "$RAIZ_02/$d" ]; then
+    no "2.2 · Falta $d (medí: que exista como archivo). Arma el taller de nuevo con  prepara 02"
+  elif cmp -s -- "$RAIZ_02/$d" <(contenido_02 "$d"); then
+    no "2.2 · $d todavía tiene la versión vieja (medí: comparé su contenido con el que tenía al armar el taller). Te falta copiar $o encima"
+  elif ! cmp -s -- "$RAIZ_02/$d" <(contenido_02 "$o"); then
+    no "2.2 · $d tiene un contenido que no es el de $o (medí: comparé los dos contenidos). Copia otra vez: cp no pregunta, escribe encima"
+  elif ! contiene_02 "$RAIZ_02/$o" "$o"; then
+    no "2.2 · $d ya es la versión buena, pero $o ya no está en su lugar, o cambió (medí: que el original exista, sea de verdad y conserve su contenido). ¿Usaste mv en lugar de cp?"
+  else
+    si "2.2 · $d es copia de $o (medí: su contenido es el de $o y no el viejo, el original sigue en su lugar con su contenido, y ninguno de los dos es un enlace)"
+  fi
+}
+
+# --- 2.2 · Una carpeta copiada entera, con cp -r --------------------------------------
+marca_copia_carpeta_02() {
+  local o d tipo ruta resto rel p esperados=" " cuantos=0 hueco="" enlace="" distinto="" sobra="" n original=1
+  read -r o d < <(tareas_02 copia-carpeta)
+  while read -r tipo ruta resto; do
+    case "$tipo" in carpeta|archivo) ;; *) continue ;; esac
+    case "$ruta" in "$o"/*) ;; *) continue ;; esac
+    rel=${ruta#"$o"/}; esperados="$esperados$rel "
+    p="$RAIZ_02/$d/$rel"
+    if enlazada_02 "$p"; then enlace=${enlace:-"$d/$rel"}
+    elif [ "$tipo" = "carpeta" ]; then
+      if [ -d "$p" ]; then cuantos=$((cuantos + 1)); else hueco=${hueco:-"$d/$rel"}; fi
+    elif [ ! -f "$p" ]; then hueco=${hueco:-"$d/$rel"}
+    elif cmp -s -- "$p" <(contenido_02 "$ruta"); then cuantos=$((cuantos + 1))
+    else distinto=${distinto:-"$d/$rel"}; fi
+    if [ "$tipo" = "archivo" ]; then contiene_02 "$RAIZ_02/$ruta" "$ruta" || original=0
+    else { [ -d "$RAIZ_02/$ruta" ] && real_02 "$RAIZ_02/$ruta"; } || original=0; fi
+  done < <(lista_02)
+  if real_02 "$RAIZ_02/$d" && [ -d "$RAIZ_02/$d" ]; then
+    while IFS= read -r n; do
+      case "$esperados" in *" $n "*) ;; *) sobra=${sobra:-$n} ;; esac
+    done < <(find "$RAIZ_02/$d" -mindepth 1 -printf '%P\n' | sort)
+  fi
+  if enlazada_02 "$RAIZ_02/$d"; then
+    no "2.2 · $d es un enlace a otra carpeta, no una copia (medí: la ruta real de $d). Copia la carpeta con cp y la opción para carpetas"
+  elif [ ! -d "$RAIZ_02/$d" ]; then
+    no "2.2 · Falta la carpeta $d (medí: que exista como carpeta). cp copia una carpeta solo con su opción para carpetas: búscala en el paso 3"
+  elif [ -n "$enlace" ]; then
+    no "2.2 · Adentro de $d, «$enlace» es un enlace, no una copia (medí: la ruta real de cada cosa copiada)"
+  elif [ "${sobra%%/*}" = "${o##*/}" ]; then
+    no "2.2 · Adentro de $d hay otra $sobra (medí: todo lo que hay en $d contra lo que hay en $o). Copiaste dos veces: la segunda copia, como el destino ya existía, quedó ADENTRO de la primera"
+  elif [ -n "$hueco" ]; then
+    no "2.2 · A la copia le falta «$hueco» (medí: cada archivo de $o, buscado en $d)"
+  elif [ -n "$distinto" ]; then
+    no "2.2 · «$distinto» tiene otro contenido que su original (medí: comparé el contenido de cada archivo copiado con el de $o)"
+  elif [ -n "$sobra" ]; then
+    no "2.2 · Adentro de $d hay algo que no está en $o: «$sobra» (medí: todo lo que hay en $d contra lo que hay en $o)"
+  elif [ "$original" -eq 0 ]; then
+    no "2.2 · La copia está bien, pero $o ya no está completa en su lugar (medí: cada archivo del original, con su contenido). ¿Usaste mv en lugar de cp?"
+  else
+    si "2.2 · $d es copia de $o (medí: los mismos $cuantos archivos, cada uno con el mismo contenido que su original, nada de más, el original completo y ningún enlace)"
+  fi
+}
+
+# --- 2.2 · Renombrar y mover: el original desaparece ----------------------------------
+# «verbo» va en el mensaje: renombrar o mover. El destino de «mueve» ya existía con
+# otro contenido; el de «renombra», no.
+marca_mueve_02() {
+  local tarea="$1" verbo="$2" o d
+  read -r o d < <(tareas_02 "$tarea")
+  if enlazada_02 "$RAIZ_02/$d"; then
+    no "2.2 · $d es un enlace (medí: la ruta real de $d). Se pide el archivo mismo, con mv"
+  elif [ ! -f "$RAIZ_02/$d" ]; then
+    no "2.2 · Falta $d (medí: que exista como archivo). Te falta $verbo $o"
+  elif [ -n "$(contenido_02 "$d")" ] && cmp -s -- "$RAIZ_02/$d" <(contenido_02 "$d"); then
+    no "2.2 · $d todavía tiene el contenido viejo (medí: comparé su contenido con el que tenía al armar el taller). Te falta $verbo $o encima"
+  elif ! cmp -s -- "$RAIZ_02/$d" <(contenido_02 "$o"); then
+    no "2.2 · $d no tiene el contenido de $o (medí: comparé los dos contenidos)"
+  elif ! ausente_02 "$RAIZ_02/$o"; then
+    no "2.2 · $d ya tiene el contenido bueno, pero $o sigue ahí (medí: que $o ya no exista, ni como enlace). Eso fue copiar: al $verbo, el nombre de antes desaparece"
+  else
+    si "2.2 · $o quedó como $d (medí: $o ya no existe, $d tiene el contenido que tenía $o y no es un enlace)"
+  fi
+}
+
+# --- 2.3 · Tu patrón -------------------------------------------------------------------
+marca_patron_02() {
+  local hoja="$PRACTICA_02/respuestas/02.md" dicho tipo ruta resto nombre nombres=" " todos=0
+  local deja="" atrapa="" palabra palabras todas=1 debe deben=0
+  if [ ! -f "$hoja" ] || enlazada_02 "$hoja"; then
+    no "2.3 · Falta tu hoja de respuestas, ~/practica/respuestas/02.md (medí: que exista como archivo y no sea un enlace). La crea  prepara 02"
+    return
+  fi
+  if ! dicho=$(respuesta_02 patron); then
+    no "2.3 · No encontré tu respuesta «patron» (medí: busqué en respuestas/02.md un renglón que empiece con  patron: )"
+    return
+  fi
+  if [ -z "$dicho" ]; then
+    no "2.3 · Tu renglón «patron:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 02 patron  y tu patrón entre comillas simples"
+    return
+  fi
+  # Los nombres que prepara puso directamente en limpieza.
+  while read -r tipo ruta resto; do
+    case "$tipo" in carpeta|archivo) ;; *) continue ;; esac
+    case "$ruta" in limpieza/*/*) continue ;; limpieza/*) ;; *) continue ;; esac
+    nombres="$nombres${ruta#limpieza/} "; todos=$((todos + 1))
+  done < <(lista_02)
+  case "$dicho" in
+    */*) no "2.3 · Tu patrón «$dicho» lleva una diagonal (medí: que no tenga / ). Va solo el patrón, como lo escribes parado en limpieza"; return ;;
+  esac
+  case "$dicho" in
+    *[[:space:]]*)
+      # read -a parte en palabras sin expandir los * (un for sobre $dicho sí los expandiría).
+      read -r -a palabras <<< "$dicho"
+      for palabra in "${palabras[@]}"; do case "$nombres" in *" $palabra "*) ;; *) todas=0 ;; esac; done
+      if [ "$todas" -eq 1 ]; then
+        no "2.3 · Anotaste «$dicho»: son nombres, no un patrón (medí: cada palabra de tu respuesta es un nombre de limpieza). La terminal cambió tu patrón por lo que atrapa antes de que anota lo viera. Anótalo entre comillas simples"
+      else
+        no "2.3 · Tu patrón «$dicho» lleva espacios (medí: que sea una sola palabra). Anota un solo patrón, entre comillas simples"
+      fi
+      return ;;
+  esac
+  case "$dicho" in
+    *[\*\?\[]*) ;;
+    *) no "2.3 · «$dicho» es un nombre, no un patrón (medí: que lleve * , ? o [ ). Un patrón atrapa varios nombres de un jalón"; return ;;
+  esac
+  for nombre in $nombres; do
+    debe=0
+    case " $(tareas_02 borra-patron | tr '\n' ' ') " in *" limpieza/$nombre "*) debe=1; deben=$((deben + 1)) ;; esac
+    # El patrón se prueba con case, sin comillas: así lo interpreta la terminal.
+    # shellcheck disable=SC2254
+    case "$nombre" in
+      $dicho) [ "$debe" -eq 1 ] || atrapa=${atrapa:-$nombre} ;;
+      *)      [ "$debe" -eq 0 ] || deja=${deja:-$nombre} ;;
+    esac
+  done
+  if [ -n "$deja" ]; then
+    no "2.3 · Tu patrón «$dicho» deja fuera «$deja», que sí se borra (medí: probé tu patrón contra los $todos nombres que prepara puso en limpieza)"
+  elif [ -n "$atrapa" ]; then
+    no "2.3 · Tu patrón «$dicho» también atrapa «$atrapa», que no debe caer con él (medí: probé tu patrón contra los $todos nombres que prepara puso en limpieza)"
+  else
+    si "2.3 · Tu patrón «$dicho» atrapa justo lo que se borra (medí: lo probé contra los $todos nombres que prepara puso en limpieza: atrapa los $deben que se borran con él y ninguno de los otros $((todos - deben)))"
+  fi
+}
+
+# --- 2.3 · Se borró lo pedido ---------------------------------------------------------
+marca_borrado_02() {
+  local tipo ruta resto p cuantos=0 sigue=""
+  while read -r tipo ruta resto; do
+    case "$tipo" in borra|borra-patron) ;; *) continue ;; esac
+    p="$RAIZ_02/$ruta"
+    if ausente_02 "$p"; then cuantos=$((cuantos + 1)); else sigue=${sigue:-$ruta}; fi
+  done < <(lista_02)
+  if [ -z "$sigue" ]; then
+    si "2.3 · Lo que se pedía borrar ya no existe (medí: los $cuantos, uno por uno: ni como archivo o carpeta ni como enlace, y su carpeta es de verdad)"
+  elif enlazada_02 "${RAIZ_02}/${sigue%/*}"; then
+    no "2.3 · ${sigue%/*} es un enlace a otro lugar (medí: la ruta real de la carpeta). Así no puedo saber qué borraste en tu taller. Ármalo de nuevo con  prepara 02"
+  elif [ -d "$RAIZ_02/$sigue" ] && [ -n "$(find "$RAIZ_02/$sigue" -mindepth 1 -print -quit)" ]; then
+    no "2.3 · «$sigue» sigue ahí, y tiene cosas adentro (medí: que ya no exista). rmdir solo borra carpetas vacías"
+  else
+    no "2.3 · «$sigue» sigue ahí (medí: que ya no exista, ni como enlace)"
+  fi
+}
+
+# --- 2.3 · Lo demás sigue ahí ---------------------------------------------------------
+marca_queda_02() {
+  local tipo ruta resto p cuantos=0 hueco="" enlace="" cambio=""
+  while read -r tipo ruta resto; do
+    [ "$tipo" = "queda" ] || continue
+    p="$RAIZ_02/$ruta"
+    if enlazada_02 "$p"; then enlace=${enlace:-$ruta}
+    elif [ "$(tipo_02 "$ruta")" = "carpeta" ]; then
+      if [ -d "$p" ]; then cuantos=$((cuantos + 1)); else hueco=${hueco:-$ruta}; fi
+    elif [ ! -f "$p" ]; then hueco=${hueco:-$ruta}
+    elif cmp -s -- "$p" <(contenido_02 "$ruta"); then cuantos=$((cuantos + 1))
+    else cambio=${cambio:-$ruta}; fi
+  done < <(lista_02)
+  if [ -n "$enlace" ]; then
+    no "2.3 · «$enlace» es un enlace, o se llega a él pasando por un enlace (medí: la ruta real de cada cosa que se queda). Ármalo de nuevo con  prepara 02"
+  elif [ -n "$hueco" ]; then
+    no "2.3 · «$hueco» ya no está, y no se pedía borrarlo (medí: que exista, de su tipo). No hay papelera de dónde sacarlo. Para repetir el ejercicio, prepara 02 arma el taller de nuevo, con todo y lo de 2.1 y 2.2"
+  elif [ -n "$cambio" ]; then
+    no "2.3 · «$cambio» cambió su contenido (medí: lo comparé con el que tenía al armar el taller)"
+  else
+    si "2.3 · Lo que no se pedía borrar sigue ahí (medí: los $cuantos, cada uno de su tipo, cada archivo con su contenido de origen, y ninguno es un enlace)"
+  fi
+}
+
+verifica_02() {
+  if [ ! -r "$LISTA_02" ]; then
+    no "No encuentro la lista del taller (medí: que $LISTA_02 se pueda leer). Tu imagen es de antes de esta lección: sal y corre  ./practicar reconstruir"
+    return
+  fi
+  if enlazada_02 "$RAIZ_02"; then
+    no "Tu taller, ~/practica/02, es un enlace a otro lugar (medí: su ruta real). No reviso nada a través de un enlace. Ármalo de nuevo con  prepara 02"
+    return
+  fi
+  if [ ! -d "$RAIZ_02" ]; then
+    no "No encuentro tu taller (medí: que ~/practica/02 exista como carpeta). Ármalo con  prepara 02"
+    return
+  fi
+  marca_arbol_02
+  marca_copia_02
+  marca_copia_carpeta_02
+  marca_mueve_02 renombra renombrar
+  marca_mueve_02 mueve mover
+  marca_patron_02
+  marca_borrado_02
+  marca_queda_02
+}
+
 case "${1:-}" in
   00) verifica_00 ;;
   01) verifica_01 ;;
+  02) verifica_02 ;;
   '') echo "Uso: verifica NN    (NN es el número de la lección; por ejemplo: verifica 01)"; exit 2 ;;
-  *)  echo "Todavía no hay verifica para la lección «$1». Por ahora existen: verifica 00 y verifica 01"; exit 2 ;;
+  *)  echo "Todavía no hay verifica para la lección «$1». Por ahora existen: verifica 00, verifica 01 y verifica 02"; exit 2 ;;
 esac
 
 echo

@@ -37,7 +37,7 @@ Se hacen en orden: cada una parte de lo que dejó la anterior. Empieza por la
 |---|---|---|
 | 00 | [Tu terminal de práctica](00-tu-terminal-de-practica.md) | En esta terminal no hay escritorio ni ventanas, solo texto: te dice quién eres y dónde estás en cada línea, y se le habla con comandos |
 | 01 | [Moverte sin ver](01-moverte-sin-ver.md) | El árbol de carpetas, y la ruta absoluta contra la relativa |
-| 02 | Crear, copiar, mover y borrar sin miedo | En la terminal no hay papelera: se piensa antes de borrar |
+| 02 | [Crear, copiar, mover y borrar sin miedo](02-crear-copiar-mover-borrar.md) | En la terminal no hay papelera: se piensa antes de borrar |
 | 03 | Ver lo que hay dentro | Casi todo en un servidor es texto, y se lee sin abrir un editor |
 | 04 | Encontrar archivos: find | `find` recorre el árbol y filtra por lo que tú le digas |
 | 05 | Buscar dentro: grep | `grep` busca texto dentro de los archivos; `find` busca los archivos |
