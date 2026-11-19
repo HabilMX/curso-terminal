@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# prepara — arma el escenario de una lección en tu carpeta de práctica.
+# Corre ADENTRO del contenedor del curso. Uso:  prepara 01
+#
+# Es un comando aparte de «verifica», a propósito: verifica solo mira; prepara
+# crea y BORRA. Lo único que toca es la carpeta de esa lección (~/practica/01/
+# para la 01). Si la carpeta ya existe, avisa que la va a borrar y pide que
+# escribas  si  antes de hacerlo. Tus respuestas viven en ~/practica/respuestas/,
+# que este comando no toca.
+#
+# El laberinto de la 01 sale igual en todas las computadoras: no hay azar. Los
+# nombres, los tamaños y las fechas vienen de una lista fija, la misma que lee
+# verifica: /usr/local/share/curso-terminal/01-laberinto.txt
+set -u
+
+LISTAS="/usr/local/share/curso-terminal"
+
+revisar_lugar() {
+  if [ "$(id -un)" != "alumno" ] || [ -z "${HOME:-}" ] || [ ! -d "$HOME/practica" ]; then
+    echo "❌ prepara corre dentro de la terminal de práctica, como alumno y con ~/practica conectada"
+    echo "   (medí: id -un, y que ~/practica exista como carpeta). Sal y entra con ./practicar"
+    exit 1
+  fi
+}
+
+# Si la carpeta de la lección ya existe, se borra solo con tu «si».
+confirmar_borrado() {
+  local carpeta="$1" respuesta
+  [ -e "$carpeta" ] || return 0
+  echo "Ya existe $carpeta."
+  echo "Para armarla de nuevo hay que BORRARLA, con todo lo que tenga adentro. No se puede deshacer."
+  echo "No se borra nada más: tus respuestas de ~/practica/respuestas/ se quedan."
+  printf "Para confirmar, escribe  si  y presiona Enter: "
+  read -r respuesta || respuesta=""
+  case "$respuesta" in
+    si|sí|SI|SÍ|Si|Sí) ;;
+    *) echo "No se borró nada. Tu carpeta sigue como estaba."; exit 0 ;;
+  esac
+  rm -rf -- "$carpeta"
+}
+
+# Un archivo de relleno de exactamente N bytes: el mismo renglón repetido y
+# cortado a la medida. Es texto, por si lo abres.
+rellenar() {
+  local archivo="$1" bytes="$2" nombre
+  nombre=$(basename "$archivo")
+  : > "$archivo"
+  [ "$bytes" -eq 0 ] && return 0
+  yes "$nombre: renglón de relleno del laberinto de la lección 01. No hay nada que leer aquí." \
+    | head -c "$bytes" > "$archivo"
+}
+
+prepara_01() {
+  local lista="$LISTAS/01-laberinto.txt" raiz="$HOME/practica/01"
+  local tipo ruta fecha bytes carpetas=0 archivos=0 mal=0 real
+
+  if [ ! -r "$lista" ]; then
+    echo "❌ No encuentro la lista del laberinto (medí: que $lista se pueda leer)."
+    echo "   Tu imagen es de antes de esta lección. Sal y corre  ./practicar reconstruir"
+    exit 1
+  fi
+  confirmar_borrado "$raiz"
+  mkdir "$raiz" || { echo "❌ No pude crear $raiz. Sal y corre ./practicar desde-cero"; exit 1; }
+
+  # Primera vuelta: se crean las carpetas y los archivos, con permisos fijos.
+  while read -r tipo ruta fecha bytes; do
+    case "$tipo" in
+      carpeta) mkdir "$raiz/$ruta" && chmod 755 "$raiz/$ruta" ;;
+      archivo) rellenar "$raiz/$ruta" "$bytes" && chmod 644 "$raiz/$ruta" ;;
+      texto)
+        cat > "$raiz/$ruta" <<'LEEME'
+Estás en el laberinto de la lección 01 de «La terminal desde cero».
+
+Si te pierdes o descompones algo, corre
+    prepara 01
+y el laberinto vuelve a quedar como el primer día.
+
+La lección te dice a dónde ir. Para saber dónde estás parado: pwd
+LEEME
+        chmod 644 "$raiz/$ruta" ;;
+    esac
+  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+
+  # Segunda vuelta: las fechas. Van al final porque crear algo dentro de una
+  # carpeta le cambia la fecha a la carpeta.
+  while read -r tipo ruta fecha bytes; do
+    case "$tipo" in
+      carpeta|archivo|texto) touch -d "${fecha/T/ }" "$raiz/$ruta" ;;
+    esac
+  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+  touch -d "2025-06-02 08:00" "$raiz"
+
+  # Tercera vuelta: se mide lo que quedó, contra la misma lista.
+  while read -r tipo ruta fecha bytes; do
+    case "$tipo" in
+      carpeta) if [ -d "$raiz/$ruta" ]; then carpetas=$((carpetas + 1)); else mal=1; fi ;;
+      texto)   if [ -f "$raiz/$ruta" ]; then archivos=$((archivos + 1)); else mal=1; fi ;;
+      archivo)
+        real=$(stat -c %s "$raiz/$ruta" 2>/dev/null)
+        if [ "${real:-x}" = "$bytes" ]; then archivos=$((archivos + 1)); else mal=1; fi ;;
+    esac
+  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+
+  if [ "$mal" -ne 0 ]; then
+    echo "❌ El laberinto no quedó completo (medí: cada carpeta y cada archivo de la lista, con su tamaño)."
+    echo "   Corre  prepara 01  otra vez. Si se repite, sal y corre ./practicar desde-cero"
+    exit 1
+  fi
+  echo "✅ Laberinto listo en $raiz (medí: $carpetas carpetas y $archivos archivos, cada archivo con su tamaño)."
+  echo "   Empieza por ahí:  cd ~/practica/01"
+}
+
+case "${1:-}" in
+  01) revisar_lugar; prepara_01 ;;
+  '') echo "Uso: prepara NN    (NN es el número de la lección; por ejemplo: prepara 01)"; exit 2 ;;
+  *)  echo "Todavía no hay prepara para la lección «$1». Por ahora existe: prepara 01"; exit 2 ;;
+esac
