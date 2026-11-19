@@ -592,7 +592,7 @@ anything yet. If you think a `cd` is going to fail, write it that way, and write
 | 5 | `cd /` | 10 | `cd ..` |
 
 When you have all ten, go to the entrance with `cd ~/practica/01` and run the commands one by one, with a `pwd` after
-each one. There is no passing number: what counts is that, for each one you missed, you can say what you read wrong:
+each one. There is no passing score: what counts is that, for each one you missed, you can say what you read wrong:
 whether the path was absolute or relative, or which folder you were standing in.
 
 **The table of columns of 1.2.** Run `ls -la` in `bitacoras` and fill in these two lines on your paper. `verifica` does
@@ -671,7 +671,7 @@ drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
 8. In `ls -lh` you see `812K` on one line and `3.1M` on another. Which file is bigger, and how do you know?
 9. A line of `ls -l` starts with `d`. What does that letter tell you? And what does the number in the size column say
    about its contents?
-10. You are going to dictate to a colleague the route to a folder, and you do not know which one he is standing in. Do
+10. You are going to dictate to a colleague the route to a folder, and you do not know which one they are standing in. Do
     you dictate an absolute path or a relative one? Why?
 
 **What comes next:** you now know how to move through folders and see what they hold. In lesson 02 you start changing
@@ -745,7 +745,7 @@ owner you hesitated between the two columns that say `alumno`: the first is the 
 7. Not yet: plain `ls` does not list hidden things. You run `ls -a`. If only `.` and `..` come out, now it is empty.
 8. The `3.1M` one. You read the letter first: one M is worth more than a thousand K.
 9. That it is a folder. It says nothing about the contents: that number is the size of the folder itself.
-10. An absolute one. A relative one only works if both know which folder he is standing in; the absolute one starts from
+10. An absolute one. A relative one only works if both know which folder they are standing in; the absolute one starts from
     the root.
 
 ---
@@ -767,4 +767,4 @@ Opened on Nov 19, 2026. All of them are in English.
 - Our own measurement, Nov 19, 2026, on a Mac with Apple silicon (Docker 29.2.1 with Colima, linux/arm64), with the
   course image on Ubuntu 26.04.1: `ls` from uutils coreutils 0.10.0, `gnuls` from GNU coreutils 9.7 and bash 5.3.9. The
   screens, the comparison of `ls` against `gnuls`, the rounding of `-h`, the Tab key and the time of
-  `./practicar reconstruir` come from there. On Linux this lesson is not tested yet.
+  `./practicar reconstruir` come from there. On Linux Mint 22.3, what the «Before you start» table says was tested.

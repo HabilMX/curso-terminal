@@ -8,7 +8,7 @@
   verrez sous le nom de *directory*, « répertoire ». C'est la même chose.
 - **Arbre :** la façon dont les dossiers sont rangés : les uns dans les autres, comme les branches d'un arbre.
 - **Racine :** le dossier tout en haut, celui qui contient tous les autres. Elle s'écrit avec une seule barre oblique : `/`.
-- **Dossier actuel :** le dossier où vous vous tenez en ce moment. C'est celui que `pwd` répond.
+- **Dossier actuel :** le dossier où vous vous tenez en ce moment. C'est celui qu'affiche `pwd`.
 - **Chemin :** les indications pour arriver à un dossier ou à un fichier : des noms de dossiers séparés par des barres
   obliques. Par exemple, `pagos/bitacoras`.
 
@@ -16,7 +16,7 @@
 allez vous retrouver avant d'appuyer sur Entrée ; vous voyez ce qu'il y a dans un dossier avec `ls`, y compris ce qui
 est caché ; vous lisez chaque colonne de `ls -l` ; et vous écrivez le chemin vers un dossier de deux façons.
 
-**Idée nouvelle de cette leçon (la seule qui est évaluée) :** les dossiers forment un arbre, et on arrive à un endroit
+**Idée nouvelle de cette leçon (la seule qui est évaluée) :** les dossiers forment un arbre, et vous arrivez à un endroit
 de cet arbre avec deux types de chemin : l'**absolu**, qui part de la racine, et le **relatif**, qui part de l'endroit
 où vous vous tenez.
 
@@ -72,7 +72,7 @@ git pull
 
 `git pull` rapporte du dépôt les nouveaux fichiers. `./practicar reconstruir` les met dans l'image et réutilise
 normalement l'Ubuntu et les paquets déjà construits ; il n'a besoin du réseau que s'il lui en manque un. Sur le Mac du
-test, avec tout le reste déjà construit, cela a pris moins de deux secondes. Cela se termine par `✅ Imagen lista.`
+test, avec tout le reste déjà construit, cela a pris moins de deux secondes. Cela se termine par `✅ Imagen lista.` (« Image prête. »)
 Si vous n'utilisez pas `git`, retéléchargez le ZIP du cours et lancez `./practicar reconstruir` dans le nouveau dossier.
 
 Reconstruire n'efface pas votre travail : votre dossier `~/practica` vit à part, dans le volume de la leçon 00. Ensuite,
@@ -113,7 +113,7 @@ Commencez par là : `cd ~/practica/01`.*
 `prepara` (« prépare ») est une commande du cours : elle monte le matériel d'entraînement d'une leçon. Trois choses à son
 sujet :
 
-- **Elle n'a aucun hasard.** Les noms, les tailles et les dates viennent d'une liste fixe. Lors des tests, elle a été
+- **Rien n'y est laissé au hasard.** Les noms, les tailles et les dates viennent d'une liste fixe. Lors des tests, elle a été
   montée plusieurs fois et le résultat était identique.
 - **Elle touche deux choses et rien d'autre :** le dossier `~/practica/01`, et votre feuille de réponses, qu'elle crée
   seulement si elle n'existe pas.
@@ -158,8 +158,8 @@ noms, en français : `LEEME.txt` (« LISEZ-MOI »), `pagos` (« paiements »), `
 
 Lisez-le de haut en bas. Tout en haut se trouve la racine, `/`. Dans la racine, il y a un dossier `home` ; dans `home`,
 un dossier `alumno` ; et ainsi de suite. Chaque niveau vers la droite veut dire « à l'intérieur de ». Monter, c'est aller
-vers la racine ; descendre, c'est entrer dans un dossier qui est à l'intérieur du vôtre. Les fichiers sont là pour
-remplir : ce qui compte, c'est leur nom, leur taille et leur date.
+vers la racine ; descendre, c'est entrer dans un dossier qui est à l'intérieur du vôtre. Les fichiers servent de
+remplissage : ce qui compte, c'est leur nom, leur taille et leur date.
 
 Maintenant, placez-vous à l'entrée du labyrinthe. `cd` est la commande pour changer de dossier, et vous la verrez en
 détail à l'étape suivante. Aujourd'hui, cette ligne est une recette à recopier :
@@ -188,8 +188,8 @@ L'invite utilise la forme courte, avec `~`. `pwd` répond avec la forme complèt
 
 ## Étape 2 · Marchez : `cd` avec des chemins relatifs
 
-`cd` vient de *change directory*, « changer de dossier ». On écrit `cd`, une espace et le chemin de l'endroit où l'on
-veut aller.
+`cd` vient de *change directory*, « changer de dossier ». Vous écrivez `cd`, une espace et le chemin de l'endroit où vous
+voulez aller.
 
 Pour savoir où vous pouvez aller, il faut voir ce qu'il y a. `ls`, tout seul, liste ce qu'il y a dans le dossier actuel ;
 vous le verrez à fond à l'étape 4.
@@ -324,7 +324,7 @@ alumno@practica:~/practica/01/pagos/bitacoras$
 ```
 
 Lisez-le avec le dessin de l'étape 1 : de la racine à `home`, de `home` à `alumno`, de là à `practica`, à `01`, à
-`pagos` et à `bitacoras`. C'est ce que `pwd` répond quand vous y êtes : **`pwd` répond le chemin absolu du dossier
+`pagos` et à `bitacoras`. C'est ce qu'affiche `pwd` quand vous y êtes : **`pwd` affiche le chemin absolu du dossier
 actuel.**
 
 **La barre oblique du début change tout.** `cd pagos` demande le dossier `pagos` qui est à l'intérieur de là où je suis.
@@ -462,7 +462,7 @@ drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
 Sans lettre, ce sont des octets. `K` sont des kilo-octets : 1 024 octets. `M` sont des mégaoctets : 1 024 K. `G` sont des
 gigaoctets : 1 024 M.
 
-**Le piège de cette colonne : on lit d'abord la lettre, ensuite le nombre.** `975K` a un nombre plus grand que `1.2M`, et
+**Le piège de cette colonne : vous lisez d'abord la lettre, ensuite le nombre.** `975K` a un nombre plus grand que `1.2M`, et
 pourtant c'est le plus petit des deux fichiers, parce qu'un M vaut plus de mille K. Et une limite : `-h` arrondit.
 `marzo.log` fait 1 200 000 octets, soit 1,14 M, et `ls` écrit `1.2M`. Quand vous avez besoin du nombre exact, enlevez
 le `h`.
@@ -578,7 +578,7 @@ total 4
 ```
 
 C'est le détail resté en suspens à l'étape 4 : votre feuille est récente, et, au lieu de l'année, elle porte l'heure. La
-taille et la date de la vôtre seront autres.
+taille et la date de la vôtre seront différentes.
 
 **Ce que cela démontre** (objectifs 1.2 et 1.3) : `verifica 01` entièrement au vert.
 
@@ -595,8 +595,7 @@ l'étape 1.
 | 1.2 | Dans `bitacoras` : vous trouvez le plus gros fichier et le fichier caché et vous les notez sur votre feuille ; et vous remplissez sur votre papier le tableau des colonnes ci-dessous | `verifica 01` marque en vert `mas-grande` et `oculto`, et votre tableau coïncide avec « Comparez vos réponses » |
 | 1.3 | Vous arrivez au dossier `guardia` avec un chemin absolu et avec un chemin relatif qui part de `bitacoras`, et vous notez les deux | `verifica 01` s'affiche entièrement au vert |
 
-**Les dix `cd` du 1.1.** D'abord, écrivez les dix prédictions, avec le chemin complet que vous pensez que `pwd` va
-répondre. Ne lancez encore rien. Si vous pensez qu'un `cd` va échouer, écrivez-le ainsi, et écrivez où vous restez. Vous
+**Les dix `cd` du 1.1.** D'abord, écrivez les dix prédictions, avec le chemin complet que `pwd` affichera, selon vous. Ne lancez encore rien. Si vous pensez qu'un `cd` va échouer, écrivez-le ainsi, et écrivez où vous restez. Vous
 partez de `~/practica/01`, et chaque commande part de là où la précédente vous a laissé.
 
 | # | Commande | # | Commande |
@@ -608,7 +607,7 @@ partez de `~/practica/01`, et chaque commande part de là où la précédente vo
 | 5 | `cd /` | 10 | `cd ..` |
 
 Quand vous avez les dix, allez à l'entrée avec `cd ~/practica/01` et lancez les commandes une par une, avec un `pwd`
-après chacune. Il n'y a pas de note pour réussir : ce qui compte, c'est que, pour chacune que vous avez ratée, vous
+après chacune. Il n'y a pas de note minimale : ce qui compte, c'est que, pour chacune que vous avez ratée, vous
 puissiez dire ce que vous avez mal lu : si le chemin était absolu ou relatif, ou dans quel dossier vous vous teniez.
 
 **Le tableau des colonnes du 1.2.** Lancez `ls -la` dans `bitacoras` et remplissez sur votre papier ces deux lignes. Cette
@@ -689,7 +688,8 @@ drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
    savez-vous ?
 9. Une ligne de `ls -l` commence par `d`. Que vous dit cette lettre ? Et que dit du contenu le nombre de la colonne de
    la taille ?
-10. Vous allez dicter à un collègue le chemin vers un dossier, et vous ne savez pas dans quel dossier il se tient.
+10. Vous allez dicter à quelqu'un de votre équipe le chemin vers un dossier, et vous ne savez pas dans quel dossier se
+    tient la personne.
     Lui dictez-vous un chemin absolu ou un chemin relatif ? Pourquoi ?
 
 **Ce qui vient ensuite :** vous savez maintenant vous déplacer dans les dossiers et voir ce qu'ils contiennent. À la
@@ -713,7 +713,7 @@ a pas de corbeille.
 
 ## Comparez vos réponses
 
-**Exercice 1.1.** Ce que `pwd` répond après chaque commande :
+**Exercice 1.1.** Ce qu'affiche `pwd` après chaque commande :
 
 | # | Commande | Vous êtes dans | Pourquoi |
 |---|---|---|---|
@@ -750,7 +750,7 @@ propriétaire et la seconde est le groupe.
 **Exercice 1.3.** Ici, il n'y a pas de réponse écrite : le contrôle, c'est `verifica 01`. Pour savoir si vous êtes sur
 la bonne voie :
 
-- Votre chemin absolu commence par `/` et c'est, lettre pour lettre, ce que `pwd` répond quand vous vous tenez dans
+- Votre chemin absolu commence par `/` et c'est, lettre pour lettre, ce qu'affiche `pwd` quand vous vous tenez dans
   `guardia`. Après la racine, il porte sept noms.
 - Votre chemin relatif ne commence ni par `/` ni par `~`. Le plus court monte d'un niveau et en descend de deux. Il y en
   a d'autres, plus longs, qui arrivent aussi, et `verifica` les accepte : ce qu'il mesure, c'est que le chemin écrit,
@@ -768,7 +768,7 @@ la bonne voie :
    oui, il est vide.
 8. Celui de `3.1M`. On lit d'abord la lettre : un M vaut plus de mille K.
 9. Que c'est un dossier. Du contenu, elle ne dit rien : ce nombre est la taille du dossier lui-même.
-10. Un chemin absolu. Un chemin relatif ne sert que si les deux savent dans quel dossier il se tient ; l'absolu part de la
+10. Un chemin absolu. Un chemin relatif ne sert que si les deux savent dans quel dossier se tient la personne ; l'absolu part de la
     racine.
 
 ---
@@ -790,4 +790,4 @@ Consultées le 19 nov. 2026. Toutes sont en anglais.
 - Nos propres mesures, 19 nov. 2026, sur un Mac avec Apple silicon (Docker 29.2.1 avec Colima, linux/arm64), avec l'image
   du cours sur Ubuntu 26.04.1 : `ls` de uutils coreutils 0.10.0, `gnuls` de GNU coreutils 9.7 et bash 5.3.9. De là
   viennent les écrans, la comparaison de `ls` avec `gnuls`, l'arrondi de `-h`, la touche Tab et le temps de
-  `./practicar reconstruir`. Sous Linux, cette leçon n'est pas encore testée.
+  `./practicar reconstruir`. Sous Linux Mint 22.3, ce que dit le tableau de « Avant de commencer » a été testé.

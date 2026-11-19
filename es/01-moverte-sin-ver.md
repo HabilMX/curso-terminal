@@ -637,8 +637,8 @@ drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
 8. En `ls -lh` ves `812K` en un renglón y `3.1M` en otro. ¿Cuál archivo es más grande, y cómo lo sabes?
 9. Un renglón de `ls -l` empieza con `d`. ¿Qué te dice esa letra? ¿Y qué dice de su contenido el número de la
    columna del tamaño?
-10. Le vas a dictar a un compañero el camino a una carpeta, y no sabes en cuál está parado él. ¿Le dictas una ruta
-    absoluta o una relativa? ¿Por qué?
+10. Le vas a dictar a alguien de tu equipo el camino a una carpeta, y no sabes en qué carpeta está esa persona. ¿Le
+    dictas una ruta absoluta o una relativa? ¿Por qué?
 
 **Lo que sigue:** ya sabes moverte por las carpetas y ver lo que tienen. En la lección 02 empiezas a cambiar lo que
 hay: creas, copias, mueves y borras, en una terminal donde no hay papelera.
@@ -651,7 +651,7 @@ hay: creas, copias, mueves y borras, en una terminal donde no hay papelera.
 > contenedores, Kubernetes y entrega continua, para banca, seguros y empresas reguladas. Si sus servidores dependen
 > de una persona que «sabe dónde está todo», eso se puede ordenar sin detener la operación.
 >
-> [**CI/CD, DevSecOps y nube**](https://www.habil.mx/es/arquitectura-cloud-native/)
+> [**CI/CD, DevSecOps y nube sin sobresaltos**](https://www.habil.mx/es/arquitectura-cloud-native/)
 >
 > Primera conversación, sin costo.
 
@@ -711,7 +711,7 @@ Si en dueño dudaste entre las dos columnas que dicen `alumno`: la primera es el
 7. Todavía no: `ls` a secas no lista lo oculto. Corres `ls -a`. Si solo salen `.` y `..`, ahora sí está vacía.
 8. El de `3.1M`. Se lee primero la letra: una M vale más de mil K.
 9. Que es una carpeta. Del contenido no dice nada: ese número es el tamaño de la carpeta misma.
-10. Una absoluta. Una relativa solo sirve si los dos saben en qué carpeta está parado él; la absoluta sale de la
+10. Una absoluta. Una relativa solo sirve si los dos saben en qué carpeta está esa persona; la absoluta sale de la
     raíz.
 
 ---
@@ -733,4 +733,4 @@ Abiertas el 19-nov-2026. Todas están en inglés.
 - Medición propia, 19-nov-2026, en una Mac con Apple silicon (Docker 29.2.1 con Colima, linux/arm64), con la imagen
   del curso sobre Ubuntu 26.04.1: `ls` de uutils coreutils 0.10.0, `gnuls` de GNU coreutils 9.7 y bash 5.3.9. De ahí
   salen las pantallas, la comparación de `ls` contra `gnuls`, el redondeo de `-h`, la tecla Tab y el tiempo de
-  `./practicar reconstruir`. En Linux esta lección todavía no se prueba.
+  `./practicar reconstruir`. En Linux Mint 22.3 se probó lo que dice la tabla de «Antes de empezar».

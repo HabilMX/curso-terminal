@@ -8,7 +8,7 @@
   «diretório». É a mesma coisa.
 - **Árvore:** a forma como as pastas estão arrumadas: uma dentro da outra, como os galhos de uma árvore.
 - **Raiz:** a pasta de cima de tudo, a que contém todas as demais. Escreve-se com uma única barra: `/`.
-- **Pasta atual:** a pasta em que se está parado neste momento. É a que o `pwd` responde.
+- **Pasta atual:** a pasta em que se está parado neste momento. É a que o `pwd` mostra.
 - **Caminho:** as indicações para chegar a uma pasta ou a um arquivo: nomes de pastas separados por barras. Por exemplo,
   `pagos/bitacoras`.
 
@@ -40,7 +40,7 @@ relativo»).
 Terça-feira, 23h47. Lucía já entrou no servidor. Já leu o prompt: sabe quem é ali dentro e em que pasta está parada. Do
 outro lado do telefone pedem a ela o seguinte:
 
-—Vá até a pasta dos logs de pagamentos e diga qual arquivo pesa mais.
+«Vá até a pasta dos logs de pagamentos e diga qual arquivo pesa mais.»
 
 «Vá.» No computador dela, ir a uma pasta é dar duplo clique até chegar. Aqui não há nada em que clicar. Há a mesma linha
 de antes, esperando:
@@ -61,7 +61,7 @@ Esta lição é esse percurso, em um labirinto feito para se perder sem consequ�
 **O que é preciso:** a lição 00 feita, com `verifica 00` em verde; o material do curso atualizado; e papel e lápis para
 as previsões.
 
-**Atualize o terminal de prática.** A imagem construída na lição 00 não traz o que há nesta lição. A partir do
+**Atualize o terminal de prática.** A imagem construída na lição 00 não traz o que esta lição precisa. A partir do
 computador, na pasta do curso:
 
 ```bash
@@ -69,7 +69,7 @@ git pull
 ./practicar reconstruir
 ```
 
-O `git pull` traz do repositório os arquivos novos. O `./practicar reconstruir` («reconstruir») os coloca na imagem e
+O `git pull` traz do repositório os arquivos novos. O `./practicar reconstruir` os coloca na imagem e
 normalmente reaproveita o Ubuntu e os pacotes que já estavam construídos; só precisa de rede se faltar algum. No Mac do
 teste, com tudo o que vinha antes já construído, levou menos de dois segundos. Termina com `✅ Imagen lista.` («Imagem
 pronta.»). Quem não usa `git` baixa de novo o ZIP do curso e roda `./practicar reconstruir` na pasta nova.
@@ -110,7 +110,7 @@ folha de respostas, com as chaves vazias: `/home/alumno/practica/respuestas/01.m
 
 O `prepara` («preparar») é um comando do curso: monta o material de prática de uma lição. Três coisas sobre ele:
 
-- **Não tem acaso.** Os nomes, os tamanhos e as datas vêm de uma lista fixa. No teste foi montado várias vezes e ficou
+- **Nada nele é aleatório.** Os nomes, os tamanhos e as datas vêm de uma lista fixa. No teste foi montado várias vezes e ficou
   idêntico.
 - **Mexe em duas coisas e em nada mais:** a pasta `~/practica/01` e a folha de respostas, que ele cria só se não existir.
 - **Pode ser rodado de novo.** Quem se perder ou estragar algo roda `prepara 01` e o labirinto volta a ser o do primeiro
@@ -577,7 +577,7 @@ Não rode nada ainda. Se se achar que um `cd` vai falhar, escreva isso, e escrev
 | 5 | `cd /` | 10 | `cd ..` |
 
 Quando as dez estiverem prontas, vá até a entrada com `cd ~/practica/01` e rode os comandos um por um, com um `pwd`
-depois de cada um. Não há um número para passar: o que conta é que, em cada previsão que falhou, se saiba dizer o que foi
+depois de cada um. Não há nota mínima: o que conta é que, em cada previsão que falhou, se saiba dizer o que foi
 lido errado: se o caminho era absoluto ou relativo, ou em que pasta se estava parado.
 
 **A tabela de colunas do 1.2.** Rode `ls -la` em `bitacoras` e preencha no papel estas duas linhas. Esta parte o
@@ -654,7 +654,7 @@ drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
 8. No `ls -lh` aparece `812K` em uma linha e `3.1M` em outra. Qual arquivo é maior, e como se sabe?
 9. Uma linha do `ls -l` começa com `d`. O que essa letra diz? E o que o número da coluna do tamanho diz sobre o conteúdo
    dela?
-10. Vai-se ditar a um colega o caminho até uma pasta, e não se sabe em qual pasta ele está parado. Dita-se um caminho
+10. Vai-se ditar a alguém da equipe o caminho até uma pasta, e não se sabe em qual pasta a pessoa está parada. Dita-se um caminho
     absoluto ou um relativo? Por quê?
 
 **O que vem a seguir:** já se sabe mover-se pelas pastas e ver o que elas têm. Na lição 02 começa-se a mudar o que há:
@@ -726,7 +726,7 @@ dono houve dúvida entre as duas colunas que dizem `alumno`: a primeira é o don
 7. Ainda não: o `ls` sozinho não lista o que está oculto. Roda-se `ls -a`. Se só saírem `.` e `..`, aí sim está vazia.
 8. O de `3.1M`. Lê-se primeiro a letra: um M vale mais de mil K.
 9. Que é uma pasta. Do conteúdo não diz nada: esse número é o tamanho da própria pasta.
-10. Um absoluto. Um relativo só serve se os dois sabem em que pasta ele está parado; o absoluto sai da raiz.
+10. Um absoluto. Um relativo só serve se os dois sabem em que pasta a pessoa está parada; o absoluto sai da raiz.
 
 ---
 
@@ -747,4 +747,4 @@ Abertas em 19/11/2026. Todas estão em inglês.
 - Medição nossa, 19/11/2026, em um Mac com Apple silicon (Docker 29.2.1 com Colima, linux/arm64), com a imagem do curso
   sobre o Ubuntu 26.04.1: `ls` do uutils coreutils 0.10.0, `gnuls` do GNU coreutils 9.7 e bash 5.3.9. Daí saem as telas,
   a comparação do `ls` com o `gnuls`, o arredondamento do `-h`, a tecla Tab e o tempo do `./practicar reconstruir`. No
-  Linux esta lição ainda não foi testada.
+  Linux Mint 22.3 foi testado o que diz a tabela de «Antes de começar».
