@@ -2,7 +2,7 @@
 
 **Por Dorian Chávez, fundador de Hábil y arquitecto de integración.**
 
-**Antes de leer, cinco palabras.** Una línea cada una; las demás llegan en el paso donde se usan.
+**Antes de leer, cuatro palabras.** Una línea cada una; las demás llegan en el paso donde se usan.
 
 - **Origen y destino:** al copiar o mover, el origen es lo que ya tienes y el destino es a dónde va. En un comando,
   el origen se escribe primero y el destino al final.
@@ -10,8 +10,6 @@
 - **Papelera:** el lugar donde tu computadora guarda lo que borraste, por si te arrepientes. En la terminal no hay.
 - **Patrón:** un nombre con comodines, como `*.log`, que atrapa varios nombres de un jalón. El `*` quiere decir
   «cualquier cosa».
-- **Variable:** un nombre que guarda un valor, como `CARPETA=ensayo`. Hoy solo ves lo mínimo; las variables llegan a
-  fondo más adelante.
 
 **Qué te llevas:** creas carpetas y archivos con `mkdir` y `touch`; copias, mueves y renombras con `cp` y `mv`, y
 sabes qué pasa cuando el destino ya existe; borras con `rm` y `rmdir`, viendo antes qué se va a ir; y puedes
@@ -85,7 +83,7 @@ prepara 02
 ```
 
 ```text
-✅ Taller listo en /home/alumno/practica/02 (medí: 12 carpetas y 21 archivos, cada archivo con su contenido).
+✅ Taller listo en /home/alumno/practica/02 (medí: 12 carpetas y 22 archivos, cada archivo con su contenido).
    Te dejé la hoja de respuestas, con su clave vacía: /home/alumno/practica/respuestas/02.md
    Empieza por ahí:  cd ~/practica/02
 ```
@@ -102,6 +100,7 @@ por el contenido se nota si una copia es la buena o si algo se sobrescribió.
 ├── config            ← lo que se respalda
 │   ├── pagos.conf
 │   └── plantillas
+│       ├── aviso de corte.txt
 │       ├── aviso.txt
 │       └── recibo.txt
 ├── respaldo          ← el respaldo, con una versión vieja de pagos.conf
@@ -125,7 +124,7 @@ por el contenido se nota si una copia es la buena o si algo se sobrescribió.
         └── adentro.txt
 ```
 
-Las demostraciones se hacen en `ensayo`; los ejercicios, en el resto del taller.
+Las demostraciones van en `ensayo`; los ejercicios, en lo demás.
 
 **Lo demuestra:** todavía nada. Este paso deja listo el material.
 
@@ -412,19 +411,11 @@ tres predicciones marcadas se comparan al final, en «Compara tus respuestas».
 4. **Mueve** `entrada/reporte-junio.txt` a `reportes`, donde ya hay un `reporte-junio.txt`.
    *Predicción C:* ¿qué le pasa al borrador viejo de `reportes`? ¿Y a la carpeta `entrada`?
 
-Los comandos los armas tú, con lo que acabas de ver en el ensayo.
+Los comandos los armas tú, con lo que viste en el ensayo.
 
-### Con Claude Code, en este orden
-
-En este curso un asistente de IA entra de una sola manera: **predices → le pides → lees → corres → explicas.**
-
-1. **Predices.** En tu papel: ¿qué crees que hace `mv -n`?
-2. **Le pides.** En tu computadora, a Claude Code: «¿Qué hace `mv -n` y en qué se distingue de `mv -i`?». Claude
-   Code no ve tu taller: corre afuera.
-3. **Lees.** Busca `-n` en `mv --help` y compara con lo que te contestó.
-4. **Corres.** Pruébalo tú en el ensayo: `mv -n primero.txt dos.txt`, y después `ls` y `cat dos.txt`.
-5. **Explicas.** Con tus palabras: ¿coincidió con tu predicción y con lo que te dijo? Lo que pasó en la prueba está
-   en «Compara tus respuestas».
+**Con Claude Code.** En este curso un asistente de IA entra de una sola manera: predices, le pides, lees, corres y
+explicas. Para borrar hay una regla más: nunca le pides el comando; le pides que te explique el tuyo. El ejercicio
+con Claude Code de esta lección, sobre `mv -n`, está en «Si quieres más».
 
 **Lo demuestra** (objetivo 2.2): las marcas dos a cinco de `verifica 02`, y tus predicciones A, B y C, que comparas
 tú. `verifica` compara **contenidos**, no solo nombres: sabe si el respaldo trae la versión buena o la vieja, y si la
@@ -437,7 +428,9 @@ copia de `plantillas` tiene lo mismo que el original.
 Antes de escribir un solo `rm`, lo que hace distinta a esta parte:
 
 - **No hay papelera.** `rm` no manda a ningún lado: borra.
-- **No pregunta.** Igual que `cp` y `mv`, a menos que le pidas `-i`.
+- **En este taller, `rm` normalmente no pregunta:** los archivos son tuyos y se pueden escribir. En otros casos el
+  `rm` de GNU puede preguntar, pero no dependas de esa pregunta: mira primero con `ls`, y usa `rm -i` cuando quieras
+  que confirme.
 - **Todo comando que borra lo escribes tú, a mano**, también los ejemplos de este paso: ni copiado de la lección ni
   pedido a una IA.
 
@@ -564,7 +557,7 @@ rm: remove regular empty file 'a.bak'? y
 rm: remove regular empty file 'b.bak'? n
 ```
 
-Con trescientos archivos ya no es cómodo: el hábito de arriba vale más que `-i`.
+Con trescientos archivos, el hábito de arriba vale más que `-i`.
 
 ### Tu turno, sin IA: la limpieza
 
@@ -581,8 +574,8 @@ Este ejercicio se hace **sin IA y sin copiar comandos**: ni de esta lección ni 
    las dos y lee lo que contesta cada una: te dice cuál necesita otra cosa. `sesiones-activas` se queda.
 5. Corre `verifica 02`.
 
-Si te llevaste algo de más, así se siente que no haya papelera. `prepara 02` arma el taller de nuevo, con todo y lo
-de 2.1 y 2.2.
+Si borras algo de más **en este taller**, no pasa nada: `prepara 02` lo restaura. Úsalo para practicar la pausa de
+mirar antes de borrar.
 
 **Lo demuestra** (objetivo 2.3, primera parte): las marcas seis a ocho de `verifica 02`. La seis prueba tu patrón
 contra los ocho nombres que `prepara` puso en `limpieza`. La siete revisa que lo pedido ya no exista. La ocho, que
@@ -595,42 +588,13 @@ contra los ocho nombres que `prepara` puso en `limpieza`. La siete revisa que lo
 ⛔ **En este paso ningún `rm` se corre.** Todo se ve con `echo` adelante, que solo escribe el comando en la pantalla.
 Si tecleas una de estas líneas sin el `echo`, no estás haciendo el ejercicio.
 
-### Lo mínimo de una variable
-
-Una variable se escribe con el nombre, `=` y el valor, todo pegado:
-
-```bash
-CARPETA=ensayo
-echo "$CARPETA"
-```
-
-```text
-ensayo
-```
-
-Con `$` adelante, la terminal cambia el nombre por su valor, igual que cambia un patrón por la lista. Y una
-variable que nunca guardó nada vale vacío, **sin dar error**:
-
-```bash
-echo "$NADA"
-```
-
-Contesta un renglón en blanco. Es todo lo que necesitas hoy de las variables.
-
 ### El borrado que crece solo
 
-Los guiones de mantenimiento borran con variables. Alguien escribe un guion que limpia una carpeta con esta línea:
+Los guiones de mantenimiento guardan la carpeta que limpian en una **variable**, `CARPETA` (lo mínimo, en la caja
+al final de este paso), y borran con una línea así: `rm -rf "$CARPETA/"`. `-f`, de *force*, le dice a `rm` que no
+pregunte y que no se queje si algo no existe.
 
-```bash
-echo rm -rf "$CARPETA/"
-```
-
-```text
-rm -rf ensayo/
-```
-
-`-f`, de *force*, le dice a `rm` que no pregunte y que no se queje si algo no existe. Con `CARPETA=ensayo`, la línea
-borraría `ensayo/` y lo que tiene. **Ahora vacía la variable, y predice qué escribe el mismo `echo`:**
+**Predice:** si `CARPETA` está vacía, ¿qué pide borrar esa línea? Escribe esto, con el `echo`:
 
 ```bash
 CARPETA=
@@ -652,11 +616,12 @@ echo rm -rf "$CARPETA"/*
 rm -rf /bin /boot /dev /etc /home /lib /media /mnt /opt /proc /root /run /sbin /srv /sys /tmp /usr /var
 ```
 
-Cada carpeta de la raíz, una por una.
+Cada carpeta de la raíz. Según su manual, el `rm` de GNU se niega a borrar `/` tal cual
+(`--preserve-root`); con el `*` ya no recibe `/`, sino esta lista. No lo probamos ni lo vas a probar.
 
-**Pasó en serio.** En enero de 2015, alguien reportó en el repositorio público de Steam para Linux que, al correrlo,
-se borró todo lo que su usuario tenía en la computadora. El reporte señala la línea 468 del guion `steam.sh`,
-`rm -rf "$STEAMROOT/"*`, y explica que con `$STEAMROOT` vacía se vuelve `rm -rf "/"*`.
+**Un caso reportado.** En enero de 2015, el issue público #3671 de Steam para Linux describió una pérdida de
+archivos tras ejecutar `steam.sh`. Comentarios del hilo señalaron `rm -rf "$STEAMROOT/"*` y el riesgo si `STEAMROOT`
+quedaba vacío. Es una razón para validar variables; no hace falta que pruebes el incidente para aprender la regla.
 
 ### Por qué no se prueba, ni en el contenedor
 
@@ -674,18 +639,13 @@ drwxr-xr-x 4 alumno alumno 4096 Nov 19 09:28 /home/alumno/practica
 drwxr-xr-x 1 root   root   4096 Nov  6 10:27 /usr
 ```
 
-Las carpetas del sistema son de `root`, el administrador, y como `alumno` no puedes escribir en ellas:
-`touch /usr/prueba` contesta `Permission denied`. Pero `~/practica` es tuya, y lo tuyo sí lo puedes borrar. Tus
-lecciones y tus respuestas no vuelven con `./practicar`.
+Las carpetas del sistema son de `root`, el administrador: `touch /usr/prueba` contesta `Permission denied`. Pero
+`~/practica` es tuya, y lo tuyo sí lo puedes borrar. Tus respuestas no vuelven con `./practicar`.
 
-Un dato del manual, que no probamos ni vas a probar: el `rm` de GNU de esta imagen trae `--preserve-root` puesto por
-omisión, y con eso se niega a borrar la raíz cuando se le pide `/` tal cual. **No te cuida de la versión con `*`**:
-ahí no recibe `/`, sino `/bin /boot /dev…`, una por una. No confíes tu trabajo a esa protección.
+### El freno: `${CARPETA:?}`
 
-### La protección: `${CARPETA:?}`
-
-Bash tiene una forma de leer una variable que **se niega a seguir si está vacía**: `${CARPETA:?}`. Con `echo`
-adelante, como siempre en este paso:
+Los guiones se protegen con un freno que tiene nombre: `${CARPETA:?}`. Si la variable está vacía, la terminal se
+niega a correr la línea. Con `echo` adelante, como siempre en este paso:
 
 ```bash
 CARPETA=
@@ -696,21 +656,14 @@ echo rm -rf "${CARPETA:?}/"
 bash: CARPETA: parameter null or not set
 ```
 
-«La variable está vacía o no existe.» Y el `echo` **no se corrió**. Según el manual de bash, la terminal cancela el
-comando que lleva esa variable: con un `rm` en lugar del `echo`, tampoco correría. Con un valor, pasa normal:
+«La variable está vacía o no existe.» Y el `echo` **no se corrió**: según el manual de bash, la terminal cancela el
+comando, y con un `rm` tampoco correría. Para ti basta con esto: **si un `rm` lleva una variable,
+la variable va como `${NOMBRE:?}`**.
 
-```bash
-CARPETA=otra
-echo rm -rf "${CARPETA:?}/"
-```
-
-```text
-rm -rf otra/
-```
-
-Para ti basta con esto: **si un `rm` lleva una variable, la variable va como `${NOMBRE:?}`**. En los guiones vas a
-ver también `set -u`, que hace que bash se queje de las variables que nunca se definieron. No lo ves aquí, y ojo:
-una variable definida y vacía, como `CARPETA=`, no la atrapa.
+> **Lo mínimo de una variable.** `CARPETA=ensayo` guarda `ensayo` con el nombre `CARPETA`: todo pegado, sin
+> espacios. Con `$` adelante, `$CARPETA`, la terminal cambia el nombre por su valor antes de correr el comando, igual
+> que cambia un patrón por la lista. Una variable vacía, o que nunca guardó nada, vale nada, **sin dar error**. Este
+> curso no va más allá de eso.
 
 **Lo demuestra** (objetivo 2.3, segunda parte): tu explicación de las preguntas 9 y 10 de «Para cerrar», comparada
 con «Compara tus respuestas».
@@ -732,7 +685,10 @@ Dice qué anotaste, qué midió y qué falló, pero no cuál es el patrón bueno
 
 **Lo que no lo engaña:** un enlace, el atajo de la lección 01. Un enlace a `config/pagos.conf` «dice» lo mismo que
 una copia, pero no es un respaldo: si el original se pierde, el enlace no tiene nada. `verifica 02` revisa la ruta
-real de cada cosa, y un enlace en lugar de un archivo o de una carpeta sale en rojo.
+real de cada cosa, y un enlace en lugar de un archivo o de una carpeta sale en rojo. Tampoco lo engaña un **enlace
+duro** (`ln`): un segundo nombre para el mismo archivo, que parece un archivo normal. Si cambias uno, cambia el
+otro. `verifica` lo nota porque los dos nombres comparten el *inode*, el número con el que el disco conoce al
+archivo.
 
 Corrige y repite hasta ver esto al final:
 
@@ -764,6 +720,10 @@ El ejercicio 2.3 se hace **sin IA**, y todos sus comandos de borrar los escribes
   que tocó. `rm -v` contestó, por ejemplo, `removed 'viaje/vuelta/dos.txt'`.
 - **Llaves para varias carpetas.** `mkdir -p viaje/{ida,vuelta}` crea `viaje/ida` y `viaje/vuelta`. Las llaves las
   expande bash, igual que el `*`: compruébalo con `echo viaje/{ida,vuelta}`.
+- **Con Claude Code: `mv -n`.** Predices en tu papel qué hace `mv -n`. Le pides a Claude Code, en tu computadora:
+  «¿Qué hace `mv -n` y en qué se distingue de `mv -i`?». Lees `-n` en `mv --help` y lo comparas. Corres, en el
+  ensayo: `touch a.txt b.txt`, `mv -n a.txt b.txt` y `ls`. Explicas con tus palabras si coincidió. Lo que pasó en la
+  prueba está en «Compara tus respuestas».
 - **`rm -I` pregunta una sola vez.** Con más de tres archivos, o con `-r`, pregunta antes de empezar: `rm -I x*`
   sobre cuatro archivos contestó `rm: remove 4 arguments?`. Con `n` no borró ninguno.
 
@@ -779,8 +739,9 @@ El ejercicio 2.3 se hace **sin IA**, y todos sus comandos de borrar los escribes
 | `rmdir: failed to remove …: Directory not empty` | La carpeta tiene algo adentro | Mira qué tiene con `ls -a` antes de decidir |
 | `❌ … son nombres, no un patrón` | Anotaste el patrón sin comillas, y la terminal lo cambió por los nombres | `anota 02 patron` y tu patrón entre comillas simples |
 | `❌ … Copiaste dos veces` | Corriste el mismo `cp -r` dos veces | Borra `respaldo/plantillas` con cuidado y cópiala una vez, o `prepara 02` |
-| `❌ … ya no está, y no se pedía borrarlo` | Tu patrón o tu `rm -r` se llevaron de más | No se recupera: `prepara 02` y repite |
+| `❌ … ya no está, y no se pedía borrarlo` | Tu patrón o tu `rm -r` se llevaron de más | En este taller no pasa nada: `prepara 02` lo restaura, y repites |
 | `❌ … es un enlace…` | Hay un atajo donde debía ir un archivo o una carpeta de verdad | Hazlo con `cp` o `mv`, o `prepara 02` |
+| `❌ … es un enlace duro…` | Ese archivo es el mismo que el original, con otro nombre | Bórralo con cuidado y cópialo con `cp` |
 
 ---
 
@@ -827,17 +788,19 @@ que hay dentro de los archivos: lees bitácoras largas sin abrir un editor.
 `puerto=8443 version=2025-06-02 (la buena, la de hoy)`, igual que `config/pagos.conf`. La versión del puerto 8080 se
 perdió: aquí era lo que se quería, pero con otro archivo podría ser lo único que no querías perder.
 
-**Predicción B (`cp -r` dos veces).** La primera vez crea `respaldo/plantillas` con `aviso.txt` y `recibo.txt`. La
-segunda, como `respaldo/plantillas` ya existe, mete otra copia adentro: queda `respaldo/plantillas/plantillas`. Así
-lo contestó `ls` en la prueba:
+**Predicción B (`cp -r` dos veces).** La primera vez crea `respaldo/plantillas` con sus tres archivos. La segunda,
+como `respaldo/plantillas` ya existe, mete otra copia adentro: queda `respaldo/plantillas/plantillas`. Así lo
+contestó `ls` en la prueba:
 
 ```text
-aviso.txt  plantillas  recibo.txt
+'aviso de corte.txt'   aviso.txt   plantillas   recibo.txt
 ```
 
-**Con Claude Code: `mv -n`.** En la prueba, `mv -n primero.txt dos.txt` no movió nada y no dijo nada: `dos.txt`
-siguió diciendo `tres` y `primero.txt` siguió en su lugar. `-n` es «nunca sobrescribas», en silencio; `-i` pregunta.
-Si Claude Code te dijo otra cosa, gana lo que viste en tu terminal.
+Las comillas no son parte del nombre: `ls` las pone porque el nombre lleva espacios.
+
+**Con Claude Code: `mv -n`.** En la prueba, `mv -n a.txt b.txt` no movió nada y no dijo nada: `ls` siguió
+mostrando `a.txt  b.txt`. `-n` es «nunca sobrescribas», en silencio; `-i` pregunta. Si Claude Code te dijo otra
+cosa, gana lo que viste en tu terminal.
 
 **Predicción C (mover sobre el borrador).** `mv` no pregunta: el borrador viejo de `reportes` se sobrescribe y se
 pierde, y en `reportes/reporte-junio.txt` queda la versión nueva. El archivo desaparece de `entrada`, pero la
@@ -874,7 +837,8 @@ carpeta `entrada` se queda, vacía: `mv` mueve lo que le pides y nada más.
 Abiertas el 19-nov-2026. Todas están en inglés.
 
 - Ubuntu Manpages. *rm(1)*, Ubuntu 26.04, GNU coreutils 9.7 (sin `-r` no borra carpetas; `-i`, `-I`, `-r`, `-f`;
-  `--preserve-root` por omisión). https://manpages.ubuntu.com/manpages/resolute/en/man1/rm.1.html
+  `--preserve-root` por omisión; la pregunta ante archivos que no se pueden escribir).
+  https://manpages.ubuntu.com/manpages/resolute/en/man1/rm.1.html
 - Ubuntu Manpages. *cp(1)*, Ubuntu 26.04, GNU coreutils 9.7 (`-i`, `-r`).
   https://manpages.ubuntu.com/manpages/resolute/en/man1/cp.1.html
 - Ubuntu Manpages. *mv(1)*, Ubuntu 26.04, GNU coreutils 9.7 (renombra o mueve a una carpeta; `-i`, `-n`).
@@ -887,12 +851,13 @@ Abiertas el 19-nov-2026. Todas están en inglés.
   https://manpages.ubuntu.com/manpages/resolute/en/man1/rmdir.1.html
 - Ubuntu Manpages. *bash(1)*, Ubuntu 26.04, bash 5.3, el manual de bash: `${parameter:?word}` (con la variable
   vacía, una terminal interactiva no corre el comando), *Pathname Expansion* (bash cambia el patrón por la lista de
-  nombres, o lo deja tal cual si no atrapa nada) y `set -u`. https://manpages.ubuntu.com/manpages/resolute/en/man1/bash.1.html
+  nombres, o lo deja tal cual si no atrapa nada). https://manpages.ubuntu.com/manpages/resolute/en/man1/bash.1.html
 - Ubuntu. *Ubuntu 26.04 LTS: summary for LTS users*, sección «rust-coreutils» (`cp`, `mv` y `rm` siguen siendo de
   GNU). https://documentation.ubuntu.com/release-notes/26.04/summary-for-lts-users/
-- Valve. *steam-for-linux*, reporte 3671, abierto el 14 de enero de 2015 («Moved ~/.local/share/steam. Ran steam. It
-  deleted everything on system owned by user.»; la línea `rm -rf "$STEAMROOT/"*`).
-  https://github.com/ValveSoftware/steam-for-linux/issues/3671
+- GitHub, repositorio ValveSoftware/steam-for-linux, issue 3671, abierto el 14 de enero de 2015: el reporte de un
+  usuario y los comentarios del hilo, que señalan `rm -rf "$STEAMROOT/"*`. https://github.com/ValveSoftware/steam-for-linux/issues/3671
+- Ubuntu Manpages. *ln(1)*, Ubuntu 26.04, `rust-coreutils` 0.10.0 (crea enlaces duros por omisión; con `-s`,
+  simbólicos). https://manpages.ubuntu.com/manpages/resolute/man1/ln.1.html
 - Medición propia, 19-nov-2026, en una Mac con Apple silicon (Docker 29.2.1 con Colima, linux/arm64), imagen del
   curso sobre Ubuntu 26.04.1: `mkdir`, `touch` y `rmdir` de uutils coreutils 0.10.0, `cp`, `mv` y `rm` de GNU
   coreutils 9.7, y bash 5.3.9. De ahí salen las pantallas, la tabla de `mkdir` y el tiempo de `./practicar reconstruir`.

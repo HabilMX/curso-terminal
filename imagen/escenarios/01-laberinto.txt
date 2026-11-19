@@ -5,7 +5,10 @@
 #   verifica 01   compara tu carpeta y tus respuestas contra lo que dice aquí
 # Así no hay dos copias que se puedan contradecir.
 #
-# Cada renglón: qué es, su ruta dentro de ~/practica/01/, su fecha y su tamaño.
+# Cada renglón: qué es, su ruta dentro de ~/practica/01/, su fecha y su tamaño, en
+# columnas separadas por UN tabulador. prepara revisa TODA la lista antes de borrar o
+# crear nada: cada ruta tiene que quedar adentro de ~/practica/01/ solo por cómo está
+# escrita (no vacía, no absoluta, sin «.» ni «..» ni tramos vacíos).
 #   carpeta   ruta   fecha
 #   archivo   ruta   fecha   bytes
 #   texto     ruta   fecha            (el LEEME: su contenido lo escribe prepara)
@@ -22,28 +25,28 @@
 #   mayo.log            0 bytes   un archivo vacío
 #   .pendiente     48,000 bytes   el único oculto de todo el laberinto
 
-texto    LEEME.txt                          2025-06-02T08:00
-carpeta  pagos                              2025-06-02T08:00
-carpeta  pagos/bitacoras                    2025-05-31T23:59
-archivo  pagos/bitacoras/enero.log          2025-01-31T23:59  980
-archivo  pagos/bitacoras/febrero.log        2025-02-28T23:59  9800
-archivo  pagos/bitacoras/marzo.log          2025-03-31T23:59  1200000
-archivo  pagos/bitacoras/abril.log          2025-04-30T23:59  998000
-archivo  pagos/bitacoras/mayo.log           2025-05-31T23:59  0
-archivo  pagos/bitacoras/.pendiente         2025-05-12T10:30  48000
-carpeta  pagos/bitacoras/viejas             2025-01-02T09:00
-archivo  pagos/bitacoras/viejas/2024.log    2024-12-31T23:59  20000
-carpeta  pagos/config                       2025-02-10T12:00
-archivo  pagos/config/pagos.conf            2025-02-10T12:00  210
-carpeta  pagos/config/plantillas            2025-02-10T12:05
-archivo  pagos/config/plantillas/recibo.txt 2025-02-10T12:05  150
-carpeta  pagos/entregas                     2025-06-02T08:00
-carpeta  pagos/entregas/guardia             2025-06-02T08:00
-carpeta  respaldos                          2025-06-01T03:00
-carpeta  respaldos/semana-1                 2025-05-25T03:00
-archivo  respaldos/semana-1/copia-1.txt     2025-05-25T03:00  5000
-carpeta  respaldos/semana-2                 2025-06-01T03:00
-archivo  respaldos/semana-2/copia-2.txt     2025-06-01T03:00  5200
+texto	LEEME.txt	2025-06-02T08:00
+carpeta	pagos	2025-06-02T08:00
+carpeta	pagos/bitacoras	2025-05-31T23:59
+archivo	pagos/bitacoras/enero.log	2025-01-31T23:59	980
+archivo	pagos/bitacoras/febrero.log	2025-02-28T23:59	9800
+archivo	pagos/bitacoras/marzo.log	2025-03-31T23:59	1200000
+archivo	pagos/bitacoras/abril.log	2025-04-30T23:59	998000
+archivo	pagos/bitacoras/mayo.log	2025-05-31T23:59	0
+archivo	pagos/bitacoras/.pendiente	2025-05-12T10:30	48000
+carpeta	pagos/bitacoras/viejas	2025-01-02T09:00
+archivo	pagos/bitacoras/viejas/2024.log	2024-12-31T23:59	20000
+carpeta	pagos/config	2025-02-10T12:00
+archivo	pagos/config/pagos.conf	2025-02-10T12:00	210
+carpeta	pagos/config/plantillas	2025-02-10T12:05
+archivo	pagos/config/plantillas/recibo.txt	2025-02-10T12:05	150
+carpeta	pagos/entregas	2025-06-02T08:00
+carpeta	pagos/entregas/guardia	2025-06-02T08:00
+carpeta	respaldos	2025-06-01T03:00
+carpeta	respaldos/semana-1	2025-05-25T03:00
+archivo	respaldos/semana-1/copia-1.txt	2025-05-25T03:00	5000
+carpeta	respaldos/semana-2	2025-06-01T03:00
+archivo	respaldos/semana-2/copia-2.txt	2025-06-01T03:00	5200
 
-inicio   pagos/bitacoras
-destino  pagos/entregas/guardia
+inicio	pagos/bitacoras
+destino	pagos/entregas/guardia

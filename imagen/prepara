@@ -18,6 +18,8 @@
 # Los escenarios no tienen azar. Los nombres, los tamaños, los contenidos y las
 # fechas vienen de una lista fija por lección, la misma que lee verifica:
 # /usr/local/share/curso-terminal/01-laberinto.txt y 02-taller.txt
+# La lista se lee COMPLETA y se revisa antes de borrar o crear nada: si una ruta
+# se saliera de la carpeta de la lección, prepara no toca nada.
 set -u
 
 LISTAS="/usr/local/share/curso-terminal"
@@ -97,26 +99,81 @@ rellenar() {
     | head -c "$bytes" > "$archivo"
 }
 
+# Una ruta de la lista tiene que quedar ADENTRO de la carpeta de la lección solo por
+# cómo está escrita, sin mirar el disco: no vacía, no absoluta, sin «.» ni «..» como
+# tramo y sin tramos vacíos. Así «carpeta/ruta» es siempre hija de «carpeta».
+ruta_segura() {
+  case "$1" in
+    ''|/*|*/|.|..|./*|../*|*/.|*/..|*/./*|*/../*|*//*) return 1 ;;
+  esac
+  return 0
+}
+
+# Lee la lista entera a cuatro arreglos: L_TIPO, L_RUTA, L_FECHA y L_RESTO. Las
+# columnas van separadas por un tabulador, así que una ruta puede llevar espacios.
+# Argumentos: la lista, la carpeta de la lección (para el mensaje), los tipos que
+# llevan una ruta y los que llevan dos (en la segunda columna y en la tercera).
+# Con un tipo que no conoce o una ruta que no es segura, se detiene SIN haber
+# borrado ni creado nada.
+cargar_lista() {
+  local lista="$1" raiz="$2" una=" $3 " dos=" $4 " n=0 renglon tipo ruta fecha resto malo
+  L_TIPO=(); L_RUTA=(); L_FECHA=(); L_RESTO=()
+  while IFS= read -r renglon || [ -n "$renglon" ]; do
+    n=$((n + 1))
+    [[ $renglon =~ ^[[:space:]]*(#|$) ]] && continue
+    # Dos tabuladores seguidos son una columna vacía. read se los saltaría y
+    # recorrería las columnas: la fecha acabaría leída como ruta.
+    case "$renglon" in
+      $'\t'*|*$'\t\t'*)
+        echo "❌ Escenario inválido: el renglón $n de $lista tiene una columna vacía."
+        echo "   No preparé ni borré nada. Sal y corre  ./practicar reconstruir"
+        exit 1 ;;
+    esac
+    IFS=$'\t' read -r tipo ruta fecha resto <<< "$renglon"
+    case "$una$dos" in
+      *" $tipo "*) ;;
+      *) echo "❌ Escenario inválido: el renglón $n de $lista es de un tipo que no conozco, «$tipo»."
+         echo "   No preparé ni borré nada. Sal y corre  ./practicar reconstruir"
+         exit 1 ;;
+    esac
+    malo=$ruta
+    if ruta_segura "$ruta"; then
+      malo=""
+      case "$dos" in *" $tipo "*) ruta_segura "$fecha" || malo=${fecha:-(vacía)} ;; esac
+    fi
+    if [ -n "$malo" ] || [ -z "$ruta" ]; then
+      malo=${malo:-(vacía)}
+      echo "❌ Escenario inválido: el renglón $n de $lista trae la ruta «$malo», que no queda adentro de $raiz"
+      echo "   (medí: que no esté vacía, que no empiece con / y que no tenga . ni .. ni tramos vacíos)."
+      echo "   No preparé ni borré nada. Sal y corre  ./practicar reconstruir"
+      exit 1
+    fi
+    L_TIPO+=("$tipo"); L_RUTA+=("$ruta"); L_FECHA+=("$fecha"); L_RESTO+=("$resto")
+  done < "$lista"
+}
+
 prepara_01() {
   local lista="$LISTAS/01-laberinto.txt" raiz="$PRACTICA/01"
-  local tipo ruta fecha bytes carpetas=0 archivos=0 mal=0 real
+  local i tipo ruta carpetas=0 archivos=0 mal=0 real
 
   if [ ! -r "$lista" ]; then
     echo "❌ No encuentro la lista del laberinto (medí: que $lista se pueda leer)."
     echo "   Tu imagen es de antes de esta lección. Sal y corre  ./practicar reconstruir"
     exit 1
   fi
+  cargar_lista "$lista" "$raiz" "carpeta archivo texto inicio destino" ""
   sin_enlaces "$raiz" "$PRACTICA/respuestas" "$PRACTICA/respuestas/01.md"
   confirmar_borrado "$raiz"
   mkdir "$raiz" || { echo "❌ No pude crear $raiz. Sal y corre ./practicar desde-cero"; exit 1; }
 
   # Primera vuelta: se crean las carpetas y los archivos, con permisos fijos.
-  while read -r tipo ruta fecha bytes; do
+  for i in "${!L_TIPO[@]}"; do
+    tipo=${L_TIPO[i]}; ruta="$raiz/${L_RUTA[i]}"
     case "$tipo" in
-      carpeta) mkdir "$raiz/$ruta" && chmod 755 "$raiz/$ruta" ;;
-      archivo) rellenar "$raiz/$ruta" "$bytes" && chmod 644 "$raiz/$ruta" ;;
+      carpeta) mkdir "$ruta" && chmod 755 "$ruta" ;;
+      archivo) rellenar "$ruta" "${L_RESTO[i]}" && chmod 644 "$ruta" ;;
       texto)
-        cat > "$raiz/$ruta" <<'LEEME'
+        cat > "$ruta" <<'LEEME'
 Estás en el laberinto de la lección 01 de «La terminal desde cero».
 
 Si te pierdes o descompones algo, corre
@@ -125,29 +182,30 @@ y el laberinto vuelve a quedar como el primer día.
 
 La lección te dice a dónde ir. Para saber dónde estás parado: pwd
 LEEME
-        chmod 644 "$raiz/$ruta" ;;
+        chmod 644 "$ruta" ;;
     esac
-  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+  done
 
   # Segunda vuelta: las fechas. Van al final porque crear algo dentro de una
   # carpeta le cambia la fecha a la carpeta.
-  while read -r tipo ruta fecha bytes; do
-    case "$tipo" in
-      carpeta|archivo|texto) touch -d "${fecha/T/ }" "$raiz/$ruta" ;;
+  for i in "${!L_TIPO[@]}"; do
+    case "${L_TIPO[i]}" in
+      carpeta|archivo|texto) touch -d "${L_FECHA[i]/T/ }" "$raiz/${L_RUTA[i]}" ;;
     esac
-  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+  done
   touch -d "2025-06-02 08:00" "$raiz"
 
   # Tercera vuelta: se mide lo que quedó, contra la misma lista.
-  while read -r tipo ruta fecha bytes; do
-    case "$tipo" in
-      carpeta) if [ -d "$raiz/$ruta" ]; then carpetas=$((carpetas + 1)); else mal=1; fi ;;
-      texto)   if [ -f "$raiz/$ruta" ]; then archivos=$((archivos + 1)); else mal=1; fi ;;
+  for i in "${!L_TIPO[@]}"; do
+    ruta="$raiz/${L_RUTA[i]}"
+    case "${L_TIPO[i]}" in
+      carpeta) if [ -d "$ruta" ]; then carpetas=$((carpetas + 1)); else mal=1; fi ;;
+      texto)   if [ -f "$ruta" ]; then archivos=$((archivos + 1)); else mal=1; fi ;;
       archivo)
-        real=$(stat -c %s "$raiz/$ruta" 2>/dev/null)
-        if [ "${real:-x}" = "$bytes" ]; then archivos=$((archivos + 1)); else mal=1; fi ;;
+        real=$(stat -c %s "$ruta" 2>/dev/null)
+        if [ "${real:-x}" = "${L_RESTO[i]}" ]; then archivos=$((archivos + 1)); else mal=1; fi ;;
     esac
-  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+  done
 
   if [ "$mal" -ne 0 ]; then
     echo "❌ El laberinto no quedó completo (medí: cada carpeta y cada archivo de la lista, con su tamaño)."
@@ -165,47 +223,52 @@ LEEME
 # si una copia es la buena o si un archivo se sobrescribió.
 prepara_02() {
   local lista="$LISTAS/02-taller.txt" raiz="$PRACTICA/02"
-  local tipo ruta fecha contenido carpetas=0 archivos=0 mal=0
+  local i ruta carpetas=0 archivos=0 mal=0
 
   if [ ! -r "$lista" ]; then
     echo "❌ No encuentro la lista del taller (medí: que $lista se pueda leer)."
     echo "   Tu imagen es de antes de esta lección. Sal y corre  ./practicar reconstruir"
     exit 1
   fi
+  cargar_lista "$lista" "$raiz" \
+    "carpeta archivo crea-carpeta crea-archivo borra-patron borra queda" \
+    "copia copia-carpeta renombra mueve"
   sin_enlaces "$raiz" "$PRACTICA/respuestas" "$PRACTICA/respuestas/02.md"
   confirmar_borrado "$raiz"
   mkdir "$raiz" || { echo "❌ No pude crear $raiz. Sal y corre ./practicar desde-cero"; exit 1; }
 
   # Primera vuelta: carpetas y archivos, con permisos fijos. Solo los renglones
   # «carpeta» y «archivo»: los demás son lo que pide cada ejercicio.
-  while read -r tipo ruta fecha contenido; do
-    case "$tipo" in
-      carpeta) mkdir "$raiz/$ruta" && chmod 755 "$raiz/$ruta" ;;
-      archivo) printf '%s\n' "$contenido" > "$raiz/$ruta" && chmod 644 "$raiz/$ruta" ;;
+  for i in "${!L_TIPO[@]}"; do
+    ruta="$raiz/${L_RUTA[i]}"
+    case "${L_TIPO[i]}" in
+      carpeta) mkdir "$ruta" && chmod 755 "$ruta" ;;
+      archivo) printf '%s\n' "${L_RESTO[i]}" > "$ruta" && chmod 644 "$ruta" ;;
     esac
-  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+  done
 
   # Segunda vuelta: las fechas, al final, porque crear algo dentro de una carpeta
   # le cambia la fecha a la carpeta.
-  while read -r tipo ruta fecha contenido; do
-    case "$tipo" in
-      carpeta|archivo) touch -d "${fecha/T/ }" "$raiz/$ruta" ;;
+  for i in "${!L_TIPO[@]}"; do
+    case "${L_TIPO[i]}" in
+      carpeta|archivo) touch -d "${L_FECHA[i]/T/ }" "$raiz/${L_RUTA[i]}" ;;
     esac
-  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+  done
   touch -d "2025-06-02 00:10" "$raiz"
 
   # Tercera vuelta: se mide lo que quedó, contra la misma lista.
-  while read -r tipo ruta fecha contenido; do
-    case "$tipo" in
-      carpeta) if [ -d "$raiz/$ruta" ] && [ ! -L "$raiz/$ruta" ]; then carpetas=$((carpetas + 1)); else mal=1; fi ;;
+  for i in "${!L_TIPO[@]}"; do
+    ruta="$raiz/${L_RUTA[i]}"
+    case "${L_TIPO[i]}" in
+      carpeta) if [ -d "$ruta" ] && [ ! -L "$ruta" ]; then carpetas=$((carpetas + 1)); else mal=1; fi ;;
       archivo)
-        if [ -f "$raiz/$ruta" ] && [ ! -L "$raiz/$ruta" ] && cmp -s -- "$raiz/$ruta" <(printf '%s\n' "$contenido"); then
+        if [ -f "$ruta" ] && [ ! -L "$ruta" ] && cmp -s -- "$ruta" <(printf '%s\n' "${L_RESTO[i]}"); then
           archivos=$((archivos + 1))
         else
           mal=1
         fi ;;
     esac
-  done < <(grep -Ev '^[[:space:]]*(#|$)' "$lista")
+  done
 
   if [ "$mal" -ne 0 ]; then
     echo "❌ El taller no quedó completo (medí: cada carpeta y cada archivo de la lista, con su contenido)."

@@ -5,6 +5,12 @@
 #   verifica 02   compara tu carpeta contra lo que piden los demás renglones
 # Así no hay dos copias que se puedan contradecir.
 #
+# Las columnas van separadas por UN tabulador, no por espacios: así un nombre puede
+# llevar espacios, como «aviso de corte.txt». prepara y verifica la leen igual, con
+# IFS=$'\t' read -r. prepara revisa TODA la lista antes de borrar o crear nada: cada
+# ruta tiene que quedar adentro de ~/practica/02/ solo por cómo está escrita (no
+# vacía, no absoluta, sin «.» ni «..» ni tramos vacíos). Si una no, no prepara nada.
+#
 # Lo que prepara arma. Las rutas van dentro de ~/practica/02/:
 #   carpeta   ruta   fecha
 #   archivo   ruta   fecha   contenido   (el contenido es el resto del renglón: un solo renglón de texto)
@@ -23,61 +29,62 @@
 #   queda           ruta              2.3  NO se borra: tiene que seguir ahí, con su contenido
 
 # --- Lo que arma prepara -------------------------------------------------------------
-archivo  LEEME.txt                         2025-06-02T00:10  Taller de la lección 02. Si descompones algo, corre  prepara 02  y vuelve a quedar como el primer día.
-carpeta  config                            2025-06-02T00:05
-archivo  config/pagos.conf                 2025-06-02T00:05  puerto=8443 version=2025-06-02 (la buena, la de hoy)
-carpeta  config/plantillas                 2025-05-20T12:00
-archivo  config/plantillas/recibo.txt      2025-05-20T12:00  Recibo de pago número {folio} por {monto} pesos.
-archivo  config/plantillas/aviso.txt       2025-05-20T12:00  Aviso: el servicio de pagos vuelve en {minutos} minutos.
-carpeta  respaldo                          2025-05-01T09:00
-archivo  respaldo/pagos.conf               2025-05-01T09:00  puerto=8080 version=2025-05-01 (la vieja, de hace un mes)
-carpeta  bitacoras                         2025-06-02T00:09
-archivo  bitacoras/ayer.log                2025-06-01T23:59  2025-06-01 23:59 pagos: cierre del día sin errores
-archivo  bitacoras/hoy.log                 2025-06-02T00:09  2025-06-02 00:09 pagos: disco lleno, no puedo escribir
-carpeta  entrada                           2025-06-02T00:08
-archivo  entrada/reporte-junio.txt         2025-06-02T00:08  Reporte de junio, versión nueva: 3 incidentes
-carpeta  reportes                          2025-05-31T18:00
-archivo  reportes/reporte-junio.txt        2025-05-31T18:00  Reporte de junio, borrador viejo: sin datos
-carpeta  limpieza                          2025-06-02T00:07
-archivo  limpieza/cache-01.tmp             2025-06-02T00:01  caché temporal 01: se puede borrar
-archivo  limpieza/cache-02.tmp             2025-06-02T00:02  caché temporal 02: se puede borrar
-archivo  limpieza/cache-03.tmp             2025-06-02T00:03  caché temporal 03: se puede borrar
-archivo  limpieza/cache-indice.txt         2025-05-15T10:00  índice de la caché: NO se borra, sin él el servicio no arranca
-archivo  limpieza/tmp-notas.txt            2025-05-15T10:05  notas del turno: NO se borran
-carpeta  limpieza/sesiones-viejas          2025-05-30T23:00
-archivo  limpieza/sesiones-viejas/s-0529.txt 2025-05-29T23:00  sesión del 29 de mayo, ya cerrada
-archivo  limpieza/sesiones-viejas/s-0530.txt 2025-05-30T23:00  sesión del 30 de mayo, ya cerrada
-carpeta  limpieza/sesiones-activas         2025-06-02T00:06
-archivo  limpieza/sesiones-activas/s-0602.txt 2025-06-02T00:06  sesión de hoy, ABIERTA: no se borra
-carpeta  limpieza/vacia                    2025-05-01T09:00
-carpeta  ensayo                            2025-06-02T00:00
-archivo  ensayo/uno.txt                    2025-06-02T00:00  uno
-archivo  ensayo/dos.txt                    2025-06-02T00:00  dos
-archivo  ensayo/tres.log                   2025-06-02T00:00  tres
-carpeta  ensayo/caja                       2025-06-02T00:00
-archivo  ensayo/caja/adentro.txt           2025-06-02T00:00  algo adentro de la caja
+archivo	LEEME.txt	2025-06-02T00:10	Taller de la lección 02. Si descompones algo, corre  prepara 02  y vuelve a quedar como el primer día.
+carpeta	config	2025-06-02T00:05
+archivo	config/pagos.conf	2025-06-02T00:05	puerto=8443 version=2025-06-02 (la buena, la de hoy)
+carpeta	config/plantillas	2025-05-20T12:00
+archivo	config/plantillas/recibo.txt	2025-05-20T12:00	Recibo de pago número {folio} por {monto} pesos.
+archivo	config/plantillas/aviso.txt	2025-05-20T12:00	Aviso: el servicio de pagos vuelve en {minutos} minutos.
+archivo	config/plantillas/aviso de corte.txt	2025-05-20T12:00	Aviso de corte: el servicio de pagos se detiene a las {hora}.
+carpeta	respaldo	2025-05-01T09:00
+archivo	respaldo/pagos.conf	2025-05-01T09:00	puerto=8080 version=2025-05-01 (la vieja, de hace un mes)
+carpeta	bitacoras	2025-06-02T00:09
+archivo	bitacoras/ayer.log	2025-06-01T23:59	2025-06-01 23:59 pagos: cierre del día sin errores
+archivo	bitacoras/hoy.log	2025-06-02T00:09	2025-06-02 00:09 pagos: disco lleno, no puedo escribir
+carpeta	entrada	2025-06-02T00:08
+archivo	entrada/reporte-junio.txt	2025-06-02T00:08	Reporte de junio, versión nueva: 3 incidentes
+carpeta	reportes	2025-05-31T18:00
+archivo	reportes/reporte-junio.txt	2025-05-31T18:00	Reporte de junio, borrador viejo: sin datos
+carpeta	limpieza	2025-06-02T00:07
+archivo	limpieza/cache-01.tmp	2025-06-02T00:01	caché temporal 01: se puede borrar
+archivo	limpieza/cache-02.tmp	2025-06-02T00:02	caché temporal 02: se puede borrar
+archivo	limpieza/cache-03.tmp	2025-06-02T00:03	caché temporal 03: se puede borrar
+archivo	limpieza/cache-indice.txt	2025-05-15T10:00	índice de la caché: NO se borra, sin él el servicio no arranca
+archivo	limpieza/tmp-notas.txt	2025-05-15T10:05	notas del turno: NO se borran
+carpeta	limpieza/sesiones-viejas	2025-05-30T23:00
+archivo	limpieza/sesiones-viejas/s-0529.txt	2025-05-29T23:00	sesión del 29 de mayo, ya cerrada
+archivo	limpieza/sesiones-viejas/s-0530.txt	2025-05-30T23:00	sesión del 30 de mayo, ya cerrada
+carpeta	limpieza/sesiones-activas	2025-06-02T00:06
+archivo	limpieza/sesiones-activas/s-0602.txt	2025-06-02T00:06	sesión de hoy, ABIERTA: no se borra
+carpeta	limpieza/vacia	2025-05-01T09:00
+carpeta	ensayo	2025-06-02T00:00
+archivo	ensayo/uno.txt	2025-06-02T00:00	uno
+archivo	ensayo/dos.txt	2025-06-02T00:00	dos
+archivo	ensayo/tres.log	2025-06-02T00:00	tres
+carpeta	ensayo/caja	2025-06-02T00:00
+archivo	ensayo/caja/adentro.txt	2025-06-02T00:00	algo adentro de la caja
 
 # --- 2.1 · El árbol que creas tú -----------------------------------------------------
-crea-carpeta  guardia
-crea-carpeta  guardia/2025-06-02
-crea-carpeta  guardia/2025-06-02/bitacoras
-crea-carpeta  guardia/2025-06-02/reportes
-crea-archivo  guardia/2025-06-02/pendientes.txt
-crea-archivo  guardia/2025-06-02/reportes/resumen.txt
+crea-carpeta	guardia
+crea-carpeta	guardia/2025-06-02
+crea-carpeta	guardia/2025-06-02/bitacoras
+crea-carpeta	guardia/2025-06-02/reportes
+crea-archivo	guardia/2025-06-02/pendientes.txt
+crea-archivo	guardia/2025-06-02/reportes/resumen.txt
 
 # --- 2.2 · Copiar, mover y renombrar --------------------------------------------------
-copia          config/pagos.conf          respaldo/pagos.conf
-copia-carpeta  config/plantillas          respaldo/plantillas
-renombra       bitacoras/hoy.log          bitacoras/2025-06-02.log
-mueve          entrada/reporte-junio.txt  reportes/reporte-junio.txt
+copia	config/pagos.conf	respaldo/pagos.conf
+copia-carpeta	config/plantillas	respaldo/plantillas
+renombra	bitacoras/hoy.log	bitacoras/2025-06-02.log
+mueve	entrada/reporte-junio.txt	reportes/reporte-junio.txt
 
 # --- 2.3 · Borrar solo lo pedido ------------------------------------------------------
-borra-patron   limpieza/cache-01.tmp
-borra-patron   limpieza/cache-02.tmp
-borra-patron   limpieza/cache-03.tmp
-borra          limpieza/sesiones-viejas
-borra          limpieza/vacia
-queda          limpieza/cache-indice.txt
-queda          limpieza/tmp-notas.txt
-queda          limpieza/sesiones-activas
-queda          limpieza/sesiones-activas/s-0602.txt
+borra-patron	limpieza/cache-01.tmp
+borra-patron	limpieza/cache-02.tmp
+borra-patron	limpieza/cache-03.tmp
+borra	limpieza/sesiones-viejas
+borra	limpieza/vacia
+queda	limpieza/cache-indice.txt
+queda	limpieza/tmp-notas.txt
+queda	limpieza/sesiones-activas
+queda	limpieza/sesiones-activas/s-0602.txt
