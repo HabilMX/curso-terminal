@@ -2,6 +2,9 @@
 
 **Por Dorian Chávez, fundador de Hábil y arquitecto de integración.**
 
+**La página del curso:** [habil.mx/es/cursos/terminal/](https://www.habil.mx/es/cursos/terminal/), con el temario y las lecciones.  
+En otros idiomas: [en](https://www.habil.mx/en/courses/terminal/) · [fr](https://www.habil.mx/fr/cours/terminal/) · [pt](https://www.habil.mx/pt/cursos/terminal/) · [bg](https://www.habil.mx/bg/courses/terminal/)
+
 > 🚧 **En construcción.** Este curso se está escribiendo. Las lecciones aparecen aquí conforme quedan revisadas y
 > probadas en una máquina real.
 
