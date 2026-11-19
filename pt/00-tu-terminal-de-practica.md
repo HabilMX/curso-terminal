@@ -83,7 +83,7 @@ Quem testar em um desses sistemas, conte-nos como foi.
 
 | Número | Como foi medida |
 |---|---|
-| Construir a imagem: 42 segundos | Mac com Apple silicon, 18/11/2026, com `time ./practicar reconstruir`: sem cache e com a imagem do Ubuntu já baixada |
+| Construir a imagem: 42 segundos | Mac com Apple silicon, 18/11/2026, com `time ./practicar reconstruir`, que naquele dia construía sem cache (hoje isso é feito por `./practicar reconstruir-limpio`), e com a imagem do Ubuntu já baixada |
 | Construir a imagem: 1 minuto e 38 segundos | O mesmo Mac, 18/11/2026, com `docker build --no-cache`, sobre uma versão anterior do Dockerfile |
 | Construir a imagem: cerca de 90 segundos | Linux Mint 22.3 (x86_64), 19/11/2026, com `./practicar` |
 | Tamanho: 221 MB | Linux Mint, 18/11/2026, com `docker image inspect` |
@@ -485,6 +485,7 @@ grupo que fizer o curso.
 | `❌ No encuentro el comando «docker» en esta computadora.` *(Não encontro o comando «docker» neste computador.)* | O Docker não está instalado | «Antes de começar», conforme o sistema |
 | `❌ Docker está instalado, pero no pude hablar con él.` *(O Docker está instalado, mas não consegui falar com ele.)* | O mais comum: o Docker está desligado, ou o usuário não tem permissão. Pode ser outra coisa | Rodar `docker info` e seguir o erro exato que ele der |
 | `no such file or directory: ./practicar` | Não se está na pasta do curso | `cd curso-terminal` e repetir |
+| A primeira construção leva muitos minutos e aparecem linhas que começam com `Ign:` | Os servidores de pacotes do Ubuntu respondem devagar. Aconteceu em 19/11/2026: a mesma construção levou 8 minutos, com 3 linhas `Ign:`, contra um minuto e meio em 18/11 | Deixá-la rodar. `Ign:` não é um erro: o apt tenta de novo. Se no fim sair `❌ No se pudo construir la imagen.`, seguir a linha de baixo |
 | `❌ No se pudo construir la imagen.` *(Não foi possível construir a imagem.)* | A rede, o espaço em disco, as permissões do Docker ou o material do curso | Ler o **primeiro** erro que saiu acima da mensagem, corrigi-lo e rodar `./practicar` outra vez |
 | `❌ ./practicar abre una terminal interactiva…` *(O ./practicar abre um terminal interativo…)* | Foi rodado com um pipe ou um redirecionamento | Rodá-lo sozinho: `./practicar` |
 | `command not found: verifica` | Rodou-se o `verifica` no computador, não lá dentro | Entrar com `./practicar`; o prompt deve dizer `alumno@practica` |

@@ -41,7 +41,7 @@ Elles se font dans l'ordre : chacune part de ce que la précédente a laissé. C
 | # | Leçon | L'idée nouvelle |
 |---|---|---|
 | 00 | [Votre terminal d'entraînement](00-tu-terminal-de-practica.md) | Dans ce terminal, il n'y a ni bureau ni fenêtres, seulement du texte : il vous dit qui vous êtes et où vous êtes sur chaque ligne, et vous lui parlez avec des commandes |
-| 01 | Se déplacer sans voir | L'arbre des dossiers, et le chemin absolu face au chemin relatif |
+| 01 | [Se déplacer sans voir](01-moverte-sin-ver.md) | L'arbre des dossiers, et le chemin absolu face au chemin relatif |
 | 02 | Créer, copier, déplacer et supprimer sans crainte | Dans le terminal, il n'y a pas de corbeille : vous réfléchissez avant de supprimer |
 | 03 | Voir ce qu'il y a dedans | Presque tout, sur un serveur, est du texte, et vous le lisez sans ouvrir d'éditeur |
 | 04 | Trouver des fichiers : find | `find` parcourt l'arbre et filtre selon ce que vous lui dites |

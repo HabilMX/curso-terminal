@@ -84,7 +84,7 @@ If you test it on one of these, tell us how it went.
 
 | Figure | How it was measured |
 |---|---|
-| Building the image: 42 seconds | Mac with Apple silicon, Nov 18, 2026, with `time ./practicar reconstruir`: without cache and with the Ubuntu image already downloaded |
+| Building the image: 42 seconds | Mac with Apple silicon, Nov 18, 2026, with `time ./practicar reconstruir`, which that day built without cache (today `./practicar reconstruir-limpio` does that), and with the Ubuntu image already downloaded |
 | Building the image: 1 minute 38 seconds | The same Mac, Nov 18, 2026, with `docker build --no-cache`, on an earlier version of the Dockerfile |
 | Building the image: about 90 seconds | Linux Mint 22.3 (x86_64), Nov 19, 2026, with `./practicar` |
 | Size: 221 MB | Linux Mint, Nov 18, 2026, with `docker image inspect` |
@@ -491,6 +491,7 @@ with the first group that takes the course.
 | `❌ No encuentro el comando «docker» en esta computadora.` *(I can't find the «docker» command on this computer.)* | Docker is not installed | «Before you start», according to your system |
 | `❌ Docker está instalado, pero no pude hablar con él.` *(Docker is installed, but I could not talk to it.)* | Most commonly: Docker is off, or your user does not have permission. It can be something else | Run `docker info` and follow the exact error it gives you |
 | `no such file or directory: ./practicar` | You are not in the course folder | `cd curso-terminal` and repeat |
+| The first build takes many minutes and lines that start with `Ign:` come out | Ubuntu's package servers are answering slowly. It happened on Nov 19, 2026: the same build took 8 minutes, with 3 `Ign:` lines, against a minute and a half on Nov 18 | Let it run. `Ign:` is not an error: apt tries again. If at the end `❌ No se pudo construir la imagen.` comes out *(The image could not be built.)*, follow the line below |
 | `❌ No se pudo construir la imagen.` *(The image could not be built.)* | The network, disk space, Docker's permissions or the course material | Read the **first** error that came out above the message, fix it and run `./practicar` again |
 | `❌ ./practicar abre una terminal interactiva…` *(./practicar opens an interactive terminal…)* | You ran it with a pipe or a redirection | Run it alone: `./practicar` |
 | `command not found: verifica` | You ran `verifica` on your computer, not inside | Get in with `./practicar`; the prompt must say `alumno@practica` |

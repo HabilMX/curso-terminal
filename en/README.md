@@ -39,7 +39,7 @@ Do them in order: each one starts from what the previous one left. Start with
 | # | Lesson | The new idea |
 |---|---|---|
 | 00 | [Your practice terminal](00-tu-terminal-de-practica.md) | This terminal has no desktop and no windows, only text: it tells you who you are and where you are on every line, and you talk to it with commands |
-| 01 | Moving around without seeing | The folder tree, and the absolute path versus the relative one |
+| 01 | [Moving around without seeing](01-moverte-sin-ver.md) | The folder tree, and the absolute path versus the relative one |
 | 02 | Create, copy, move and delete without fear | The terminal has no trash can: you think before you delete |
 | 03 | Seeing what is inside | Almost everything on a server is text, and you read it without opening an editor |
 | 04 | Finding files: find | `find` walks the tree and filters by whatever you tell it |

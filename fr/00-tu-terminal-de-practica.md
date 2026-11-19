@@ -85,7 +85,7 @@ Si vous le testez sur l'un de ceux-ci, dites-nous comment cela s'est passé.
 
 | Chiffre | Comment il a été mesuré |
 |---|---|
-| Construire l'image : 42 secondes | Mac avec Apple silicon, 18 nov. 2026, avec `time ./practicar reconstruir` : sans cache et avec l'image d'Ubuntu déjà téléchargée |
+| Construire l'image : 42 secondes | Mac avec Apple silicon, 18 nov. 2026, avec `time ./practicar reconstruir`, qui ce jour-là construisait sans cache (aujourd'hui, c'est `./practicar reconstruir-limpio` qui le fait), et avec l'image d'Ubuntu déjà téléchargée |
 | Construire l'image : 1 minute 38 secondes | Le même Mac, 18 nov. 2026, avec `docker build --no-cache`, sur une version antérieure du Dockerfile |
 | Construire l'image : environ 90 secondes | Linux Mint 22.3 (x86_64), 19 nov. 2026, avec `./practicar` |
 | Taille : 221 Mo | Linux Mint, 18 nov. 2026, avec `docker image inspect` |
@@ -507,6 +507,7 @@ ajustée avec le premier groupe qui suivra le cours.
 | `❌ No encuentro el comando «docker» en esta computadora.` *(Je ne trouve pas la commande « docker » sur cet ordinateur.)* | Docker n'est pas installé | « Avant de commencer », selon votre système |
 | `❌ Docker está instalado, pero no pude hablar con él.` *(Docker est installé, mais je n'ai pas pu lui parler.)* | Le plus courant : Docker est éteint, ou votre utilisateur n'a pas la permission. Cela peut être autre chose | Lancez `docker info` et suivez l'erreur exacte qu'il vous donne |
 | `no such file or directory: ./practicar` | Vous n'êtes pas dans le dossier du cours | `cd curso-terminal` et recommencez |
+| La première construction prend beaucoup de minutes et des lignes qui commencent par `Ign:` s'affichent | Les serveurs de paquets d'Ubuntu répondent lentement. Cela est arrivé le 19 nov. 2026 : la même construction a pris 8 minutes, avec 3 lignes `Ign:`, contre une minute et demie le 18 nov. | Laissez-la tourner. `Ign:` n'est pas une erreur : apt réessaie. Si, à la fin, `❌ No se pudo construir la imagen.` apparaît, suivez la ligne du dessous |
 | `❌ No se pudo construir la imagen.` *(L'image n'a pas pu être construite.)* | Le réseau, l'espace disque, les permissions de Docker ou le matériel du cours | Lisez la **première** erreur qui est sortie au-dessus du message, corrigez-la et relancez `./practicar` |
 | `❌ ./practicar abre una terminal interactiva…` *(./practicar ouvre un terminal interactif…)* | Vous l'avez lancé avec un tube ou une redirection | Lancez-le seul : `./practicar` |
 | `command not found: verifica` | Vous avez lancé `verifica` sur votre ordinateur, pas à l'intérieur | Entrez avec `./practicar` ; l'invite doit dire `alumno@practica` |
