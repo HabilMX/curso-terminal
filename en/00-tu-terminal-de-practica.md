@@ -2,10 +2,10 @@
 
 **By Dorian Chávez, founder of Hábil and integration architect.**
 
-**Before you read, six words.** One line each; the others arrive in the lesson where they are used.
+**Before you read, six words.** One line each; the rest come in the lesson where they are used.
 
-- **Terminal:** the window where you type orders with the keyboard and the computer answers you with text.
-- **Command:** a typed order. For example, `whoami` («who am I?»). You type it and press Enter.
+- **Terminal:** the window where you type instructions with the keyboard and the computer answers you with text.
+- **Command:** a typed instruction. For example, `whoami` («who am I?»). You type it and press Enter.
 - **Prompt:** the text the terminal puts at the start of the line when it is waiting for your next command. In
   Spanish, *indicador*.
 - **Docker:** the program that creates and runs containers.
@@ -34,7 +34,7 @@ translated.
 
 *An invented scenario; the screens that appear in the lesson are real.*
 
-Tuesday, 11:40 p.m. Lucía has been three weeks in her first job and tonight she is on call. The phone rings: the
+Tuesday, 11:40 p.m. Lucía has been at her first job for three weeks and tonight she is on call. The phone rings: the
 payments service has stopped answering. They give her an address and a sentence: «get into the server and tell me
 what you see».
 
@@ -92,8 +92,8 @@ If you test it on one of these, tell us how it went.
 
 **Install Docker, according to your system.** It is the only thing that gets installed on your computer.
 
-- **Linux Mint or Ubuntu:** Docker Engine, from Docker's official repository. [Lesson 1 of the Docker
-  course](https://www.habil.mx/en/courses/docker/01-instalacion/) from this house does it step by step on Linux Mint
+- **Linux Mint or Ubuntu:** Docker Engine, from Docker's official repository. [Lesson 1 of our Docker
+  course](https://www.habil.mx/en/courses/docker/01-instalacion/) does it step by step on Linux Mint
   and explains each error. Docker does not officially support Mint, and that lesson says what to do about it. On the
   test computer, the user was in the `docker` group and used Docker without `sudo`; that same lesson explains what
   joining that group implies.
@@ -158,7 +158,7 @@ alumno@practica:~$
 *Image ready. Getting into your practice terminal. To get out, type `exit` (or Ctrl+D).*
 
 No window opened. **You are in the same window, but you are now on another machine.** The last line is the prompt of
-your practice terminal, and you will read it calmly in step 3. Compare it with what you predicted.
+your practice terminal, and you will read it closely in step 3. Compare it with what you predicted.
 
 **How separate it is from your computer.** For these exercises no folder of your computer is connected, the terminal
 runs as `alumno`, without administrator privileges, and inside there is no network. Your work is saved only in the
@@ -205,7 +205,7 @@ again.
 **Predict first.** You are going to create a file inside `practica`, get out and get back in. Will it still be there?
 And if you had created it outside `practica`?
 
-Today these two lines are a given recipe. Type them exactly:
+Today these two lines are a recipe to copy as is. Type them exactly:
 
 ```bash
 mkdir ~/practica/00
@@ -214,9 +214,9 @@ date > ~/practica/00/aqui-estuve.txt
 
 - `mkdir` creates a folder: here, the folder `00` inside `practica`.
 - `date` answers the date and time. The `>` sign sends that answer to a file instead of to the screen.
-- `~` is the abbreviation for your home folder. You see it calmly in step 3.
+- `~` is the abbreviation for your home folder. You see it closely in step 3.
 
-In lessons 02 and 06 you understand each piece in detail. Neither of the two lines answers anything: in the terminal,
+In lessons 02 and 06 you will understand each piece in detail. Neither of the two lines answers anything: in the terminal,
 **silence usually means it went well**.
 
 Run `verifica 00` again, **before leaving**. The last line changed:
@@ -454,7 +454,7 @@ your terminal you see it in `man whoami`: under *VERSION* it says `uutils coreut
 `mv` and `rm`.
 
 - **What it means for you:** if you compare with a tutorial or with an older server, the text of `man` and of `--help`
-  may differ from what you see here. It is not your mistake or the tutorial's.
+  may differ from what you see here. It is not your fault or the tutorial's.
 - **What does not change in this course:** the commands are called the same and the options that are taught work the
   same. The outputs you see in the lessons come from the image tested on Nov 18 and 19, 2026. The image is always built
   on the current Ubuntu 26.04, so after an update an output may vary a little.

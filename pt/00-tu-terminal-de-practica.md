@@ -4,12 +4,12 @@
 
 **Antes de ler, seis palavras.** Uma linha cada uma; as demais chegam na lição em que são usadas.
 
-- **Terminal:** a janela em que se digitam ordens no teclado e o computador responde com texto.
-- **Comando:** uma ordem escrita. Por exemplo, `whoami` («quem sou eu?»). Digita-se e aperta-se Enter.
+- **Terminal:** a janela em que se digitam instruções no teclado e o computador responde com texto.
+- **Comando:** uma instrução escrita. Por exemplo, `whoami` («quem sou eu?»). Digita-se e aperta-se Enter.
 - **Prompt:** o texto que o terminal coloca no começo da linha quando espera o próximo comando. Em espanhol,
   *indicador*.
 - **Docker:** o programa que cria e roda contêineres.
-- **Contêiner:** um computador Linux pequeno que vive dentro do computador, separado dos arquivos dele.
+- **Contêiner:** um computador Linux pequeno que vive dentro do computador de quem estuda, separado dos arquivos pessoais.
 - **Imagem:** o molde de que sai um contêiner. Constrói-se uma vez e usa-se muitas.
 
 **O que fica com quem termina:** o terminal de prática funcionando, que é um Ubuntu 26.04 dentro de um contêiner; saber
@@ -51,7 +51,7 @@ Lucía ainda não sabe, mas essa linha já respondeu duas das três perguntas qu
 ali dentro e em que pasta está parada. A terceira, o que fazer, pergunta-se à própria máquina. E se algo travar, há
 três teclas para sair.
 
-Esta lição dá essas quatro coisas em uma máquina feita para errar: o terminal de prática, próprio de cada pessoa.
+Esta lição dá essas quatro coisas em uma máquina em que errar não custa nada: o terminal de prática, próprio de cada pessoa.
 
 ---
 
@@ -63,7 +63,7 @@ Esta lição dá essas quatro coisas em uma máquina feita para errar: o termina
 |---|---|---|
 | Sistema | Linux, Mac ou Windows | Abaixo diz em quais já foi testado e em quais falta |
 | Docker | Instalado e respondendo | Abaixo diz como, por sistema |
-| Disco | Menos de 300 MB para a imagem do curso | Vai um teto e não uma cifra, porque cada ferramenta do Docker mede de um jeito (abaixo) |
+| Disco | Menos de 300 MB para a imagem do curso | Vai um teto e não um número, porque cada ferramenta do Docker mede de um jeito (abaixo) |
 | Rede | Para baixar o Ubuntu e alguns pacotes na primeira vez | Só o computador a usa, ao construir; dentro do terminal de prática não há rede |
 | Conhecimento | Abrir o terminal do computador e colar uma linha | Não se supõe nada de Linux nem de Docker |
 
@@ -79,9 +79,9 @@ Esta lição dá essas quatro coisas em uma máquina feita para errar: o termina
 
 Quem testar em um desses sistemas, conte-nos como foi.
 
-**As cifras desta lição, e como foram medidas:**
+**Os números desta lição, e como foram medidas:**
 
-| Cifra | Como foi medida |
+| Número | Como foi medida |
 |---|---|
 | Construir a imagem: 42 segundos | Mac com Apple silicon, 18/11/2026, com `time ./practicar reconstruir`: sem cache e com a imagem do Ubuntu já baixada |
 | Construir a imagem: 1 minuto e 38 segundos | O mesmo Mac, 18/11/2026, com `docker build --no-cache`, sobre uma versão anterior do Dockerfile |
@@ -92,7 +92,7 @@ Quem testar em um desses sistemas, conte-nos como foi.
 **Instale o Docker, conforme o sistema.** É a única coisa que se instala no computador.
 
 - **Linux Mint ou Ubuntu:** Docker Engine, a partir do repositório oficial do Docker. A
-  [lição 1 do curso de Docker](https://www.habil.mx/pt/cursos/docker/01-instalacion/) desta casa faz isso passo a
+  [lição 1 do curso de Docker](https://www.habil.mx/pt/cursos/docker/01-instalacion/) da Hábil faz isso passo a
   passo no Linux Mint e explica cada erro. O Docker não dá suporte oficial ao Mint, e essa lição diz o que fazer a
   respeito. No computador do teste, o usuário estava no grupo `docker` e usou o Docker sem `sudo`; essa mesma lição
   explica o que implica entrar nesse grupo.
@@ -132,7 +132,7 @@ na pasta que foi criada. Não copie o `cd curso-terminal` de cima: essa pasta po
 
 ## Passo 1 · Suba o terminal e entre
 
-**Preveja primeiro.** Escreva em um papel: ao entrar, o que se acha que vai aparecer? Uma janela nova? Uma área de
+**Preveja primeiro.** Escreva em um papel: ao entrar, o que deve aparecer? Uma janela nova? Uma área de
 trabalho? Outra coisa?
 
 A partir da pasta do curso:
@@ -226,7 +226,7 @@ registro de uma sessão anterior; acabo de deixá-lo em `00/.sesion-verifica`). 
 com `./practicar` e rodar `verifica 00` outra vez.*
 
 O `verifica` já viu a marca e anotou em que sessão a viu. Uma **sessão** é cada vez que se entra. A anotação fica na
-pasta de prática, em um arquivo chamado `.sesion-verifica`. Agora obedeça a ele. Saia:
+pasta de prática, em um arquivo chamado `.sesion-verifica`. Agora faça o que ele diz. Saia:
 
 ```bash
 exit
@@ -401,7 +401,7 @@ programa: «pare já».
 cat
 ```
 
-Digite `hola` e Enter: ele responde `hola`. Vai continuar esperando para sempre. Aperte **Ctrl+D** em uma linha vazia.
+Digite `hola` («olá») e Enter: ele responde `hola`. Vai continuar esperando para sempre. Aperte **Ctrl+D** em uma linha vazia.
 O prompt volta. O Ctrl+D diz ao programa: «não há mais nada a escrever».
 
 **3. Um programa de tela cheia.** O `htop` mostra os programas que estão rodando:
@@ -490,7 +490,7 @@ grupo que fizer o curso.
 | `command not found: verifica` | Rodou-se o `verifica` no computador, não lá dentro | Entrar com `./practicar`; o prompt deve dizer `alumno@practica` |
 | `mkdir: /home/alumno/practica/00: File exists` | A pasta `00` já tinha sido criada | Sem problema: seguir com a linha do `date` |
 | A última linha do `verifica 00` continua em vermelho depois de voltar | Não se rodou o `verifica 00` antes de sair, então ele acabava de ver a marca | Já ficou anotada: sair com `exit`, entrar e rodar `verifica 00` outra vez |
-| `❌ No sé en qué sesión estás…` *(Não sei em que sessão está.)* | Entrou-se no contêiner sem o script do curso | Sair e entrar com `./practicar` |
+| `❌ No sé en qué sesión estás…` *(Não sei em que sessão está…)* | Entrou-se no contêiner sem o script do curso | Sair e entrar com `./practicar` |
 | O prompt não volta | Um programa tomou o terminal | Tentar `q`; se não, Ctrl+C; se não, Ctrl+D (passo 5) |
 | Fechou-se a janela sem digitar `exit` | O terminal de prática pode ter ficado aberto por dentro | Abrir outra janela e entrar com `./practicar`: a pasta continua lá |
 | `❌ No borré nada: tu carpeta de práctica está en uso.` *(Não apaguei nada: a pasta de prática está em uso.)* | Há um terminal de prática aberto, talvez de uma janela fechada sem `exit` | Sair dele com `exit`. Se a janela já não existe, a mesma mensagem traz a linha `docker stop …` para fechá-lo à mão |
@@ -514,9 +514,9 @@ grupo que fizer o curso.
 
 6. Aparece `soporte@caja-07:~$`. Sem rodar nada: quem é o usuário, em que máquina e em que pasta ele está?
 7. Criou-se um arquivo fora de `~/practica` e saiu-se. Ele vai estar lá na volta? Por quê?
-8. Não se lembra o que faz uma opção de um comando e não há internet. Que duas coisas se tentam?
+8. Não se lembra do que faz uma opção de um comando e não há internet. Que duas coisas se tentam?
 
-**O que vem a seguir:** já existe onde praticar e já se sabe onde se está parado. Na lição 01 a pessoa se move pelas
+**O que vem a seguir:** já há um lugar para praticar e já se sabe onde se está parado. Na lição 01 a pessoa se move pelas
 pastas sem vê-las.
 
 ---
@@ -570,11 +570,11 @@ Abertas em 18/11/2026.
 - Docker. *Install Docker Engine on Ubuntu* (versões do Ubuntu com suporte; Linux Mint sem suporte oficial). https://docs.docker.com/engine/install/ubuntu/
 - Docker. *Install Docker Desktop on Mac* (instalador por processador; versões do macOS com suporte). https://docs.docker.com/desktop/setup/install/mac-install/
 - Docker. *Docker Desktop WSL 2 backend on Windows* (integração com a distribuição do WSL). https://docs.docker.com/desktop/features/wsl/
-- Microsoft. *How to install Linux on Windows with WSL* (`wsl --install`; versões do Windows). https://learn.microsoft.com/en-us/windows/wsl/install
+- Microsoft. *How to install Linux on Windows with WSL* (`wsl --install`; versões do Windows). https://learn.microsoft.com/pt-br/windows/wsl/install
 - Docker. *Volumes* (um volume guarda dados fora do contêiner e sobrevive a que ele seja apagado). https://docs.docker.com/engine/storage/volumes/
 - Docker. *docker container run* (`-i`, `-t`, `--rm`, `-h`, `--network`; cada contêiner tem uma lista de processos própria). https://docs.docker.com/reference/cli/docker/container/run/
-- Apple. *Use zsh as the default shell on Mac* (zsh por padrão desde o macOS 10.15). https://support.apple.com/en-us/102360
-- Medição própria, 18 e 19/11/2026, em um Mac com Apple silicon (Docker 29.2.1, linux/arm64) e em um computador com
-  Linux Mint 22.3 (x86_64, Docker 29.10.0). O que se rodou em cada um e como se mediu cada cifra está nas duas tabelas
+- Apple. *Use zsh as the default shell on Mac* (zsh por padrão desde o macOS 10.15). https://support.apple.com/pt-br/102360
+- Medição nossa, 18 e 19/11/2026, em um Mac com Apple silicon (Docker 29.2.1, linux/arm64) e em um computador com
+  Linux Mint 22.3 (x86_64, Docker 29.10.0). O que se rodou em cada um e como se mediu cada número está nas duas tabelas
   de «Antes de começar». As telas desta lição e as três teclas do passo 5 foram tiradas no Mac. A revisão de 19/11
   —o contêiner sem rede, as etiquetas do curso e o `verifica` que já não usa o relógio— foi testada nos dois.

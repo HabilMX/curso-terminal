@@ -4,8 +4,8 @@
 
 **Avant de lire, six mots.** Une ligne chacun ; les autres arrivent dans la leçon où ils servent.
 
-- **Terminal :** la fenêtre où vous écrivez des ordres au clavier et où l'ordinateur vous répond par du texte.
-- **Commande :** un ordre écrit. Par exemple, `whoami` (« qui suis-je ? »). Vous l'écrivez et vous appuyez sur Entrée.
+- **Terminal :** la fenêtre où vous écrivez des instructions au clavier et où l'ordinateur vous répond par du texte.
+- **Commande :** une instruction écrite. Par exemple, `whoami` (« qui suis-je ? »). Vous l'écrivez et vous appuyez sur Entrée.
 - **Invite :** le texte que le terminal place au début de la ligne quand il attend votre prochaine commande. En
   anglais, *prompt*.
 - **Docker :** le programme qui crée et fait tourner des conteneurs.
@@ -35,7 +35,7 @@ code et ne sont pas traduits.
 
 *Scénario inventé ; les écrans qui apparaissent dans la leçon sont réels.*
 
-Mardi, 23 h 40. Lucía a trois semaines dans son premier emploi et ce soir, elle est d'astreinte. Le téléphone sonne : le
+Mardi, 23 h 40. Lucía est dans son premier emploi depuis trois semaines et ce soir, elle est d'astreinte. Le téléphone sonne : le
 service de paiements a cessé de répondre. On lui donne une adresse et une phrase : « connecte-toi au serveur et dis-moi
 ce que tu vois ».
 
@@ -53,7 +53,7 @@ Lucía ne le sait pas encore, mais cette ligne a déjà répondu à deux des tro
 qui elle est là-dedans et dans quel dossier elle se trouve. La troisième, quoi faire, se demande à la machine
 elle-même. Et si quelque chose reste bloqué, il y a trois touches pour sortir.
 
-Cette leçon vous donne ces quatre choses sur une machine faite pour se tromper : la vôtre, d'entraînement.
+Cette leçon vous donne ces quatre choses sur une machine où l'on a le droit de se tromper : la vôtre, d'entraînement.
 
 ---
 
@@ -162,7 +162,7 @@ alumno@practica:~$
 *Image prête. Entrée dans votre terminal d'entraînement. Pour sortir, tapez `exit` (ou Ctrl+D).*
 
 Aucune fenêtre ne s'est ouverte. **Vous êtes dans la même fenêtre, mais vous êtes maintenant sur une autre machine.** La
-dernière ligne est l'invite de votre terminal d'entraînement, et vous la lirez calmement à l'étape 3. Comparez avec ce
+dernière ligne est l'invite de votre terminal d'entraînement, et vous la lirez en détail à l'étape 3. Comparez avec ce
 que vous aviez prédit.
 
 **À quel point il est séparé de votre ordinateur.** Pour ces exercices, aucun dossier de votre ordinateur n'est
@@ -211,7 +211,7 @@ renaît propre.
 **Prédisez d'abord.** Vous allez créer un fichier dans `practica`, sortir et rentrer. Sera-t-il encore là ? Et si vous
 l'aviez créé en dehors de `practica` ?
 
-Aujourd'hui, ces deux lignes sont une recette donnée. Écrivez-les telles quelles :
+Aujourd'hui, ces deux lignes sont une recette à recopier. Écrivez-les telles quelles :
 
 ```bash
 mkdir ~/practica/00
@@ -220,7 +220,7 @@ date > ~/practica/00/aqui-estuve.txt
 
 - `mkdir` crée un dossier : ici, le dossier `00` dans `practica`.
 - `date` répond avec la date et l'heure. Le signe `>` envoie cette réponse dans un fichier au lieu de l'écran.
-- `~` est l'abréviation de votre dossier personnel. Vous le verrez calmement à l'étape 3.
+- `~` est l'abréviation de votre dossier personnel. Vous le verrez en détail à l'étape 3.
 
 Dans les leçons 02 et 06, vous comprendrez chaque pièce en détail. Aucune des deux lignes ne répond quoi que ce soit :
 dans le terminal, **le silence signifie le plus souvent que cela s'est bien passé**.
@@ -237,7 +237,7 @@ reste à sortir avec `exit`, à rentrer avec `./practicar` et à relancer `verif
 
 `verifica` a déjà vu votre marque et a noté dans quelle session il l'a vue. Une **session**, c'est chaque fois que vous
 entrez. La note reste dans votre dossier d'entraînement, dans un fichier qui s'appelle `.sesion-verifica`. Maintenant,
-obéissez-lui. Sortez :
+faites ce qu'il dit. Sortez :
 
 ```bash
 exit
@@ -411,7 +411,7 @@ Maintenant, trois façons de rester piégé. Faites les trois.
 sleep 1000
 ```
 
-L'invite ne revient pas. Appuyez sur **Ctrl+C** (maintenez Ctrl et touchez C). `^C` apparaît et l'invite revient. Ctrl+C
+L'invite ne revient pas. Appuyez sur **Ctrl+C** (maintenez Ctrl et appuyez sur C). `^C` apparaît et l'invite revient. Ctrl+C
 dit au programme : « arrête-toi tout de suite ».
 
 **2. Un programme qui attend que vous écriviez.** `cat`, sans rien d'autre, répète ce que vous écrivez :
@@ -540,7 +540,7 @@ ajustée avec le premier groupe qui suivra le cours.
 8. Vous ne vous rappelez plus ce que fait une option d'une commande et vous n'avez pas internet. Quelles deux choses
    essayez-vous ?
 
-**Ce qui vient ensuite :** vous avez maintenant où vous entraîner et vous savez où vous vous trouvez. Dans la leçon 01,
+**Ce qui vient ensuite :** vous avez maintenant un endroit où vous entraîner et vous savez où vous vous trouvez. Dans la leçon 01,
 vous vous déplacez dans les dossiers sans les voir.
 
 ---
@@ -554,7 +554,7 @@ vous vous déplacez dans les dossiers sans les voir.
 >
 > [**CI/CD, DevSecOps et cloud sans accroc**](https://www.habil.mx/fr/architecture-cloud-native/)
 >
-> Première conversation, sans frais.
+> Premier échange, sans frais.
 
 ---
 
@@ -599,7 +599,7 @@ Consultées le 18 nov. 2026.
 - Docker. *Volumes* (un volume garde des données en dehors du conteneur et survit à sa suppression). https://docs.docker.com/engine/storage/volumes/
 - Docker. *docker container run* (`-i`, `-t`, `--rm`, `-h`, `--network` ; chaque conteneur a sa propre liste de processus). https://docs.docker.com/reference/cli/docker/container/run/
 - Apple. *Utiliser zsh comme shell par défaut sur un Mac* (zsh par défaut depuis macOS 10.15). https://support.apple.com/fr-fr/102360
-- Mesure propre, 18 et 19 nov. 2026, sur un Mac avec Apple silicon (Docker 29.2.1, linux/arm64) et sur un ordinateur
+- Nos propres mesures, 18 et 19 nov. 2026, sur un Mac avec Apple silicon (Docker 29.2.1, linux/arm64) et sur un ordinateur
   sous Linux Mint 22.3 (x86_64, Docker 29.10.0). Ce qui a été lancé sur chacun et comment chaque chiffre a été mesuré
   figure dans les deux tableaux de « Avant de commencer ». Les écrans de cette leçon et les trois touches de l'étape 5
   ont été pris sur le Mac. La révision du 19 nov. — le conteneur sans réseau, les étiquettes du cours et le `verifica`

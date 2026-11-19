@@ -2,7 +2,7 @@
 
 **Par Dorian Chávez, fondateur de Hábil et architecte d'intégration.**
 
-**À qui s'adresse ce cours :** à celles et ceux qui programment et n'ont jamais vécu dans un terminal. Aucune
+**À qui s'adresse ce cours :** à celles et ceux qui programment et n'ont jamais travaillé dans un terminal. Aucune
 connaissance de Linux n'est supposée.
 
 **Ce que vous saurez à la fin :** entrer dans un terminal Linux sans écran et y travailler sans crainte. Vous vous

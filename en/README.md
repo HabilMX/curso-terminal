@@ -2,7 +2,7 @@
 
 **By Dorian Chávez, founder of Hábil and integration architect.**
 
-**Who it is for:** people who write code and have never lived in a terminal. No Linux is assumed.
+**Who it is for:** people who write code and have never worked in a terminal. No Linux is assumed.
 
 **What you will know by the end:** how to get into a Linux terminal with no screen and work there without fear. You
 move through folders; you create, copy and delete knowing what you are doing; you read logs, find files and text,
@@ -39,7 +39,7 @@ Do them in order: each one starts from what the previous one left. Start with
 | # | Lesson | The new idea |
 |---|---|---|
 | 00 | [Your practice terminal](00-tu-terminal-de-practica.md) | This terminal has no desktop and no windows, only text: it tells you who you are and where you are on every line, and you talk to it with commands |
-| 01 | Moving around without seeing | The tree of folders, and the absolute path versus the relative one |
+| 01 | Moving around without seeing | The folder tree, and the absolute path versus the relative one |
 | 02 | Create, copy, move and delete without fear | The terminal has no trash can: you think before you delete |
 | 03 | Seeing what is inside | Almost everything on a server is text, and you read it without opening an editor |
 | 04 | Finding files: find | `find` walks the tree and filters by whatever you tell it |
@@ -55,5 +55,5 @@ The lessons without a link are in preparation and are published in order.
 
 ## What comes after
 
-This course is the doorway to this house's [Docker](https://www.habil.mx/en/courses/docker/) and
+This course is the doorway to our [Docker](https://www.habil.mx/en/courses/docker/) and
 [Kubernetes](https://www.habil.mx/en/courses/kubernetes/) courses.

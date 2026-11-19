@@ -2,7 +2,7 @@
 
 **Por Dorian Chávez, fundador da Hábil e arquiteto de integração.**
 
-**Para quem é:** quem programa e nunca viveu em um terminal. Não se supõe nada de Linux.
+**Para quem é:** quem programa e nunca trabalhou num terminal. Não se supõe nada de Linux.
 
 **O que se vai saber ao terminar:** entrar em um terminal Linux sem tela e trabalhar ali sem medo. Quem termina circula
 por pastas; cria, copia e apaga sabendo o que faz; lê logs, encontra arquivos e texto, encadeia comandos, edita com o
@@ -15,7 +15,7 @@ como tê-lo no Linux, no Mac e no Windows, e deixa pronto o terminal de prática
 
 Em um **contêiner**: um computador Linux pequeno que vive dentro do computador de quem estuda. É um Ubuntu 26.04 LTS,
 sobe com um único comando (`./practicar`) e fica separado dos arquivos: nenhuma pasta do computador é conectada a ele
-e lá dentro não há rede. Se for desarrumado, descarta-se e recomeça-se do zero. Todos praticam ali, inclusive quem já
+e lá dentro não há rede. Se quebrar, descarta-se e recomeça-se do zero. Todos praticam ali, inclusive quem já
 tem Linux ou Mac: assim o grupo inteiro pratica no mesmo ambiente.
 
 ## Como se aprende aqui
@@ -53,4 +53,4 @@ As lições sem link estão em preparação e são publicadas em ordem.
 ## O que vem depois
 
 Este curso é a porta de entrada dos cursos de [Docker](https://www.habil.mx/pt/cursos/docker/) e de
-[Kubernetes](https://www.habil.mx/pt/cursos/kubernetes/) desta casa.
+[Kubernetes](https://www.habil.mx/pt/cursos/kubernetes/) da Hábil.
