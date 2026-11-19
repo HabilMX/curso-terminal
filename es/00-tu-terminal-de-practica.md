@@ -63,7 +63,7 @@ Esta lección te da esas cuatro cosas en una máquina hecha para equivocarse: la
 
 | Sistema | Estado | Qué se corrió |
 |---|---|---|
-| Linux Mint 22.3 (x86_64), Docker Engine 29.10.0 | Probado el 19-nov-2026 | `./practicar` construyó la imagen en unos 90 segundos, `verifica 00` dio sus cinco marcas en verde y `./practicar desde-cero` borró la carpeta. Ojo: Docker no da soporte oficial a Linux Mint; su guía dice que «puede funcionar» |
+| Linux Mint 22.3 (x86_64), Docker Engine 29.10.0 | Probado el 19-nov-2026 | `./practicar` construyó la imagen en unos 90 segundos, `verifica 00` dio su quinta marca en rojo antes de salir y las cinco en verde al volver; adentro solo existe la red interna `lo`; `./practicar desde-cero` se negó con la sesión abierta y, ya cerrada, borró la carpeta. Ojo: Docker no da soporte oficial a Linux Mint; su guía dice que «puede funcionar» |
 | Mac con Apple silicon, Docker 29.2.1 corriendo con Colima | Probado el 18 y el 19-nov-2026 | Todo lo de esta lección: entrar, salir, volver, `verifica 00`, `desde-cero` y las pantallas que ves aquí |
 | Ubuntu | Sin probar todavía | Docker sí le da soporte oficial; la instalación es la de su guía |
 | Mac con Docker Desktop | Sin probar todavía | La instalación es la de la guía oficial de Docker Desktop |
@@ -554,4 +554,4 @@ Abiertas el 18-nov-2026.
   con Linux Mint 22.3 (x86_64, Docker 29.10.0). Qué se corrió en cada una y cómo se midió cada cifra está en las dos
   tablas de «Antes de empezar». Las pantallas de esta lección y las tres teclas del paso 5 se tomaron en la Mac. La
   revisión del 19-nov —el contenedor sin red, las etiquetas del curso y el `verifica` que ya no usa el reloj— se
-  probó en la Mac. `[pendiente: repetir en Linux Mint la revisión del 19-nov]`
+  probó en las dos.
