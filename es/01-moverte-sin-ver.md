@@ -75,7 +75,8 @@ como ya sabes, con `./practicar`.
 | Sistema | Estado |
 |---|---|
 | Mac con Apple silicon, Docker 29.2.1 corriendo con Colima | Probado el 19-nov-2026: `./practicar reconstruir`, `prepara 01` dos veces, cada comando de los cinco pasos, `verifica 01` en rojo y en verde, y las pantallas que ves aquí |
-| Linux Mint 22.3, Ubuntu, Mac con Docker Desktop, Windows con Docker Desktop y WSL 2 | Sin probar todavía con esta lección |
+| Linux Mint 22.3 (x86_64), Docker Engine 29.10.0 | Probado el 19-nov-2026: `./practicar reconstruir-limpio`, `./practicar reconstruir` con la capa de paquetes reutilizada, `prepara 01` dos veces, `verifica 01` en verde, una ruta mala y un atajo en rojo, y las seis formas de `ls` idénticas a las de GNU |
+| Ubuntu, Mac con Docker Desktop, Windows con Docker Desktop y WSL 2 | Sin probar todavía con esta lección |
 
 **Qué va a coincidir con tu pantalla y qué no.** Coinciden los nombres, los tamaños de los archivos, las fechas y
 las rutas. Pueden variar el acomodo en columnas, los colores, el renglón `total` y el tamaño de las carpetas, que

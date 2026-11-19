@@ -461,6 +461,7 @@ primer grupo que tome el curso.
 | `❌ No encuentro el comando «docker» en esta computadora.` | Docker no está instalado | «Antes de empezar», según tu sistema |
 | `❌ Docker está instalado, pero no pude hablar con él.` | Lo más común: Docker está apagado, o tu usuario no tiene permiso. Puede ser otra cosa | Corre `docker info` y sigue el error exacto que te dé |
 | `no such file or directory: ./practicar` | No estás en la carpeta del curso | `cd curso-terminal` y repite |
+| La primera construcción lleva muchos minutos y salen renglones que empiezan con `Ign:` | Los servidores de paquetes de Ubuntu responden lento. Pasó el 19-nov-2026: la misma construcción tardó 8 minutos, con 3 renglones `Ign:`, contra minuto y medio el 18-nov | Déjala correr. `Ign:` no es un error: apt vuelve a intentar. Si al final sale `❌ No se pudo construir la imagen.`, sigue el renglón de abajo |
 | `❌ No se pudo construir la imagen.` | La red, el espacio en disco, los permisos de Docker o el material del curso | Lee el **primer** error que salió arriba del mensaje, arréglalo y corre `./practicar` otra vez |
 | `❌ ./practicar abre una terminal interactiva…` | Lo corriste con una tubería o una redirección | Córrelo solo: `./practicar` |
 | `command not found: verifica` | Corriste `verifica` en tu computadora, no adentro | Entra con `./practicar`; el indicador debe decir `alumno@practica` |
