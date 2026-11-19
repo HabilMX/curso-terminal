@@ -1,0 +1,5 @@
+# Patrones internos: no se publican
+.publicable-interno.txt
+# Respaldos y basura del sistema
+*.bak
+.DS_Store
