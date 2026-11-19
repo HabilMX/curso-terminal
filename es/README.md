@@ -2,6 +2,8 @@
 
 **Por Dorian Chávez, fundador de Hábil y arquitecto de integración.**
 
+**La página del curso:** [habil.mx/es/cursos/terminal/](https://www.habil.mx/es/cursos/terminal/), con el temario y las lecciones en cinco idiomas.
+
 **Para quién es:** para quien programa y nunca ha vivido en una terminal. No se supone nada de Linux.
 
 **Qué vas a terminar sabiendo:** entrar a una terminal de Linux sin pantalla y trabajar ahí sin miedo. Te mueves por

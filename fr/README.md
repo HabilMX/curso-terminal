@@ -2,6 +2,8 @@
 
 **Par Dorian Chávez, fondateur de Hábil et architecte d'intégration.**
 
+**Page du cours :** [habil.mx/fr/cours/terminal/](https://www.habil.mx/fr/cours/terminal/), avec le programme et les leçons en cinq langues.
+
 **À qui s'adresse ce cours :** à celles et ceux qui programment et n'ont jamais travaillé dans un terminal. Aucune
 connaissance de Linux n'est supposée.
 

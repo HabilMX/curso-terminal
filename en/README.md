@@ -2,6 +2,8 @@
 
 **By Dorian Chávez, founder of Hábil and integration architect.**
 
+**Course page:** [habil.mx/en/courses/terminal/](https://www.habil.mx/en/courses/terminal/), with the syllabus and the lessons in five languages.
+
 **Who it is for:** people who write code and have never worked in a terminal. No Linux is assumed.
 
 **What you will know by the end:** how to get into a Linux terminal with no screen and work there without fear. You
