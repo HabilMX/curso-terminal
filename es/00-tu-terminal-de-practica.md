@@ -9,16 +9,15 @@
 - **Indicador:** el texto que la terminal pone al principio de la línea cuando espera tu siguiente comando. En
   inglés, *prompt*.
 - **Docker:** el programa que crea y corre contenedores.
-- **Contenedor:** una computadora Linux chiquita que vive dentro de la tuya. Lo que hagas adentro no toca tu
-  computadora.
+- **Contenedor:** una computadora Linux chiquita que vive dentro de la tuya, separada de tus archivos.
 - **Imagen:** el molde del que sale un contenedor. Se construye una vez y se usa muchas.
 
 **Qué te llevas:** tu terminal de práctica funcionando, que es un Ubuntu 26.04 dentro de un contenedor; sabes entrar,
 salir y volver sin perder tu trabajo; lees el indicador; le pides ayuda a la propia máquina; y sales de cualquier
 programa que te atrape.
 
-**Idea nueva de esta lección (la única que se evalúa):** una terminal de Linux no tiene ventanas: te dice quién eres
-y dónde estás en cada línea, y se le habla con comandos.
+**Idea nueva de esta lección (la única que se evalúa):** en esta terminal no hay escritorio ni ventanas, solo
+texto: te dice quién eres y dónde estás en cada línea, y se le habla con comandos.
 
 **En qué orden va:** primero levantas la terminal (pasos 1 y 2), luego lees lo que te dice (paso 3), luego aprendes
 a pedirle ayuda (paso 4) y al final a salir de donde te atores (paso 5).
@@ -44,7 +43,7 @@ Lucía no lo sabe todavía, pero esa línea ya le contestó dos de las tres preg
 quién es ahí adentro y en qué carpeta está parada. La tercera, qué hacer, se le pregunta a la propia máquina. Y si
 algo se queda trabado, hay tres teclas para salir.
 
-Esta lección te da esas cuatro cosas en una máquina donde no hay nada que romper: la tuya, de práctica.
+Esta lección te da esas cuatro cosas en una máquina hecha para equivocarse: la tuya, de práctica.
 
 ---
 
@@ -52,29 +51,50 @@ Esta lección te da esas cuatro cosas en una máquina donde no hay nada que romp
 
 **Qué necesitas:**
 
-| | Sirve | Notas |
+| | Qué | Notas |
 |---|---|---|
-| Sistema | Linux, Mac o Windows | Medido en una computadora con Linux Mint 22.3 (x86_64) y en una Mac con Apple silicon. Windows: `[pendiente: medir en Windows con Docker Desktop y WSL2]` |
+| Sistema | Linux, Mac o Windows | Abajo dice en cuáles ya se probó y en cuáles falta |
 | Docker | Instalado y respondiendo | Abajo dice cómo, por sistema |
-| Disco | Menos de 300 MB para la imagen del curso | Las herramientas de Docker miden distinto: la misma imagen dio 221 MB con un comando y 277 MB con otro. Por eso va un tope y no una cifra |
-| Red | Para descargar Ubuntu y unos paquetes la primera vez | |
+| Disco | Menos de 300 MB para la imagen del curso | Va un tope y no una cifra, porque cada herramienta de Docker mide distinto (abajo) |
+| Red | Para descargar Ubuntu y unos paquetes la primera vez | Solo la usa tu computadora al construir; adentro de la terminal de práctica no hay red |
 | Saber | Abrir la terminal de tu computadora y pegar una línea | No se supone nada de Linux ni de Docker |
+
+**Dónde se probó, y dónde falta:**
+
+| Sistema | Estado | Qué se corrió |
+|---|---|---|
+| Linux Mint 22.3 (x86_64), Docker Engine 29.10.0 | Probado el 19-nov-2026 | `./practicar` construyó la imagen en unos 90 segundos, `verifica 00` dio sus cinco marcas en verde y `./practicar desde-cero` borró la carpeta. Ojo: Docker no da soporte oficial a Linux Mint; su guía dice que «puede funcionar» |
+| Mac con Apple silicon, Docker 29.2.1 corriendo con Colima | Probado el 18 y el 19-nov-2026 | Todo lo de esta lección: entrar, salir, volver, `verifica 00`, `desde-cero` y las pantallas que ves aquí |
+| Ubuntu | Sin probar | Docker sí le da soporte oficial. `[pendiente: medir en Ubuntu]` |
+| Mac con Docker Desktop | Sin probar | Instrucciones de la guía oficial. `[pendiente: medir en Mac con Docker Desktop]` |
+| Windows con Docker Desktop y WSL 2 | Sin probar | Instrucciones de las guías oficiales. `[pendiente: medir en Windows con Docker Desktop y WSL2]` |
+
+**Las cifras de esta lección, y cómo se midieron:**
+
+| Cifra | Cómo se midió |
+|---|---|
+| Construir la imagen: 42 segundos | Mac con Apple silicon, 18-nov-2026, con `time ./practicar reconstruir`: sin caché y con la imagen de Ubuntu ya descargada |
+| Construir la imagen: 1 minuto 38 segundos | La misma Mac, 18-nov-2026, con `docker build --no-cache`, sobre una versión anterior del Dockerfile |
+| Construir la imagen: unos 90 segundos | Linux Mint 22.3 (x86_64), 19-nov-2026, con `./practicar` |
+| Tamaño: 221 MB | Linux Mint, 18-nov-2026, con `docker image inspect` |
+| Tamaño: 277 MB | Mac, 18-nov-2026, con `docker image ls` |
 
 **Instala Docker, según tu sistema.** Es lo único que se instala en tu computadora.
 
 - **Linux Mint o Ubuntu:** Docker Engine, desde el repositorio oficial de Docker. La
   [lección 1 del curso de Docker](https://www.habil.mx/es/cursos/docker/01-instalacion/) de esta casa lo hace paso a
-  paso en Linux Mint y explica cada error. En la computadora de la prueba, el usuario estaba en el grupo `docker` y
+  paso en Linux Mint y explica cada error. Docker no da soporte oficial a Mint, y esa lección dice qué hacer al
+  respecto. En la computadora de la prueba, el usuario estaba en el grupo `docker` y
   usó Docker sin `sudo`; esa misma lección explica qué implica entrar a ese grupo.
 - **Mac:** Docker Desktop, con el instalador de tu procesador (Apple silicon o Intel), desde la
   [guía oficial](https://docs.docker.com/desktop/setup/install/mac-install/). Ábrelo y espera a que diga que está
-  corriendo. En la Mac de la prueba, Docker corría con otra herramienta, Colima, y no con Docker Desktop.
-  `[pendiente: medir en Mac con Docker Desktop]`
+  corriendo. En la Mac de la prueba, Docker corría con otra herramienta, Colima, y no con Docker Desktop: por eso
+  esta vía está en la tabla como «sin probar».
 - **Windows:** la vía documentada es Docker Desktop con WSL 2. WSL es la pieza de Windows que corre un Linux adentro.
   Según Microsoft, en Windows 10 (versión 2004 o posterior) y Windows 11 se instala con `wsl --install` en un
   PowerShell abierto como administrador, y trae Ubuntu. Según Docker, después se instala Docker Desktop y se enciende
   la integración en *Settings › Resources › WSL Integration*. Todo lo que sigue lo corres en la terminal de ese
-  Ubuntu, no en PowerShell. `[pendiente: medir en Windows con Docker Desktop y WSL2]`
+  Ubuntu, no en PowerShell. También está en la tabla como «sin probar».
 
 **Comprueba que Docker responde.** Abre la terminal de tu computadora y corre:
 
@@ -83,17 +103,19 @@ docker version
 ```
 
 Vas bien si ves dos bloques, `Client` y `Server`, cada uno con su versión. En las pruebas fueron Docker 29.10.0 en
-Linux y 29.2.1 en la Mac. Si solo aparece `Client` y luego un error, Docker está instalado pero apagado: ve a
-«¿No te corre?».
+Linux y 29.2.1 en la Mac. Si aparece `Client` y, en lugar de `Server`, un error, el programa `docker` no pudo hablar
+con su motor. Corre `docker info` y sigue el error exacto que te dé; las causas más comunes están en «¿No te corre?».
 
-**Trae el material del curso.** Es un repositorio público:
+**Trae el material del curso.** Está en un **repositorio**: una carpeta con todos los archivos del curso, publicada
+en GitHub. El programa `git` la descarga con la primera línea; la segunda te mete a esa carpeta:
 
 ```bash
 git clone https://github.com/HabilMX/curso-terminal.git
 cd curso-terminal
 ```
 
-Si no tienes `git`, en esa misma página de GitHub el botón *Code › Download ZIP* te da lo mismo.
+**Sin `git`:** abre esa dirección en tu navegador, elige *Code › Download ZIP*, descomprime el archivo y abre tu
+terminal en la carpeta que se creó. No copies el `cd curso-terminal` de arriba: esa carpeta puede llamarse distinto.
 
 ---
 
@@ -109,8 +131,8 @@ Desde la carpeta del curso:
 ```
 
 `practicar` es un guion del curso. La primera vez construye la imagen: descarga Ubuntu 26.04 y le pone lo que el
-curso usa. En las pruebas tardó entre 42 segundos y 1 minuto 38 segundos, según la red. Las siguientes veces entra
-de inmediato.
+curso usa. En las pruebas tardó entre 42 segundos y 1 minuto 38 segundos. Las siguientes veces ya no descarga ni
+reconstruye: en la Mac de la prueba entró en menos de dos segundos. Tu tiempo depende de Docker y de tu equipo.
 
 Verás pasar mucho texto y, al final, esto:
 
@@ -122,6 +144,10 @@ alumno@practica:~$
 
 No se abrió ninguna ventana. **Sigues en la misma ventana, pero ya estás en otra máquina.** La última línea es el
 indicador de tu terminal de práctica, y la vas a leer con calma en el paso 3. Compara con lo que predijiste.
+
+**Qué tan separada está de tu computadora.** Para estos ejercicios no se conecta ninguna carpeta de tu computadora,
+la terminal corre como `alumno`, sin privilegios de administrador, y adentro no hay red. Tu trabajo se guarda solo
+en la carpeta `~/practica`. Lo que el contenedor sí usa de tu computadora es procesador, memoria y disco.
 
 Corre tu primer comando adentro:
 
@@ -137,7 +163,7 @@ salir así:
 ✅ Eres el usuario alumno (medí: id -un)
 ✅ /home/alumno/practica existe y es una carpeta (medí: que exista como carpeta)
 ✅ Puedes escribir en /home/alumno/practica (medí: creé un archivo vacío ahí y lo borré)
-❌ Falta /home/alumno/practica/00/aqui-estuve.txt (medí: que el archivo exista). Créalo con el paso 2 de la lección, sal con exit y vuelve a entrar
+❌ Falta /home/alumno/practica/00/aqui-estuve.txt (medí: que el archivo exista). Créalo con el paso 2 de la lección, corre  verifica 00, sal con exit y vuelve a entrar
 
 ❌ Lección 00: falta lo marcado con ❌. Arréglalo y corre  verifica 00  otra vez.
 ```
@@ -157,23 +183,28 @@ limpio.
 **Predice primero.** Vas a crear un archivo dentro de `practica`, salir y volver a entrar. ¿Seguirá ahí? ¿Y si lo
 hubieras creado fuera de `practica`?
 
-Estas dos líneas vienen dadas; los comandos que usan se enseñan en las lecciones 02 y 06. Escríbelas tal cual:
+Hoy estas dos líneas son una receta dada. Escríbelas tal cual:
 
 ```bash
 mkdir ~/practica/00
 date > ~/practica/00/aqui-estuve.txt
 ```
 
-La primera crea la carpeta `00` dentro de `practica`. La segunda guarda la fecha y la hora en un archivo. Ninguna
-contesta nada: en la terminal, **el silencio suele significar que salió bien**.
+- `mkdir` crea una carpeta: aquí, la carpeta `00` dentro de `practica`.
+- `date` contesta la fecha y la hora. El signo `>` manda esa respuesta a un archivo en lugar de a la pantalla.
+- `~` es la abreviatura de tu carpeta personal. La ves con calma en el paso 3.
 
-Corre `verifica 00` otra vez. El último renglón cambió:
+En las lecciones 02 y 06 entiendes cada pieza a detalle. Ninguna de las dos líneas contesta nada: en la terminal,
+**el silencio suele significar que salió bien**.
+
+Corre `verifica 00` otra vez, **antes de salir**. El último renglón cambió:
 
 ```text
-❌ aqui-estuve.txt existe, pero se escribió en ESTA sesión (medí: la sesión arrancó hace 8 s y el archivo se escribió después, hace 2 s). Te falta salir con exit, volver a entrar con ./practicar y correr  verifica 00  otra vez, sin tocar el archivo
+❌ Tu marca aqui-estuve.txt ya existe, y es la primera vez que la veo: fue en ESTA sesión (medí: no había apunte de una sesión anterior; lo acabo de dejar en 00/.sesion-verifica). Te falta salir con exit, volver a entrar con ./practicar y correr  verifica 00  otra vez
 ```
 
-Hazle caso. Sal:
+`verifica` ya vio tu marca y apuntó en qué sesión la vio. Una **sesión** es cada vez que entras. El apunte queda en
+tu carpeta de práctica, en un archivo que se llama `.sesion-verifica`. Ahora hazle caso. Sal:
 
 ```bash
 exit
@@ -181,21 +212,21 @@ exit
 
 ```text
 logout
-Saliste de la terminal de práctica. Tu carpeta ~/practica quedó guardada.
-Para volver a entrar:  ./practicar
+Saliste de la terminal de práctica.
+Lo que dejaste en ~/practica sigue guardado. Para volver a entrar:  ./practicar
 ```
 
 Fíjate en el indicador: cambió. Ya no dice `alumno@practica`. Estás de vuelta en tu computadora. Vuelve a entrar con
 `./practicar` y corre `verifica 00`:
 
 ```text
-✅ Saliste y volviste sin perder tu carpeta (medí: aqui-estuve.txt se escribió hace 8 s y esta sesión arrancó después, hace 4 s)
+✅ Saliste y volviste sin perder tu carpeta (medí: tu marca ya existía en una sesión anterior a esta, según el apunte de 00/.sesion-verifica)
 
 ✅ Lección 00: todo en verde.
 ```
 
-Tus tiempos serán otros. Lo que importa es el orden: el archivo es más viejo que la sesión, así que sobrevivió a una
-salida.
+`verifica` no usa el reloj. Compara dos cosas: la sesión en que vio tu marca por primera vez y la sesión de ahora.
+Son distintas y la marca sigue ahí: saliste, volviste y tu carpeta sobrevivió.
 
 **Empezar de cero.** Si un día quieres tu carpeta de práctica vacía otra vez, desde tu computadora (no desde
 adentro):
@@ -204,8 +235,9 @@ adentro):
 ./practicar desde-cero
 ```
 
-Pide que escribas `si` antes de borrar, porque no se puede deshacer. Es un comando que borra: escríbelo tú, a mano.
-Si lo corres ahora, tendrás que repetir este paso.
+Pide que escribas `si` antes de borrar, porque no se puede deshacer. Borra solo tu carpeta de práctica. Si tienes la
+terminal de práctica abierta en otra ventana, no borra nada y te pide salir primero. Es un comando que borra:
+escríbelo tú, a mano. Si lo corres ahora, tendrás que repetir este paso.
 
 **Lo demuestra** (objetivo 0.1 completo): `verifica 00` todo en verde.
 
@@ -271,8 +303,8 @@ Options:
   -V, --version  Print version
 ```
 
-La ayuda viene en inglés, como en casi todos los servidores. Se lee así: qué hace, cómo se usa (*Usage*) y qué
-opciones acepta (*Options*). Una **opción** es una palabra con guiones que cambia lo que hace el comando.
+En esta terminal la ayuda aparece en inglés. Tiene tres partes: qué hace, cómo se usa (*Usage*) y qué opciones
+acepta (*Options*). Una **opción** es una palabra con guiones que cambia lo que hace el comando.
 
 **La larga: `man`.** Es el manual (`man`, de *manual*). Cada comando tiene su página:
 
@@ -286,11 +318,12 @@ Ahora la pantalla es distinta. Ya no ves el indicador, y abajo dice:
  Manual page whoami(1) line 1 (press h for help or q to quit)
 ```
 
-Estás **dentro** del manual. Lo que teclees ya no son comandos: son teclas del manual. Estas cuatro alcanzan:
+Estás **dentro** del manual. Lo que teclees ya no son comandos: son teclas del manual. Estas cinco alcanzan:
 
 | Tecla | Qué hace |
 |---|---|
-| Flechas, o barra espaciadora | Bajar y subir; la barra avanza una pantalla |
+| Flecha abajo, o barra espaciadora | Baja: la flecha, un renglón; la barra, una pantalla |
+| Flecha arriba | Sube un renglón |
 | `/` y una palabra, luego Enter | Busca esa palabra hacia abajo |
 | `n` | Va a la siguiente aparición |
 | `q` | Sale del manual y te regresa al indicador |
@@ -376,8 +409,8 @@ Tres cosas medidas que conviene saber:
 ## Tres notas sobre tu terminal de práctica
 
 **Tu Mac usa zsh; adentro usas bash.** El programa que lee tus comandos se llama *shell*. Desde macOS 10.15, el de
-las cuentas nuevas de Mac es zsh, según Apple. Adentro del contenedor es bash, que es el que vas a encontrar en los
-servidores. Por eso todo el curso se hace adentro: el mismo comando da lo mismo en todas las computadoras del grupo.
+las cuentas nuevas de Mac es zsh, según Apple. Adentro del contenedor es bash, que es común en muchos
+servidores. Por eso todo el curso se hace adentro: todo el grupo practica en el mismo entorno.
 La terminal de tu computadora solo sirve para correr `./practicar`.
 
 **`htop` y `ps` solo ven el contenedor.** Cuando abriste `htop` viste solo dos programas: bash y el propio htop. No
@@ -390,8 +423,9 @@ terminal se ve en `man whoami`: bajo *VERSION* dice `uutils coreutils`. Tres sig
 
 - **Qué significa para ti:** si comparas con un tutorial o con un servidor más viejo, el texto de `man` y de
   `--help` puede ser distinto del que ves aquí. No es error tuyo ni del tutorial.
-- **Qué no cambia en este curso:** los comandos se llaman igual y las opciones que se enseñan funcionan igual. Y
-  todas las salidas de las lecciones se tomaron en esta misma imagen.
+- **Qué no cambia en este curso:** los comandos se llaman igual y las opciones que se enseñan funcionan igual. Las
+  salidas que ves en las lecciones son de la imagen probada el 18 y el 19-nov-2026. La imagen se construye siempre
+  sobre el Ubuntu 26.04 vigente, así que tras una actualización una salida puede variar un poco.
 
 ---
 
@@ -423,15 +457,17 @@ primer grupo que tome el curso.
 | Ves | Causa probable | Qué haces |
 |---|---|---|
 | `❌ No encuentro el comando «docker» en esta computadora.` | Docker no está instalado | «Antes de empezar», según tu sistema |
-| `❌ Docker está instalado, pero no responde.` | Docker está apagado, o tu usuario no tiene permiso | Sigue lo que dice el mismo mensaje. Para ver el error completo: `docker info` |
+| `❌ Docker está instalado, pero no pude hablar con él.` | Lo más común: Docker está apagado, o tu usuario no tiene permiso. Puede ser otra cosa | Corre `docker info` y sigue el error exacto que te dé |
 | `no such file or directory: ./practicar` | No estás en la carpeta del curso | `cd curso-terminal` y repite |
-| `❌ La imagen no se pudo construir.` | Casi siempre, la red | Revisa tu conexión y corre `./practicar` otra vez |
+| `❌ No se pudo construir la imagen.` | La red, el espacio en disco, los permisos de Docker o el material del curso | Lee el **primer** error que salió arriba del mensaje, arréglalo y corre `./practicar` otra vez |
 | `❌ ./practicar abre una terminal interactiva…` | Lo corriste con una tubería o una redirección | Córrelo solo: `./practicar` |
 | `command not found: verifica` | Corriste `verifica` en tu computadora, no adentro | Entra con `./practicar`; el indicador debe decir `alumno@practica` |
 | `mkdir: /home/alumno/practica/00: File exists` | Ya habías creado la carpeta `00` | No pasa nada: sigue con la línea de `date` |
-| El último renglón de `verifica 00` sigue en rojo después de volver | Volviste a escribir el archivo en esta sesión | Sal con `exit`, entra y corre `verifica 00` sin tocar el archivo |
+| El último renglón de `verifica 00` sigue en rojo después de volver | No corriste `verifica 00` antes de salir, así que apenas vio tu marca | Ya quedó apuntada: sal con `exit`, entra y corre `verifica 00` otra vez |
+| `❌ No sé en qué sesión estás…` | Entraste al contenedor sin el guion del curso | Sal y entra con `./practicar` |
 | El indicador no vuelve | Un programa tomó la terminal | Prueba `q`; si no, Ctrl+C; si no, Ctrl+D (paso 5) |
-| Cerraste la ventana sin escribir `exit` | La terminal de práctica pudo quedarse abierta por dentro | Abre otra ventana y entra con `./practicar`: tu carpeta sigue ahí. `./practicar desde-cero` cierra la que quedó abierta antes de borrar |
+| Cerraste la ventana sin escribir `exit` | La terminal de práctica pudo quedarse abierta por dentro | Abre otra ventana y entra con `./practicar`: tu carpeta sigue ahí |
+| `❌ No borré nada: tu carpeta de práctica está en uso.` | Hay una terminal de práctica abierta, quizá de una ventana que cerraste sin `exit` | Sal de ella con `exit`. Si ya no tienes esa ventana, el mismo mensaje te da la línea `docker stop …` para cerrarla tú |
 | El curso se actualizó y `verifica` no conoce una lección | Tu imagen es de antes | `./practicar reconstruir` |
 
 ---
@@ -475,7 +511,7 @@ sin verlas.
 
 **Paso 3 (ejercicio 0.2).** `whoami` contesta `alumno`. `hostname` contesta `practica`. `pwd` contesta
 `/home/alumno`. Ese es el truco: el indicador dice `~`, y `~` es la abreviatura de tu carpeta personal, que en esta
-máquina es `/home/alumno`. Si escribiste `~`, leíste bien el indicador; ahora ya sabes qué hay detrás.
+máquina es `/home/alumno`. `~` y `/home/alumno` nombran el mismo lugar: el indicador usa la forma corta.
 
 **Ejercicio 0.3.**
 
@@ -510,10 +546,10 @@ Abiertas el 18-nov-2026.
 - Docker. *Docker Desktop WSL 2 backend on Windows* (integración con la distribución de WSL). https://docs.docker.com/desktop/features/wsl/
 - Microsoft. *How to install Linux on Windows with WSL* (`wsl --install`; versiones de Windows). https://learn.microsoft.com/en-us/windows/wsl/install
 - Docker. *Volumes* (un volumen guarda datos fuera del contenedor y sobrevive a que este se borre). https://docs.docker.com/engine/storage/volumes/
-- Docker. *docker container run* (`-i`, `-t`, `--rm`, `-h`; cada contenedor tiene su propia lista de procesos). https://docs.docker.com/reference/cli/docker/container/run/
+- Docker. *docker container run* (`-i`, `-t`, `--rm`, `-h`, `--network`; cada contenedor tiene su propia lista de procesos). https://docs.docker.com/reference/cli/docker/container/run/
 - Apple. *Use zsh as the default shell on Mac* (zsh por omisión desde macOS 10.15). https://support.apple.com/en-us/102360
-- Medición propia, 18-nov-2026. En una computadora con Linux Mint 22.3 (x86_64, Docker 29.10.0) y en una Mac con
-  Apple silicon (Docker 29.2.1, linux/arm64): la imagen se construyó, `man` respondió en los comandos del curso, el
-  indicador fue `alumno@practica:~$`, y un archivo en `~/practica` sobrevivió a salir y volver a entrar. Solo en la
-  Mac: el guion `practicar`, el `verifica`, las pantallas de esta lección y las tres teclas del paso 5.
-  `[pendiente: repetir en Linux Mint el guion practicar y el verifica]`
+- Medición propia, 18 y 19-nov-2026, en una Mac con Apple silicon (Docker 29.2.1, linux/arm64) y en una computadora
+  con Linux Mint 22.3 (x86_64, Docker 29.10.0). Qué se corrió en cada una y cómo se midió cada cifra está en las dos
+  tablas de «Antes de empezar». Las pantallas de esta lección y las tres teclas del paso 5 se tomaron en la Mac. La
+  revisión del 19-nov —el contenedor sin red, las etiquetas del curso y el `verifica` que ya no usa el reloj— se
+  probó en la Mac. `[pendiente: repetir en Linux Mint la revisión del 19-nov]`

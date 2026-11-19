@@ -6,10 +6,17 @@
 #   ./practicar reconstruir  vuelve a construir la imagen (cuando el curso se actualiza)
 #
 # Corre en macOS (también con el bash 3.2 que trae) y en Linux. Necesita Docker.
+#
+# Qué toca en tu computadora, y nada más: una imagen («curso-terminal»), un volumen
+# («curso-terminal-practica», donde vive tu carpeta ~/practica) y el contenedor de
+# cada sesión, que se quita solo al salir. El volumen y los contenedores llevan una
+# etiqueta del curso; este guion solo borra lo que trae esa etiqueta.
 set -u
 
 IMAGEN="curso-terminal"
 VOLUMEN="curso-terminal-practica"
+TEMPORAL="curso-terminal-practica-adopcion"
+ETIQUETA="curso-terminal=practica"
 AQUI="$(cd "$(dirname "$0")" && pwd)"
 
 revisar_docker() {
@@ -19,18 +26,18 @@ revisar_docker() {
     exit 1
   fi
   if ! docker info >/dev/null 2>&1; then
-    echo "❌ Docker está instalado, pero no responde. Revisa esto:"
+    echo "❌ Docker está instalado, pero no pude hablar con él. Las causas más comunes:"
     case "$(uname -s)" in
       Darwin)
         echo "   • En Mac, Docker corre dentro de un programa que tiene que estar abierto."
         echo "     Abre Docker Desktop (o el que uses), espera a que diga que está corriendo y repite." ;;
       *)
-        echo "   • ¿El servicio está encendido?   sudo systemctl start docker"
-        echo "   • ¿Tu usuario está en el grupo docker?   El comando «groups» debe mostrar «docker»."
+        echo "   • El servicio está apagado. Se enciende con:   sudo systemctl start docker"
+        echo "   • Tu usuario no está en el grupo docker. El comando «groups» debe mostrar «docker»."
         echo "     Si te acabas de agregar al grupo, cierra tu sesión y vuelve a entrar."
-        echo "   • En Windows con WSL2: abre Docker Desktop y enciende la integración con tu distribución." ;;
+        echo "   • En Windows con WSL2: Docker Desktop cerrado, o sin la integración con tu distribución." ;;
     esac
-    echo "   Para ver el error completo, corre:   docker info"
+    echo "   Puede ser otra cosa. Corre   docker info   y sigue el error exacto que te dé."
     exit 1
   fi
 }
@@ -38,11 +45,84 @@ revisar_docker() {
 construir() {
   echo "Construyendo la imagen «${IMAGEN}». Descarga Ubuntu y unos paquetes: tarda un par de minutos."
   if ! docker build ${1+"$@"} -t "$IMAGEN" "$AQUI/imagen"; then
-    echo "❌ La imagen no se pudo construir. Lee el error de arriba: casi siempre es la red."
-    echo "   Revisa tu conexión y vuelve a correr ./practicar"
+    echo "❌ No se pudo construir la imagen. Lee el PRIMER error de arriba: puede ser la red,"
+    echo "   el espacio en disco, los permisos de Docker o el material del curso."
+    echo "   Cuando lo arregles, vuelve a correr ./practicar"
     exit 1
   fi
   echo "✅ Imagen lista."
+}
+
+existe_volumen() { docker volume inspect "$1" >/dev/null 2>&1; }
+
+# ¿El volumen trae la etiqueta del curso? Solo lo que la trae se considera nuestro.
+es_del_curso() {
+  [ "$(docker volume inspect -f '{{ index .Labels "curso-terminal" }}' "$1" 2>/dev/null)" = "practica" ]
+}
+
+crear_volumen() { docker volume create --label "$ETIQUETA" "$1" >/dev/null; }
+
+# Copia todo de un volumen a otro y comprueba que quedaron iguales. No borra nada.
+copiar_volumen() {
+  docker run --rm --network none --user root --label "$ETIQUETA" \
+    --mount "type=volume,src=$1,dst=/de" --mount "type=volume,src=$2,dst=/a" \
+    "$IMAGEN" sh -c 'cp -a /de/. /a/ && diff -r /de /a' >/dev/null
+}
+
+# Segunda mitad de la adopción: la copia etiquetada pasa a llamarse como la carpeta.
+terminar_adopcion() {
+  if crear_volumen "$VOLUMEN" && copiar_volumen "$TEMPORAL" "$VOLUMEN"; then
+    docker volume rm "$TEMPORAL" >/dev/null
+    echo "✅ Carpeta adoptada. Tu trabajo sigue ahí."
+  else
+    echo "❌ No pude terminar de adoptar la carpeta. Tu trabajo está completo en el volumen «${TEMPORAL}»:"
+    echo "   no lo borres. Vuelve a correr ./practicar para reintentar."
+    exit 1
+  fi
+}
+
+# Una carpeta de práctica hecha con una versión anterior del curso no trae etiqueta,
+# y Docker no deja ponérsela después. Adoptarla es copiarla a un volumen etiquetado.
+# La original solo se borra cuando la copia ya se comprobó.
+adoptar() {
+  echo "Encontré una carpeta de práctica («${VOLUMEN}») hecha con una versión anterior del curso:"
+  echo "no trae la etiqueta que ahora la marca como tuya. Puedo adoptarla: copio tu trabajo a una"
+  echo "carpeta etiquetada y compruebo la copia antes de quitar la vieja. No se pierde nada."
+  printf "¿La adopto? Escribe  si  y presiona Enter (cualquier otra cosa: se queda como está): "
+  read -r respuesta || respuesta=""
+  case "$respuesta" in
+    si|sí|SI|SÍ|Si|Sí) ;;
+    *) echo "Se queda como está. Puedes practicar igual; lo único que no se podrá es ./practicar desde-cero."
+       return 0 ;;
+  esac
+  if [ -n "$(docker ps -aq --filter "volume=$VOLUMEN")" ]; then
+    echo "No la adopto ahora: hay un contenedor usándola. Entras con la carpeta como está."
+    return 0
+  fi
+  if crear_volumen "$TEMPORAL" && copiar_volumen "$VOLUMEN" "$TEMPORAL"; then
+    docker volume rm "$VOLUMEN" >/dev/null || { echo "❌ No pude quitar la carpeta vieja. No se perdió nada."; exit 1; }
+    terminar_adopcion
+  else
+    existe_volumen "$TEMPORAL" && es_del_curso "$TEMPORAL" && docker volume rm "$TEMPORAL" >/dev/null 2>&1
+    echo "No pude copiarla, así que no toqué nada. Entras con la carpeta como está."
+  fi
+}
+
+asegurar_volumen() {
+  # Una adopción que se interrumpió a la mitad deja una copia etiquetada.
+  if existe_volumen "$TEMPORAL" && es_del_curso "$TEMPORAL"; then
+    if existe_volumen "$VOLUMEN"; then
+      docker volume rm "$TEMPORAL" >/dev/null 2>&1   # la original sigue entera: la copia sobra
+    else
+      echo "Una adopción anterior quedó a medias. La termino."
+      terminar_adopcion
+    fi
+  fi
+  if ! existe_volumen "$VOLUMEN"; then
+    crear_volumen "$VOLUMEN" || { echo "❌ No pude crear tu carpeta de práctica. Corre  docker info  y revisa el error."; exit 1; }
+  elif ! es_del_curso "$VOLUMEN"; then
+    adoptar
+  fi
 }
 
 case "${1:-}" in
@@ -56,8 +136,15 @@ case "${1:-}" in
     if ! docker image inspect "$IMAGEN" >/dev/null 2>&1; then
       construir
     fi
+    asegurar_volumen
+    # Cada entrada lleva un identificador distinto. «verifica» lo usa para saber si
+    # saliste y volviste; no depende del reloj.
+    SESION="$(date +%s)-$$-$RANDOM"
     echo "Entrando a tu terminal de práctica. Para salir, escribe  exit  (o Ctrl+D)."
-    docker run -it --rm -h practica -v "$VOLUMEN:/home/alumno/practica" "$IMAGEN"
+    # --network none: adentro no hay red. El curso no la necesita.
+    docker run -it --rm --network none --label "$ETIQUETA" -h practica \
+      --env "CURSO_TERMINAL_SESION=$SESION" \
+      --mount "type=volume,src=$VOLUMEN,dst=/home/alumno/practica" "$IMAGEN"
     rc=$?
     # 125 es de Docker: no pudo arrancar el contenedor. Cualquier otro número es
     # solo el del último comando que corriste adentro, y no es un error de aquí.
@@ -66,33 +153,48 @@ case "${1:-}" in
       echo "   Si no se entiende, corre  ./practicar reconstruir  y vuelve a intentar."
       exit 1
     fi
-    echo "Saliste de la terminal de práctica. Tu carpeta ~/practica quedó guardada."
-    echo "Para volver a entrar:  ./practicar"
+    echo "Saliste de la terminal de práctica."
+    if existe_volumen "$VOLUMEN"; then
+      echo "Lo que dejaste en ~/practica sigue guardado. Para volver a entrar:  ./practicar"
+    else
+      echo "Tu carpeta de práctica se borró mientras tanto: la próxima vez que entres estará vacía."
+    fi
     exit 0
     ;;
   desde-cero)
     revisar_docker
-    if ! docker volume inspect "$VOLUMEN" >/dev/null 2>&1; then
+    if ! existe_volumen "$VOLUMEN"; then
       echo "No hay nada que borrar: tu carpeta de práctica todavía no existe."
       exit 0
     fi
+    if ! es_del_curso "$VOLUMEN"; then
+      echo "❌ No la borro: el volumen «${VOLUMEN}» existe, pero no trae la etiqueta del curso."
+      echo "   Si es tu carpeta de una versión anterior, entra con ./practicar: ahí te ofrece adoptarla."
+      exit 1
+    fi
+    # Docker no borra un volumen en uso, y este guion no cierra nada a la fuerza.
+    if [ -n "$(docker ps -aq --filter "volume=$VOLUMEN")" ]; then
+      del_curso="$(docker ps -aq --filter "volume=$VOLUMEN" --filter "label=$ETIQUETA")"
+      echo "❌ No borré nada: tu carpeta de práctica está en uso."
+      if [ -n "$del_curso" ]; then
+        echo "   Hay una terminal de práctica abierta. Sal de ella con  exit  y vuelve a correr"
+        echo "   ./practicar desde-cero"
+        echo "   ¿Cerraste la ventana sin escribir exit? Entonces sigue abierta por dentro. Ciérrala tú:"
+        for c in $del_curso; do echo "     docker stop $c"; done
+      else
+        echo "   La usa un contenedor que no es del curso. No lo toco: ciérralo tú y repite."
+        echo "   Para verlo:   docker ps -a --filter volume=$VOLUMEN"
+      fi
+      exit 1
+    fi
     echo "Esto BORRA todo lo que hay en ~/practica dentro de tu terminal de práctica."
-    echo "No se puede deshacer. Tu computadora no se toca: solo esa carpeta."
+    echo "No se puede deshacer. No se borra nada más: ni la imagen ni archivos de tu computadora."
     printf "Para confirmar, escribe  si  y presiona Enter: "
     read -r respuesta || respuesta=""
     case "$respuesta" in
       si|sí|SI|SÍ|Si|Sí) ;;
       *) echo "No se borró nada."; exit 0 ;;
     esac
-    # Si cerraste la ventana sin escribir exit, la terminal de práctica puede seguir
-    # abierta por dentro, y Docker no borra una carpeta en uso. Se cierran primero
-    # las terminales de práctica que la estén usando (solo esas, ninguna otra cosa).
-    abiertas="$(docker ps -aq --filter "volume=$VOLUMEN")"
-    if [ -n "$abiertas" ]; then
-      echo "Había una terminal de práctica abierta. La cierro para poder borrar la carpeta."
-      # shellcheck disable=SC2086
-      docker rm -f $abiertas >/dev/null 2>&1
-    fi
     if docker volume rm "$VOLUMEN" >/dev/null 2>&1; then
       echo "✅ Carpeta de práctica borrada. La próxima vez que entres con ./practicar, ~/practica estará vacía."
     else

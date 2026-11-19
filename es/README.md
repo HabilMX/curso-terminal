@@ -14,9 +14,9 @@ dice cómo tenerlo en Linux, en Mac y en Windows, y te deja la terminal de prác
 ## Dónde se practica
 
 En un **contenedor**: una computadora Linux chiquita que vive dentro de la tuya. Es Ubuntu 26.04 LTS, se levanta con
-un solo comando (`./practicar`) y nada de lo que hagas adentro toca tu computadora. Si la descompones, la tiras y
-empiezas de nuevo. Todos practican ahí, también quienes ya tienen Linux o Mac: así el mismo ejercicio le sale igual
-a todo el grupo.
+un solo comando (`./practicar`) y está separada de tus archivos: no se le conecta ninguna carpeta de tu computadora y
+adentro no hay red. Si la descompones, la tiras y empiezas de nuevo. Todos practican ahí, también quienes ya tienen
+Linux o Mac: así todo el grupo practica en el mismo entorno.
 
 ## Cómo se aprende aquí
 
@@ -35,7 +35,7 @@ Se hacen en orden: cada una parte de lo que dejó la anterior. Empieza por la
 
 | # | Lección | La idea nueva |
 |---|---|---|
-| 00 | [Tu terminal de práctica](00-tu-terminal-de-practica.md) | Una terminal te dice quién eres y dónde estás en cada línea, y se le habla con comandos |
+| 00 | [Tu terminal de práctica](00-tu-terminal-de-practica.md) | En esta terminal no hay escritorio ni ventanas, solo texto: te dice quién eres y dónde estás en cada línea, y se le habla con comandos |
 | 01 | Moverte sin ver | El árbol de carpetas, y la ruta absoluta contra la relativa |
 | 02 | Crear, copiar, mover y borrar sin miedo | En la terminal no hay papelera: se piensa antes de borrar |
 | 03 | Ver lo que hay dentro | Casi todo en un servidor es texto, y se lee sin abrir un editor |

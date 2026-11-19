@@ -5,11 +5,12 @@
 # práctica. No necesitas entender este archivo para tomar el curso: está comentado
 # para quien tenga curiosidad. Lo construye el guion ./practicar, desde la raíz.
 
-# FROM: de dónde se parte. La imagen oficial de Ubuntu 26.04 LTS, la misma versión
-# que vas a encontrar en servidores. Ojo: «26.04» es una etiqueta que se mueve.
+# FROM: de dónde se parte. La imagen oficial de Ubuntu 26.04 LTS, una versión
+# común en servidores. Ojo: «26.04» es una etiqueta que se mueve.
 # Canonical la vuelve a publicar con las correcciones de seguridad, así que una
 # imagen construida otro día puede traer paquetes un poco más nuevos. Lo que no
 # cambia es que es Ubuntu 26.04. El día de la prueba (18-nov-2026) era la 26.04.1.
+# Por eso las salidas de las lecciones pueden variar un poco tras una actualización.
 FROM ubuntu:26.04
 
 # La imagen oficial viene «minimizada»: para pesar poco, no trae las páginas del
@@ -51,6 +52,12 @@ COPY --chmod=755 verifica /usr/local/bin/verifica
 #                                    con bash como su terminal
 #   install -d -o alumno -g alumno   crea la carpeta de práctica y se la da a alumno
 RUN useradd -m -s /bin/bash alumno && install -d -o alumno -g alumno /home/alumno/practica
+
+# Esta imagen NO declara un volumen (no hay instrucción VOLUME), a propósito: si la
+# declarara, correr la imagen a mano dejaría un volumen sin nombre en cada corrida.
+# Que tu carpeta ~/practica se guarde entre una sesión y otra es trabajo de
+# ./practicar, que le conecta un volumen con nombre y etiqueta. Si corres la imagen
+# sin ese guion, lo que hagas en ~/practica se pierde al salir.
 
 # USER: de aquí en adelante, todo corre como «alumno», no como root.
 USER alumno

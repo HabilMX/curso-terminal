@@ -3,22 +3,18 @@
 # Corre ADENTRO del contenedor del curso. Uso:  verifica 00
 # Solo revisa cómo están las cosas: no califica predicciones ni explicaciones;
 # esas las comparas tú con «Compara tus respuestas» de la lección.
-# Solo lee, con una excepción que se dice en su marca: para saber si ~/practica
-# se puede escribir, crea un archivo vacío y lo borra enseguida.
+# Escribe solo dos cosas, y las dos se dicen en su marca: para saber si ~/practica
+# se puede escribir, crea un archivo vacío y lo borra enseguida; y para saber si
+# saliste y volviste, anota en ~/practica/00/.sesion-verifica en qué sesión vio tu
+# marca por primera vez.
 set -uo pipefail
 
 falta=0
 si()   { echo "✅ $1"; }
 no()   { echo "❌ $1"; falta=1; }
 
-# «hace 75» escribe «1 min 15 s»: los segundos, en palabras.
-hace() {
-  if [ "$1" -lt 60 ]; then echo "$1 s"; else echo "$(($1 / 60)) min $(($1 % 60)) s"; fi
-}
-
 verifica_00() {
-  local version usuario practica marca prueba
-  local ahora corriendo arranque escrito
+  local version usuario practica marca prueba apunte vista
 
   # --- 0.1 · Estás en la terminal del curso -------------------------------------
   version=$(. /etc/os-release 2>/dev/null && echo "${ID:-?} ${VERSION_ID:-?}")
@@ -51,23 +47,29 @@ verifica_00() {
   fi
 
   # --- 0.1 · Saliste y volviste a entrar sin perder tu carpeta -------------------
+  # No se usa el reloj. ./practicar le pone a cada entrada un identificador distinto
+  # (CURSO_TERMINAL_SESION). La primera vez que verifica ve tu marca, apunta en el
+  # volumen en qué sesión la vio. Si después corre en OTRA sesión y la marca sigue
+  # ahí, es que saliste, volviste y tu carpeta sobrevivió.
   marca="$practica/00/aqui-estuve.txt"
+  apunte="$practica/00/.sesion-verifica"
   if [ ! -f "$marca" ]; then
-    no "Falta $marca (medí: que el archivo exista). Créalo con el paso 2 de la lección, sal con exit y vuelve a entrar"
+    rm -f "$apunte" 2>/dev/null
+    no "Falta $marca (medí: que el archivo exista). Créalo con el paso 2 de la lección, corre  verifica 00, sal con exit y vuelve a entrar"
+  elif [ -z "${CURSO_TERMINAL_SESION:-}" ]; then
+    no "No sé en qué sesión estás (medí: la variable CURSO_TERMINAL_SESION, que pone ./practicar, está vacía). Sal y entra con ./practicar"
   else
-    # Docker escribe /etc/hostname cuando arranca el contenedor: su fecha es la
-    # hora en que empezó esta sesión. Se compara contra la fecha de tu archivo.
-    ahora=$(date +%s)
-    arranque=$(stat -c %Y /etc/hostname 2>/dev/null)
-    escrito=$(stat -c %Y "$marca" 2>/dev/null)
-    case "$arranque$escrito" in
-      ''|*[!0-9]*) no "No pude leer las fechas (medí: la de /etc/hostname dio «${arranque}» y la de tu archivo dio «${escrito}»): no sé si saliste y volviste"; return ;;
-    esac
-    corriendo=$((ahora - arranque))
-    if [ "$escrito" -lt "$arranque" ]; then
-      si "Saliste y volviste sin perder tu carpeta (medí: aqui-estuve.txt se escribió hace $(hace $((ahora - escrito))) y esta sesión arrancó después, hace $(hace "$corriendo"))"
+    vista=$(cat "$apunte" 2>/dev/null)
+    if [ -z "$vista" ]; then
+      if echo "$CURSO_TERMINAL_SESION" 2>/dev/null > "$apunte"; then
+        no "Tu marca aqui-estuve.txt ya existe, y es la primera vez que la veo: fue en ESTA sesión (medí: no había apunte de una sesión anterior; lo acabo de dejar en 00/.sesion-verifica). Te falta salir con exit, volver a entrar con ./practicar y correr  verifica 00  otra vez"
+      else
+        no "Tu marca existe, pero no pude apuntar en qué sesión la vi (medí: intenté escribir 00/.sesion-verifica). Sal y corre ./practicar desde-cero"
+      fi
+    elif [ "$vista" = "$CURSO_TERMINAL_SESION" ]; then
+      no "Tu marca aqui-estuve.txt existe, pero sigues en la misma sesión en que la vi por primera vez (medí: el apunte de 00/.sesion-verifica es de esta sesión). Te falta salir con exit, volver a entrar con ./practicar y correr  verifica 00  otra vez"
     else
-      no "aqui-estuve.txt existe, pero se escribió en ESTA sesión (medí: la sesión arrancó hace $(hace "$corriendo") y el archivo se escribió después, hace $(hace $((ahora - escrito)))). Te falta salir con exit, volver a entrar con ./practicar y correr  verifica 00  otra vez, sin tocar el archivo"
+      si "Saliste y volviste sin perder tu carpeta (medí: tu marca ya existía en una sesión anterior a esta, según el apunte de 00/.sesion-verifica)"
     fi
   fi
 }
