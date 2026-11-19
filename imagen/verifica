@@ -7,6 +7,7 @@
 # ~/practica se puede escribir, crea un archivo vacío y lo borra enseguida; y para
 # saber si saliste y volviste, anota en ~/practica/00/.sesion-verifica en qué sesión
 # vio tu marca por primera vez. En la 01 no escribe nada: solo lee.
+# Las respuestas las escribes tú, con «anota».
 set -uo pipefail
 
 falta=0
@@ -77,6 +78,8 @@ verifica_00() {
 # --- Lección 01 -------------------------------------------------------------------
 # El laberinto tiene una sola definición: la lista que también lee «prepara 01».
 LISTA_01="/usr/local/share/curso-terminal/01-laberinto.txt"
+# La carpeta de práctica va escrita completa, igual que en prepara.
+PRACTICA_01="/home/alumno/practica"
 
 # Los renglones útiles de la lista: sin comentarios ni renglones vacíos.
 lista_01() { grep -Ev '^[[:space:]]*(#|$)' "$LISTA_01"; }
@@ -100,14 +103,50 @@ respuesta_01() {
       valor = v; hay = 1
     }
     END { if (!hay) exit 1; print valor }
-  ' "$HOME/practica/respuestas/01.md"
+  ' "$PRACTICA_01/respuestas/01.md"
+}
+
+# Una ruta se lee de dos maneras, y las dos tienen que dar el mismo lugar:
+#   léxica  solo con lo escrito: se quitan los «.» y se aplican los «..», sin
+#           mirar si algún nombre es un enlace (realpath -s)
+#   física  la carpeta real a la que se llega, siguiendo los enlaces (realpath -P)
+# Si las dos coinciden, la ruta pasa por carpetas de verdad. Si no, en el camino
+# hay un enlace: un atajo, que no demuestra que sepas escribir la ruta.
+lexica_01() { realpath -s -- "$1" 2>/dev/null; }
+fisica_01() { realpath -e -P -- "$1" 2>/dev/null; }
+
+# ¿Algún tramo de la ruta, tal como está escrita, es un enlace? Se recorre nombre
+# por nombre. Hace falta además de comparar la léxica con la física: una ruta que
+# entra por un enlace y luego sale con «..» puede dar el mismo lugar en las dos.
+con_enlace_01() {
+  local resto="$1" tramo camino=""
+  case "$resto" in /*) camino="" ;; *) camino="." ;; esac
+  while [ -n "$resto" ]; do
+    tramo=${resto%%/*}
+    case "$resto" in */*) resto=${resto#*/} ;; *) resto="" ;; esac
+    [ -z "$tramo" ] && continue
+    camino="$camino/$tramo"
+    [ -L "$camino" ] && return 0
+  done
+  return 1
+}
+
+# Califica una ruta ya armada contra la carpeta destino. Contesta una palabra:
+#   bien · no-existe · enlace · otra
+ruta_01() {
+  local candidata="$1" destino="$2" lex fis
+  [ -d "$candidata" ] || { echo "no-existe"; return; }
+  lex=$(lexica_01 "$candidata"); fis=$(fisica_01 "$candidata")
+  if con_enlace_01 "$candidata" || [ "$lex" != "$fis" ]; then echo "enlace"
+  elif [ "$lex" = "$destino" ]; then echo "bien"
+  else echo "otra"; fi
 }
 
 verifica_01() {
-  local raiz="$HOME/practica/01" hoja="$HOME/practica/respuestas/01.md"
-  local tipo ruta fecha bytes real malo="" cuantos=0
+  local raiz="$PRACTICA_01/01" hoja="$PRACTICA_01/respuestas/01.md"
+  local tipo ruta fecha bytes real malo="" enlace="" cuantos=0
   local grande="" grande_bytes=-1 oculto="" inicio="" destino=""
-  local dicho nombre que_es llego meta   # que_es: qué es lo anotado, según la lista
+  local dicho que_es fallo
 
   if [ ! -r "$LISTA_01" ]; then
     no "No encuentro la lista del laberinto (medí: que $LISTA_01 se pueda leer). Tu imagen es de antes de esta lección: sal y corre  ./practicar reconstruir"
@@ -127,26 +166,34 @@ verifica_01() {
   done < <(lista_01)
 
   # --- El laberinto está completo --------------------------------------------------
+  # Cada carpeta y archivo de la lista tiene que estar ahí de verdad: uno que sea
+  # un enlace, o al que se llegue pasando por un enlace, no cuenta.
   while read -r tipo ruta fecha bytes; do
+    case "$tipo" in carpeta|texto|archivo) ;; *) continue ;; esac
+    if [ "$(fisica_01 "$raiz/$ruta")" != "$raiz/$ruta" ]; then
+      if [ -e "$raiz/$ruta" ] || [ -L "$raiz/$ruta" ]; then enlace=${enlace:-$ruta}; else malo=${malo:-$ruta}; fi
+      continue
+    fi
     case "$tipo" in
       carpeta) [ -d "$raiz/$ruta" ] || { malo=${malo:-$ruta}; continue; } ;;
       texto)   [ -f "$raiz/$ruta" ] || { malo=${malo:-$ruta}; continue; } ;;
       archivo)
         real=$(stat -c %s "$raiz/$ruta" 2>/dev/null)
         [ -f "$raiz/$ruta" ] && [ "${real:-x}" = "$bytes" ] || { malo=${malo:-$ruta}; continue; } ;;
-      *) continue ;;
     esac
     cuantos=$((cuantos + 1))
   done < <(lista_01)
-  if [ -z "$malo" ]; then
-    si "Tu laberinto está completo (medí: las $cuantos carpetas y archivos de la lista existen en ~/practica/01, cada archivo con su tamaño)"
-  else
+  if [ -n "$enlace" ]; then
+    no "Tu laberinto no está completo: «$enlace» es un enlace, o se llega a él pasando por un enlace (medí: la ruta real de cada carpeta y archivo de la lista contra su lugar en $raiz). Ármalo de nuevo con  prepara 01"
+  elif [ -n "$malo" ]; then
     no "Tu laberinto no está completo: falta o cambió «$malo» (medí: cada carpeta y archivo de la lista contra ~/practica/01, con su tamaño). Ármalo de nuevo con  prepara 01"
+  else
+    si "Tu laberinto está completo (medí: las $cuantos carpetas y archivos de la lista existen en ~/practica/01, ninguno es un enlace y cada archivo tiene su tamaño)"
   fi
 
   # --- Tu hoja de respuestas -------------------------------------------------------
   if [ ! -f "$hoja" ]; then
-    no "Falta tu hoja de respuestas, ~/practica/respuestas/01.md (medí: que el archivo exista). Créala con el paso 5 de la lección. Sin ella no puedo revisar tus cuatro respuestas"
+    no "Falta tu hoja de respuestas, ~/practica/respuestas/01.md (medí: que el archivo exista). La crea  prepara 01 . Sin ella no puedo revisar tus cuatro respuestas"
     return
   fi
 
@@ -154,19 +201,20 @@ verifica_01() {
   if ! dicho=$(respuesta_01 "mas-grande"); then
     no "No encontré tu respuesta «mas-grande» (medí: busqué en respuestas/01.md un renglón que empiece con  mas-grande: )"
   elif [ -z "$dicho" ]; then
-    no "Tu renglón «mas-grande:» está vacío (medí: lo que hay después de los dos puntos)"
+    no "Tu renglón «mas-grande:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 01 mas-grande  y el nombre del archivo"
+  elif [ "${dicho#*/}" != "$dicho" ]; then
+    no "En «mas-grande» anotaste «$dicho», que lleva una diagonal (medí: que la respuesta no tenga / ). Va solo el nombre del archivo, como lo escribe ls, sin su carpeta"
   else
-    nombre=${dicho##*/}
     # ¿Qué es en la lista lo que anotaste? «archivo», «texto», «carpeta» o nada.
-    que_es=$(lista_01 | awk -v n="$nombre" '{ m = $2; sub(/.*\//, "", m) } m == n && $1 != "inicio" && $1 != "destino" { print $1; exit }')
-    if [ "$nombre" = "$grande" ]; then
-      si "«$nombre» es el archivo más grande del laberinto (medí: comparé los bytes de cada archivo de la lista del laberinto)"
+    que_es=$(lista_01 | N="$dicho" awk '{ m = $2; sub(/.*\//, "", m) } m == ENVIRON["N"] && $1 != "inicio" && $1 != "destino" { print $1; exit }')
+    if [ "$dicho" = "$grande" ]; then
+      si "«$dicho» es el archivo más grande del laberinto (medí: comparé los bytes de cada archivo de la lista del laberinto)"
     elif [ "$que_es" = "carpeta" ]; then
-      no "«$nombre» es una carpeta, no un archivo (medí: qué es ese nombre en la lista del laberinto). En  ls -l , el renglón de una carpeta empieza con d; el de un archivo, con un guion"
+      no "«$dicho» es una carpeta, no un archivo (medí: qué es ese nombre en la lista del laberinto). En  ls -l , el renglón de una carpeta empieza con d; el de un archivo, con un guion"
     elif [ -n "$que_es" ]; then
-      no "«$nombre» no es el archivo más grande del laberinto (medí: comparé sus bytes contra los de los demás archivos de la lista; hay uno con más). Vuelve a leer la columna del tamaño con  ls -lh : fíjate en la letra, no solo en el número"
+      no "«$dicho» no es el archivo más grande del laberinto (medí: comparé sus bytes contra los de los demás archivos de la lista; hay uno con más). Vuelve a leer la columna del tamaño con  ls -lh : fíjate en la letra, no solo en el número"
     else
-      no "«$nombre» no es un archivo del laberinto (medí: busqué ese nombre tal cual, con sus mayúsculas, minúsculas y puntos, en la lista del laberinto). Anota solo el nombre, como lo escribe ls"
+      no "«$dicho» no es un archivo del laberinto (medí: busqué ese nombre tal cual, con sus mayúsculas, minúsculas y puntos, en la lista del laberinto). Anota solo el nombre, como lo escribe ls"
     fi
   fi
 
@@ -174,58 +222,53 @@ verifica_01() {
   if ! dicho=$(respuesta_01 "oculto"); then
     no "No encontré tu respuesta «oculto» (medí: busqué en respuestas/01.md un renglón que empiece con  oculto: )"
   elif [ -z "$dicho" ]; then
-    no "Tu renglón «oculto:» está vacío (medí: lo que hay después de los dos puntos)"
+    no "Tu renglón «oculto:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 01 oculto  y el nombre del archivo"
+  elif [ "${dicho#*/}" != "$dicho" ]; then
+    no "En «oculto» anotaste «$dicho», que lleva una diagonal (medí: que la respuesta no tenga / ). Va solo el nombre del archivo, como lo escribe ls -a, sin su carpeta"
+  elif [ "$dicho" = "$oculto" ]; then
+    si "«$dicho» es el archivo oculto del laberinto (medí: es el único archivo de la lista con un nombre que empieza con punto)"
+  elif [ ".$dicho" = "$oculto" ]; then
+    no "Anotaste «$dicho», sin el punto del principio (medí: comparé tu respuesta, letra por letra, con el nombre del archivo oculto). El punto es parte del nombre: anótalo como lo escribe  ls -a"
   else
-    nombre=${dicho##*/}
-    if [ "$nombre" = "$oculto" ]; then
-      si "«$nombre» es el archivo oculto del laberinto (medí: es el único archivo de la lista con un nombre que empieza con punto)"
-    elif [ ".$nombre" = "$oculto" ]; then
-      no "Anotaste «$nombre», sin el punto del principio (medí: comparé tu respuesta, letra por letra, con el nombre del archivo oculto). El punto es parte del nombre: anótalo como lo escribe  ls -a"
-    else
-      no "«$nombre» no es el archivo oculto del laberinto (medí: comparé tu respuesta con el único archivo de la lista con un nombre que empieza con punto). Búscalo con  ls -a  en la carpeta de las bitácoras"
-    fi
+    no "«$dicho» no es el archivo oculto del laberinto (medí: comparé tu respuesta con el único archivo de la lista con un nombre que empieza con punto). Búscalo con  ls -a  en la carpeta de las bitácoras"
   fi
-
-  meta=$(cd -- "$destino" 2>/dev/null && pwd -P)
 
   # --- 1.3 · La ruta absoluta ------------------------------------------------------
   if ! dicho=$(respuesta_01 "ruta-absoluta"); then
     no "No encontré tu respuesta «ruta-absoluta» (medí: busqué en respuestas/01.md un renglón que empiece con  ruta-absoluta: )"
   elif [ -z "$dicho" ]; then
-    no "Tu renglón «ruta-absoluta:» está vacío (medí: lo que hay después de los dos puntos)"
+    no "Tu renglón «ruta-absoluta:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 01 ruta-absoluta  y tu ruta"
   elif [ "${dicho#/}" = "$dicho" ]; then
     no "«$dicho» no es una ruta absoluta (medí: que empiece con / ). Una ruta absoluta empieza en la raíz; «~» es una abreviatura, no la raíz"
-  elif [ ! -d "$dicho" ]; then
-    no "Tu ruta absoluta «$dicho» no existe o no es una carpeta (medí: que exista como carpeta). Compruébala con  cd  y  pwd  antes de anotarla"
   else
-    llego=$(cd -- "$dicho" 2>/dev/null && pwd -P)
-    if [ -n "$meta" ] && [ "$llego" = "$meta" ]; then
-      si "Tu ruta absoluta lleva a la carpeta destino (medí: empieza con /, existe, y entrando por ella se llega a $destino)"
-    else
-      no "Tu ruta absoluta «$dicho» existe, pero no lleva a la carpeta destino (medí: entré por ella y llegué a «${llego:-ningún lado}», no a la carpeta que pide el ejercicio 1.3)"
-    fi
+    fallo=$(ruta_01 "$dicho" "$destino")
+    case "$fallo" in
+      bien)      si "Tu ruta absoluta lleva a la carpeta destino (medí: empieza con /, existe, ningún tramo es un enlace, y tanto leída letra por letra como siguiéndola de verdad da $destino)" ;;
+      no-existe) no "Tu ruta absoluta «$dicho» no existe o no es una carpeta (medí: que exista como carpeta). Compruébala con  cd  y  pwd  antes de anotarla" ;;
+      enlace)    no "Tu ruta absoluta «$dicho» pasa por un enlace: un atajo que apunta a otra carpeta (medí: cada tramo de la ruta, que ninguno sea un enlace, y que la ruta leída letra por letra dé la misma carpeta que siguiéndola de verdad). Escribe el camino por las carpetas del laberinto" ;;
+      *)         no "Tu ruta absoluta «$dicho» existe, pero no lleva a la carpeta destino (medí: siguiéndola llegué a «$(fisica_01 "$dicho")», no a la carpeta que pide el ejercicio 1.3)" ;;
+    esac
   fi
 
   # --- 1.3 · La ruta relativa ------------------------------------------------------
+  # Se prueba pegada a la carpeta de salida: «salida/tu-ruta». Así se lee siempre
+  # como ruta, también si es un guion solo o lleva espacios.
   if ! dicho=$(respuesta_01 "ruta-relativa"); then
     no "No encontré tu respuesta «ruta-relativa» (medí: busqué en respuestas/01.md un renglón que empiece con  ruta-relativa: )"
   elif [ -z "$dicho" ]; then
-    no "Tu renglón «ruta-relativa:» está vacío (medí: lo que hay después de los dos puntos)"
+    no "Tu renglón «ruta-relativa:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 01 ruta-relativa  y tu ruta"
   elif [ "${dicho#/}" != "$dicho" ] || [ "${dicho#\~}" != "$dicho" ]; then
     no "«$dicho» no es una ruta relativa (medí: que NO empiece con / ni con ~ ). Una ruta relativa sale de la carpeta donde estás parado"
-  elif [ ! -d "$inicio" ]; then
-    no "No pude probar tu ruta relativa: falta la carpeta de salida, $inicio (medí: que exista como carpeta). Arma el laberinto con  prepara 01"
+  elif [ "$(ruta_01 "$inicio" "$inicio")" != "bien" ]; then
+    no "No pude probar tu ruta relativa: falta la carpeta de salida, $inicio, o es un enlace (medí: que exista como carpeta de verdad). Arma el laberinto con  prepara 01"
   else
-    # El «./» por delante hace que tu ruta se lea siempre como ruta: sin él, un
-    # guion solo («-») le diría a cd «regresa a la carpeta anterior».
-    llego=$(unset CDPATH; cd -- "$inicio" 2>/dev/null && cd -- "./$dicho" 2>/dev/null && pwd -P)
-    if [ -z "$llego" ]; then
-      no "Tu ruta relativa «$dicho» no existe saliendo de $inicio (medí: me paré en esa carpeta y traté de entrar por tu ruta). Compruébala parado ahí, con  cd  y  pwd"
-    elif [ -n "$meta" ] && [ "$llego" = "$meta" ]; then
-      si "Tu ruta relativa lleva a la carpeta destino (medí: no empieza con / ni con ~, y saliendo de $inicio se llega por ella a $destino)"
-    else
-      no "Tu ruta relativa «$dicho» existe, pero no lleva a la carpeta destino (medí: saliendo de $inicio llegué a «$llego», no a la carpeta que pide el ejercicio 1.3)"
-    fi
+    fallo=$(ruta_01 "$inicio/$dicho" "$destino")
+    case "$fallo" in
+      bien)      si "Tu ruta relativa lleva a la carpeta destino (medí: no empieza con / ni con ~, ningún tramo es un enlace, y saliendo de $inicio, tanto leída letra por letra como siguiéndola de verdad, da $destino)" ;;
+      no-existe) no "Tu ruta relativa «$dicho» no existe saliendo de $inicio (medí: que exista como carpeta partiendo de ahí). Compruébala parado ahí, con  cd  y  pwd" ;;
+      enlace)    no "Tu ruta relativa «$dicho» pasa por un enlace: un atajo que apunta a otra carpeta (medí: saliendo de $inicio, cada tramo de la ruta, que ninguno sea un enlace, y que la ruta leída letra por letra dé la misma carpeta que siguiéndola de verdad). Escribe el camino por las carpetas del laberinto" ;;
+      *)         no "Tu ruta relativa «$dicho» existe, pero no lleva a la carpeta destino (medí: saliendo de $inicio llegué a «$(fisica_01 "$inicio/$dicho")», no a la carpeta que pide el ejercicio 1.3)" ;;
+    esac
   fi
 }
 

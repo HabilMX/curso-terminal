@@ -7,7 +7,7 @@
 - **Carpeta:** un lugar que guarda archivos y otras carpetas. En la terminal y en los manuales la vas a ver como
   *directory*, «directorio». Es lo mismo.
 - **Árbol:** la forma en que están acomodadas las carpetas: una adentro de otra, como las ramas de un árbol.
-- **Raíz:** la carpeta de hasta arriba, la que contiene a todas las demás. Se escribe con una sola diagonal: `/`.
+- **Raíz:** la carpeta de hasta arriba, la que contiene a las demás. Se escribe con una sola diagonal: `/`.
 - **Carpeta actual:** la carpeta donde estás parado en este momento. Es la que contesta `pwd`.
 - **Ruta:** las indicaciones para llegar a una carpeta o a un archivo: nombres de carpetas separados por diagonales.
   Por ejemplo, `pagos/bitacoras`.
@@ -16,13 +16,13 @@
 Enter; ves lo que hay en una carpeta con `ls`, también lo oculto; lees cada columna de `ls -l`; y escribes el camino
 a una carpeta de dos maneras.
 
-**Idea nueva de esta lección (la única que se evalúa):** las carpetas forman un árbol, y a cualquier lugar de ese
-árbol se llega con dos tipos de ruta: la **absoluta**, que sale de la raíz, y la **relativa**, que sale de donde
-estás parado.
+**Idea nueva de esta lección (la única que se evalúa):** las carpetas forman un árbol, y a un lugar de ese árbol se
+llega con dos tipos de ruta: la **absoluta**, que sale de la raíz, y la **relativa**, que sale de donde estás
+parado.
 
-**En qué orden va:** primero armas un laberinto de carpetas para practicar (paso 1). Luego caminas por él con rutas
-relativas (paso 2) y con rutas absolutas (paso 3). Después miras lo que hay en una carpeta y lees sus columnas
-(paso 4). Al final anotas cuatro respuestas y `verifica` las revisa (paso 5).
+**En qué orden va:** armas un laberinto de carpetas (paso 1), caminas por él con rutas relativas (paso 2) y con
+rutas absolutas (paso 3), miras lo que hay en una carpeta y lees sus columnas (paso 4), y al final anotas cuatro
+respuestas que `verifica` revisa (paso 5).
 
 ---
 
@@ -35,16 +35,15 @@ parada. Del otro lado del teléfono le piden lo siguiente:
 
 —Ve a la carpeta de las bitácoras de pagos y dime cuál archivo pesa más.
 
-«Ve.» En su computadora, ir a una carpeta es dar doble clic hasta llegar. Aquí no hay nada a qué darle clic. Está la
-misma línea de antes, esperando:
+«Ve.» En su computadora, ir a una carpeta es dar doble clic hasta llegar. Aquí no hay nada a qué darle clic. Está
+la misma línea de antes, esperando:
 
 ```text
 operaciones@pagos-03:~$
 ```
 
-Lucía tiene que llegar a una carpeta que no ve, por un camino que no ve, y saber en todo momento dónde está parada.
-Y cuando llegue, tiene que leer una lista de archivos y decir cuál es el más grande sin equivocarse, porque del otro
-lado van a actuar con lo que ella diga.
+Lucía tiene que llegar a una carpeta que no ve, por un camino que no ve, y decir cuál archivo es el más grande sin
+equivocarse, porque del otro lado van a actuar con lo que ella diga.
 
 Esta lección es ese recorrido, en un laberinto hecho para perderse sin consecuencias.
 
@@ -52,52 +51,35 @@ Esta lección es ese recorrido, en un laberinto hecho para perderse sin consecue
 
 ## Antes de empezar
 
-**Qué necesitas:**
-
-| | Qué | Notas |
-|---|---|---|
-| La lección 00 | Hecha: `verifica 00` en verde | De ahí vienen el indicador, `pwd`, `man`, `--help` y las teclas para salir |
-| El material del curso | Actualizado | Esta lección trae un comando nuevo, `prepara`. Abajo dice cómo recibirlo |
-| Papel y lápiz | Para tus predicciones | El ejercicio 1.1 se hace sin IA y sin correr nada antes de predecir |
+**Qué necesitas:** la lección 00 hecha, con `verifica 00` en verde; el material del curso actualizado; y papel y
+lápiz para tus predicciones.
 
 **Actualiza tu terminal de práctica.** La imagen que construiste en la lección 00 no trae lo de esta lección. Desde
-tu computadora, en la carpeta del curso, corre estas dos líneas:
+tu computadora, en la carpeta del curso:
 
 ```bash
 git pull
 ./practicar reconstruir
 ```
 
-- `git pull` trae del repositorio los archivos nuevos del curso.
-- `./practicar reconstruir` vuelve a construir la imagen con ellos. Descarga otra vez Ubuntu y los paquetes, así que
-  tarda como la primera vez: en las pruebas de la lección 00 fueron entre 42 segundos y 1 minuto 38 segundos. Termina
-  con `✅ Imagen lista.` Ese tiempo depende de la red y del servidor de paquetes de Ubuntu: el 19-nov-2026, en la Mac
-  de la prueba, ese servidor contestaba lento, y una construcción completa llevaba más de 11 minutos sin terminar
-  cuando se canceló. Si a ti te tarda, mira si el texto sigue avanzando antes de interrumpirla.
+`git pull` trae del repositorio los archivos nuevos. `./practicar reconstruir` los mete a la imagen y normalmente
+reutiliza Ubuntu y los paquetes que ya estaban construidos; necesita red solo si le falta alguno. En la Mac de la
+prueba, con todo lo anterior ya construido, tardó menos de dos segundos. Termina con `✅ Imagen lista.` Si no usas
+`git`, vuelve a descargar el ZIP del curso y corre `./practicar reconstruir` en la carpeta nueva.
 
-**Sin `git`:** vuelve a descargar el ZIP del curso, descomprímelo, abre tu terminal en la carpeta nueva y corre ahí
-`./practicar reconstruir`.
-
-Reconstruir la imagen no borra tu trabajo. Tu carpeta `~/practica` vive aparte, en el volumen que viste en la
-lección 00, y este comando no lo toca.
-
-Después entra como ya sabes:
-
-```bash
-./practicar
-```
+Reconstruir no borra tu trabajo: tu carpeta `~/practica` vive aparte, en el volumen de la lección 00. Después entra
+como ya sabes, con `./practicar`.
 
 **Dónde se probó esta lección, y dónde falta:**
 
-| Sistema | Estado | Qué se corrió |
-|---|---|---|
-| Mac con Apple silicon, Docker 29.2.1 corriendo con Colima | Probado el 19-nov-2026 | Adentro de la terminal de práctica, todo: `prepara 01` dos veces, cada comando de los cinco pasos, `verifica 01` en rojo y en verde, y las pantallas que ves aquí. La imagen se construyó con `docker build`, reutilizando los pasos ya construidos; `./practicar reconstruir` completo no se terminó de correr ese día, por la red |
-| Linux Mint 22.3 (x86_64) | Sin probar todavía con esta lección | Ahí se probó la lección 00. Lo que puede cambiar está en la nota de abajo |
-| Ubuntu, Mac con Docker Desktop, Windows con Docker Desktop y WSL 2 | Sin probar todavía | Igual que en la lección 00 |
+| Sistema | Estado |
+|---|---|
+| Mac con Apple silicon, Docker 29.2.1 corriendo con Colima | Probado el 19-nov-2026: `./practicar reconstruir`, `prepara 01` dos veces, cada comando de los cinco pasos, `verifica 01` en rojo y en verde, y las pantallas que ves aquí |
+| Linux Mint 22.3, Ubuntu, Mac con Docker Desktop, Windows con Docker Desktop y WSL 2 | Sin probar todavía con esta lección |
 
-Una nota sobre lo que puede cambiar de una computadora a otra: el número que `ls -l` pone como tamaño de una
-**carpeta**. En la prueba salió `4096`. Ese número lo decide el sistema donde Docker guarda el volumen, así que en tu
-computadora puede ser otro. Los tamaños de los **archivos** del laberinto sí son los mismos en todas.
+**Qué va a coincidir con tu pantalla y qué no.** Coinciden los nombres, los tamaños de los archivos, las fechas y
+las rutas. Pueden variar el acomodo en columnas, los colores, el renglón `total` y el tamaño de las carpetas, que
+dependen de tu ventana y de dónde guarda Docker el volumen.
 
 ---
 
@@ -111,26 +93,21 @@ prepara 01
 
 ```text
 ✅ Laberinto listo en /home/alumno/practica/01 (medí: 10 carpetas y 12 archivos, cada archivo con su tamaño).
+   Te dejé la hoja de respuestas, con sus claves vacías: /home/alumno/practica/respuestas/01.md
    Empieza por ahí:  cd ~/practica/01
 ```
 
-`prepara` es un comando del curso. Arma el material de práctica de una lección; el de la 01 es un laberinto de
-carpetas. Tres cosas sobre él:
+`prepara` es un comando del curso: arma el material de práctica de una lección. Tres cosas sobre él:
 
-- **No tiene azar.** Los nombres, los tamaños y las fechas vienen de una lista fija. Por eso las pantallas de esta
-  lección deben coincidir con las tuyas. En la prueba se armó dos veces seguidas y quedó idéntico. La excepción
-  conocida es el tamaño de las carpetas, por lo que dice la nota de «Antes de empezar».
-- **Solo toca la carpeta `~/practica/01`.** Nada más.
-- **Se puede volver a correr.** Si te pierdes o descompones algo, `prepara 01` deja el laberinto como el primer día.
-  Para eso tiene que borrar el que ya está, así que te avisa y te pide que escribas `si`. En la prueba tardó menos de
-  un segundo.
+- **No tiene azar.** Los nombres, los tamaños y las fechas vienen de una lista fija. En la prueba se armó varias
+  veces y quedó idéntico.
+- **Toca dos cosas y nada más:** la carpeta `~/practica/01`, y tu hoja de respuestas, que crea solo si no existe.
+- **Se puede volver a correr.** Si te pierdes o descompones algo, `prepara 01` deja el laberinto como el primer
+  día. Para eso borra el que ya está, así que te pide que escribas `si`. Por eso va aparte de `verifica`, que solo
+  mira.
 
-¿Por qué `prepara` es un comando aparte y no una parte de `verifica`? Porque hacen cosas opuestas. `verifica` solo
-mira y te dice qué falta. `prepara` crea y borra. Si estuvieran juntos, un día correrías uno queriendo el otro.
-
-**El laberinto, visto desde arriba.** Así quedó. Este dibujo no es la salida de ningún comando: lo ponemos aquí
-porque es lo que vas a tener que imaginar mientras caminas. En la terminal no vas a ver el árbol completo: solo vas
-a ver la carpeta donde estás parado.
+**El laberinto, visto desde arriba.** Este dibujo no es la salida de ningún comando: es lo que vas a tener que
+imaginar mientras caminas. En la terminal solo vas a ver la carpeta donde estás parado.
 
 ```text
 /                                  ← la raíz
@@ -158,12 +135,9 @@ a ver la carpeta donde estás parado.
 ```
 
 Léelo de arriba hacia abajo. Hasta arriba está la raíz, `/`. Adentro de la raíz hay una carpeta `home`; adentro de
-`home`, una carpeta `alumno`; y así. Cada nivel hacia la derecha es «adentro de». Los archivos del laberinto no
-tienen nada que leer: son de relleno, y lo que importa de ellos es su nombre, su tamaño y su fecha.
-
-Hay dos palabras que se usan mucho al hablar del árbol. Si `bitacoras` está adentro de `pagos`, se dice que `pagos`
-es la carpeta **de arriba** de `bitacoras`, o su carpeta *padre*. Subir es ir hacia la raíz. Bajar es entrar a una
-carpeta que está adentro de la tuya.
+`home`, una carpeta `alumno`; y así. Cada nivel hacia la derecha es «adentro de». Subir es ir hacia la raíz; bajar
+es entrar a una carpeta que está adentro de la tuya. Los archivos son de relleno: importan su nombre, su tamaño y
+su fecha.
 
 Ahora párate en la entrada del laberinto. `cd` es el comando para cambiar de carpeta, y lo ves con calma en el
 siguiente paso. Hoy esta línea es una receta dada:
@@ -177,12 +151,8 @@ alumno@practica:~/practica/01$
 ```
 
 `cd` no contestó nada: como en la lección 00, el silencio quiere decir que salió bien. Lo que cambió es el
-indicador. Antes decía `~` y ahora dice `~/practica/01`. **El indicador te va diciendo en qué carpeta estás parado.**
-Compruébalo con el comando que ya conoces:
-
-```bash
-pwd
-```
+indicador: antes decía `~` y ahora dice `~/practica/01`. **El indicador te va diciendo en qué carpeta estás
+parado.** Compruébalo con `pwd`:
 
 ```text
 /home/alumno/practica/01
@@ -198,8 +168,8 @@ El indicador usa la forma corta, con `~`. `pwd` contesta la forma completa.
 
 `cd` viene de *change directory*, «cambiar de carpeta». Se escribe `cd`, un espacio y la ruta a donde quieres ir.
 
-Para saber a dónde puedes ir necesitas ver qué hay. `ls`, a secas, lista lo que hay en la carpeta actual. Lo ves a
-fondo en el paso 4; por ahora alcanza con esto:
+Para saber a dónde puedes ir necesitas ver qué hay. `ls`, a secas, lista lo que hay en la carpeta actual; lo ves a
+fondo en el paso 4.
 
 ```bash
 ls
@@ -222,8 +192,7 @@ alumno@practica:~/practica/01/pagos$
 ```
 
 Bajaste un nivel. `pagos` es una **ruta relativa**: no dice dónde está `pagos` en todo el árbol, solo dice «la
-carpeta `pagos` que está aquí, donde estoy parado». Funcionó porque estabas en `01`, y en `01` hay una carpeta
-`pagos`.
+carpeta `pagos` que está aquí, donde estoy parado». Funcionó porque en `01` hay una carpeta `pagos`.
 
 Baja otro nivel y pregunta dónde quedaste:
 
@@ -248,8 +217,8 @@ pwd
 /home/alumno/practica/01/pagos
 ```
 
-**Varios niveles en una sola ruta.** Las carpetas de una ruta se separan con una diagonal, `/`. Puedes bajar dos
-niveles de un jalón:
+**Varios niveles en una sola ruta.** Las carpetas de una ruta se separan con una diagonal. Puedes bajar dos niveles
+de un jalón, y subir dos con dos veces `..`:
 
 ```bash
 cd config/plantillas
@@ -258,8 +227,6 @@ cd config/plantillas
 ```text
 alumno@practica:~/practica/01/pagos/config/plantillas$
 ```
-
-Y subir dos niveles de un jalón, con dos veces `..`:
 
 ```bash
 cd ../..
@@ -280,37 +247,12 @@ cd nada
 bash: cd: nada: No such file or directory
 ```
 
-«No existe ese archivo o carpeta.» Fíjate en dos cosas. El mensaje te regresó el indicador, así que no te atrapó. Y
-el indicador sigue diciendo `pagos`: **cuando `cd` falla, te quedas donde estabas.**
+«No existe ese archivo o carpeta.» El mensaje te regresó el indicador, así que no te atrapó. Y el indicador sigue
+diciendo `pagos`: **cuando `cd` falla, te quedas donde estabas.** Pasa lo mismo con `cd Bitacoras`: la carpeta se
+llama `bitacoras`, y la terminal distingue mayúsculas de minúsculas en los nombres igual que en los comandos.
 
-Otro error, que es el mismo:
-
-```bash
-cd Bitacoras
-```
-
-```text
-bash: cd: Bitacoras: No such file or directory
-```
-
-La carpeta se llama `bitacoras`, con minúscula. La terminal distingue mayúsculas de minúsculas en los nombres de las
-carpetas igual que en los comandos.
-
-**Un atajo que no se evalúa.** No tienes que escribir los nombres completos. Escribe `cd bit` y presiona la tecla
-**Tab**: la terminal completa el nombre, `bitacoras/`, porque es la única carpeta de aquí que empieza así. Menos
-letras, menos errores de dedo. Si no completa nada, es que no hay ninguna que empiece así, o hay varias.
-
-**Lo que acabas de usar,** en una tabla:
-
-| Escribes | Quiere decir |
-|---|---|
-| `cd pagos` | Entra a la carpeta `pagos` que está aquí |
-| `cd config/plantillas` | Entra a `config`, que está aquí, y luego a `plantillas`, que está adentro |
-| `cd ..` | Sube a la carpeta de arriba |
-| `cd ../..` | Sube dos niveles |
-
-Todas son rutas relativas: **su resultado depende de dónde estás parado.** El mismo `cd pagos` que funcionó en `01`
-falla en cualquier carpeta que no tenga una `pagos` adentro.
+Todas las rutas de este paso son relativas: **su resultado depende de dónde estás parado.** El mismo `cd pagos` que
+funcionó en `01` falla en una carpeta que no tenga una `pagos` adentro.
 
 **Lo demuestra** (objetivo 1.1, primera mitad): tus predicciones de este paso, comparadas con el indicador y con
 `pwd`.
@@ -325,15 +267,6 @@ Una ruta relativa sirve mientras sepas dónde estás. Hay otra manera de escribi
 
 ```bash
 cd /
-```
-
-```text
-alumno@practica:/$
-```
-
-El indicador dice `/`. Estás en la raíz del árbol, la carpeta que contiene a todas. Mira qué hay:
-
-```bash
 ls
 ```
 
@@ -342,24 +275,19 @@ bin   dev  home  media  opt   root  sbin  sys  usr
 boot  etc  lib   mnt    proc  run   srv   tmp  var
 ```
 
-Son las carpetas de un sistema Linux. En este curso vas a entrar a pocas; hoy te importa una, `home`, porque adentro
-está tu carpeta personal.
+El indicador ahora dice `alumno@practica:/$`. Estás en la raíz, y esas son las carpetas de un sistema Linux. Hoy te
+importa una, `home`, porque adentro está tu carpeta personal.
 
 **Predice:** estás en la raíz. ¿Qué pasa si corres `cd pagos`, el mismo comando que funcionó en el paso 2?
-
-```bash
-cd pagos
-```
 
 ```text
 bash: cd: pagos: No such file or directory
 ```
 
-Falló, y con razón: en la raíz no hay ninguna carpeta `pagos`. La ruta relativa `pagos` solo funciona parado en
-`01`.
+Falló, y con razón: en la raíz no hay ninguna carpeta `pagos`.
 
 **Una ruta absoluta empieza con `/`.** Dice el camino completo desde la raíz, carpeta por carpeta. Por eso funciona
-igual desde cualquier lugar. Esta lleva a las bitácoras:
+igual sin importar dónde estés parado. Esta lleva a las bitácoras:
 
 ```bash
 cd /home/alumno/practica/01/pagos/bitacoras
@@ -369,18 +297,12 @@ cd /home/alumno/practica/01/pagos/bitacoras
 alumno@practica:~/practica/01/pagos/bitacoras$
 ```
 
-Léela junto con el dibujo del paso 1: de la raíz a `home`, de `home` a `alumno`, de `alumno` a `practica`, de ahí a
-`01`, a `pagos` y a `bitacoras`. Es exactamente lo que contesta `pwd` cuando estás ahí: **`pwd` contesta la ruta
-absoluta de la carpeta actual.**
+Léela junto con el dibujo del paso 1: de la raíz a `home`, de `home` a `alumno`, de ahí a `practica`, a `01`, a
+`pagos` y a `bitacoras`. Es lo mismo que contesta `pwd` cuando estás ahí: **`pwd` contesta la ruta absoluta de la
+carpeta actual.**
 
-**La diagonal del principio cambia todo.** Estas dos rutas se parecen y piden cosas distintas:
-
-| Escribes | Empieza con `/` | Quiere decir |
-|---|---|---|
-| `cd pagos` | No: es relativa | La carpeta `pagos` que está adentro de donde estoy |
-| `cd /pagos` | Sí: es absoluta | La carpeta `pagos` que está en la raíz |
-
-Compruébalo. Ve a `~/practica/01`, donde sí hay una `pagos`, y pide la de la raíz:
+**La diagonal del principio cambia todo.** `cd pagos` pide la carpeta `pagos` que está adentro de donde estoy.
+`cd /pagos` pide la carpeta `pagos` que está en la raíz. Compruébalo donde sí hay una `pagos`:
 
 ```bash
 cd ~/practica/01
@@ -393,35 +315,11 @@ bash: cd: /pagos: No such file or directory
 
 Hay una `pagos` a un paso de ti, pero pediste otra: una que estaría en la raíz, y esa no existe.
 
-**Tu carpeta personal tiene abreviatura: `~`.** Ya la conoces del indicador. Al principio de una ruta, la terminal
-cambia `~` por `/home/alumno` antes de correr el comando. Por eso `cd ~/practica/01` y
-`cd /home/alumno/practica/01` llevan al mismo lugar. Una ruta que empieza con `~` no depende de dónde estás, igual
-que una absoluta. Pero la abreviatura la entiende la terminal, no es parte del árbol: en otra cuenta, `~` es otra
-carpeta. Cuando te pidan una ruta absoluta, escríbela desde la raíz, con `/`.
-
-**`cd` a secas te lleva a casa.** Sin ruta, `cd` te lleva a tu carpeta personal:
-
-```bash
-cd
-pwd
-```
-
-```text
-/home/alumno
-```
-
-**Y `cd -` te regresa a la carpeta anterior.** Es un guion después de `cd`. Sirve para ir y venir entre dos lugares:
-
-```bash
-cd -
-```
-
-```text
-/home/alumno/practica/01
-alumno@practica:~/practica/01$
-```
-
-Este sí contesta: te dice a dónde te regresó.
+**Tu carpeta personal tiene abreviatura: `~`.** Al principio de una ruta, la terminal cambia `~` por
+`/home/alumno` antes de correr el comando. Por eso `cd ~/practica/01` y `cd /home/alumno/practica/01` llevan al
+mismo lugar, y `cd` a secas, sin ruta, te lleva a tu carpeta personal. Pero `~` es una abreviatura de la terminal y
+no parte del árbol: en otra cuenta, `~` es otra carpeta. Cuando te pidan una ruta absoluta, escríbela desde la
+raíz, con `/`.
 
 **Los cuatro puntos de partida,** juntos:
 
@@ -432,16 +330,8 @@ Este sí contesta: te dice a dónde te regresó.
 | `..` | La carpeta de arriba de la actual | `../config` | Sí |
 | Un nombre | La carpeta actual | `pagos/bitacoras` | Sí |
 
-Las dos primeras filas funcionan desde cualquier lugar. Las dos últimas son relativas.
-
-**¿Cuál conviene?** Las dos se usan, para cosas distintas.
-
-- La **relativa** es corta. Conviene cuando el lugar está cerca de donde estás: `cd ..`, `cd config`.
-- La **absoluta** no deja dudas. Conviene cuando anotas un camino para alguien más, o para ti dentro de un mes: quien
-  lo lea no sabe en qué carpeta estabas parado cuando lo escribiste.
-
-Es lo que le pasa a Lucía por teléfono. Si le dictan «entra a `bitacoras`», solo sirve si los dos saben dónde está
-parada ella. Si le dictan la ruta desde la raíz, sirve aunque esté en otro lado.
+**¿Cuál conviene?** La relativa es corta: conviene cuando el lugar está cerca. La absoluta no deja dudas: conviene
+cuando le dictas un camino a alguien que no sabe en qué carpeta estás parado, como a Lucía por teléfono.
 
 **Lo demuestra** (objetivo 1.1 completo): ejercicio 1.1, abajo. Y es la mitad del objetivo 1.3.
 
@@ -449,7 +339,7 @@ parada ella. Si le dictan la ruta desde la raíz, sirve aunque esté en otro lad
 
 ## Paso 4 · Mira lo que hay: `ls` y sus columnas
 
-Ve a la carpeta de las bitácoras. Usa la ruta que quieras; ya tienes dos.
+Ve a la carpeta de las bitácoras, con la ruta que quieras, y lista:
 
 ```bash
 cd ~/practica/01/pagos/bitacoras
@@ -460,9 +350,8 @@ ls
 abril.log  enero.log  febrero.log  marzo.log  mayo.log  viejas
 ```
 
-`ls` viene de *list*, «listar». A secas, da solo los nombres, en orden alfabético. En tu pantalla, `viejas` sale en
-azul: el color marca que es una carpeta. No da nada más: ni tamaños ni fechas. Para eso están las opciones. Como
-viste en la lección 00, una opción es una palabra con guion que cambia lo que hace el comando. Hoy son tres.
+`ls` viene de *list*, «listar». A secas da solo los nombres, en orden alfabético. No da tamaños ni fechas: para eso
+están las opciones, las palabras con guion que cambian lo que hace un comando. Hoy son tres.
 
 ### `-a`: también lo oculto
 
@@ -478,15 +367,9 @@ ls -a
 ```
 
 Aparecieron tres nombres que empiezan con punto. En Linux, **un archivo cuyo nombre empieza con punto es un archivo
-oculto**: `ls` a secas no lo lista. No está protegido ni es secreto; solo no estorba en la lista de todos los días.
-`-a` viene de *all*, «todo».
-
-- `.pendiente` es un archivo oculto del laberinto.
-- `..` ya lo conoces: es la carpeta de arriba.
-- `.` es la carpeta actual. Por eso `cd .` no te mueve.
-
-Los dos últimos no son archivos que alguien haya creado: toda carpeta los tiene, y son la razón de que `cd ..`
-funcione en cualquier parte.
+oculto**: `ls` a secas no lo lista. No está protegido ni es secreto; solo no estorba en la lista de diario. `-a`
+viene de *all*, «todo». `.pendiente` es un archivo oculto del laberinto. `..` ya lo conoces: es la carpeta de
+arriba. Y `.` es la carpeta actual.
 
 ### `-l`: la lista larga
 
@@ -504,34 +387,29 @@ total 2168
 drwxr-xr-x 2 alumno alumno    4096 Jan  2  2025 viejas
 ```
 
-`-l` viene de *long*, «larga»: un renglón por archivo o carpeta, con sus datos en columnas. Toma el renglón de
-`marzo.log` y léelo de izquierda a derecha:
+`-l` viene de *long*, «larga»: un renglón por archivo o carpeta, con sus datos en columnas. Lee el renglón de
+`marzo.log` de izquierda a derecha:
 
-```text
--rw-r--r-- 1 alumno alumno 1200000 Mar 31  2025 marzo.log
-```
-
-| Columna | En el ejemplo | Qué dice |
+| Columna | En `marzo.log` | Qué dice |
 |---|---|---|
 | **Tipo** | `-` | La primera letra del renglón. Un guion es un archivo normal. Una `d`, de *directory*, es una carpeta: mira el renglón de `viejas`. Hay otros tipos; en este laberinto solo hay estos dos |
 | **Permisos** | `rw-r--r--` | Las nueve letras que siguen. Dicen quién puede leer, escribir y ejecutar el archivo. Hoy solo les pones nombre: se leen y se cambian en la lección 09 |
 | **Enlaces** | `1` | Cuántos nombres apuntan a ese mismo archivo. En este curso no lo usas |
 | **Dueño** | `alumno` | El usuario al que pertenece el archivo. Aquí eres tú |
-| **Grupo** | `alumno` | El grupo de usuarios al que pertenece. Vuelve a salir en la lección 09, junto con los permisos |
+| **Grupo** | `alumno` | El grupo de usuarios al que pertenece. Vuelve a salir en la lección 09 |
 | **Tamaño** | `1200000` | Cuánto mide el archivo, en bytes |
 | **Fecha** | `Mar 31  2025` | Cuándo se modificó por última vez. Los meses salen en inglés: `Mar` es marzo y `Apr` es abril |
 | **Nombre** | `marzo.log` | Cómo se llama |
 
-Tres detalles que conviene saber:
+Tres detalles:
 
-- **El `total` de arriba no es la suma de la columna de tamaño.** Es el espacio que ocupa en disco lo que se listó,
-  contado en bloques de 1024 bytes. En este curso no lo usas.
+- **El `total` de arriba no es la suma de la columna de tamaño.** Es el espacio que lo listado ocupa en disco, en
+  bloques de 1024 bytes. En este curso no lo usas.
 - **El tamaño de una carpeta no es lo que lleva adentro.** `viejas` dice `4096` y adentro tiene un archivo de
-  20,000 bytes. El número de una carpeta es lo que ocupa su propia lista de nombres. Para saber cuánto hay adentro,
-  entras y miras.
+  20,000 bytes. Para saber cuánto hay adentro, entras y miras.
 - **La fecha cambia de forma según la edad.** Si el archivo se modificó hace más de seis meses, ves el año, como
-  aquí. Si es reciente, en lugar del año ves la hora. Lo vas a notar en el paso 5, en un archivo que vas a crear tú.
-  Esa hora no es la de tu reloj: la terminal de práctica usa la hora universal, UTC.
+  aquí. Si es reciente, en lugar del año ves la hora, en hora universal (UTC) y no la de tu reloj. Lo vas a notar
+  en el paso 5.
 
 ### `-h`: tamaños que se leen
 
@@ -552,91 +430,31 @@ total 2.2M
 drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
 ```
 
-| Letra | Unidad | Cuántos bytes |
-|---|---|---|
-| ninguna | bytes | Tal cual: `980` son 980 bytes |
-| `K` | kilobytes | 1,024 |
-| `M` | megabytes | 1,048,576, que son 1,024 K |
-| `G` | gigabytes | 1,024 M |
+Sin letra son bytes. `K` son kilobytes: 1,024 bytes. `M` son megabytes: 1,024 K. `G` son gigabytes: 1,024 M.
 
 **La trampa de esta columna: se lee primero la letra y después el número.** `975K` tiene un número más grande que
-`1.2M`, y aun así es el archivo más chico de los dos, porque una M vale más de mil K. Quien lee solo el número se
-equivoca de archivo.
+`1.2M`, y aun así es el archivo más chico de los dos, porque una M vale más de mil K. Y un límite: `-h` redondea.
+`marzo.log` mide 1,200,000 bytes, que son 1.14 M, y `ls` escribe `1.2M`. Cuando necesites el número exacto, quita
+la `h`.
 
-Y un límite: `-h` redondea. `marzo.log` mide 1,200,000 bytes, que son 1.14 M, y `ls` escribe `1.2M`. Para ver rápido
-cuál es grande y cuál es chico, `-h` alcanza. Cuando necesites el número exacto, quita la `h`.
+### Las opciones se juntan, y `ls` acepta una ruta
 
-### Las opciones se juntan
+Varias opciones de una letra se pueden escribir pegadas: `ls -lah` es lo mismo que `ls -l -a -h`. Córrelo: es la
+lista larga, con lo oculto y con tamaños legibles. Ahí `.pendiente` ya tiene su renglón.
 
-Varias opciones de una letra se pueden escribir pegadas, con un solo guion. `ls -lah` es lo mismo que
-`ls -l -a -h`: lista larga, con lo oculto y con tamaños legibles.
-
-```bash
-ls -lah
-```
-
-```text
-total 2.2M
-drwxr-xr-x 3 alumno alumno 4.0K May 31  2025 .
-drwxr-xr-x 5 alumno alumno 4.0K Jun  2  2025 ..
--rw-r--r-- 1 alumno alumno  47K May 12  2025 .pendiente
--rw-r--r-- 1 alumno alumno 975K Apr 30  2025 abril.log
--rw-r--r-- 1 alumno alumno  980 Jan 31  2025 enero.log
--rw-r--r-- 1 alumno alumno 9.6K Feb 28  2025 febrero.log
--rw-r--r-- 1 alumno alumno 1.2M Mar 31  2025 marzo.log
--rw-r--r-- 1 alumno alumno    0 May 31  2025 mayo.log
-drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
-```
-
-### `ls` también acepta una ruta
-
-No hace falta ir a una carpeta para ver qué tiene. `ls` acepta una ruta, relativa o absoluta, igual que `cd`. Sin
-moverte de `bitacoras`:
-
-```bash
-ls -lh ..
-```
-
-```text
-total 12K
-drwxr-xr-x 3 alumno alumno 4.0K May 31  2025 bitacoras
-drwxr-xr-x 3 alumno alumno 4.0K Feb 10  2025 config
-drwxr-xr-x 3 alumno alumno 4.0K Jun  2  2025 entregas
-```
-
-Viste la carpeta de arriba, `pagos`, y sigues parado en `bitacoras`. Mirar no te mueve.
+Y no hace falta ir a una carpeta para ver qué tiene: `ls` acepta una ruta, relativa o absoluta, igual que `cd`.
+`ls -lh ..` te muestra la carpeta de arriba y sigues parado en `bitacoras`. Mirar no te mueve.
 
 ### Con Claude Code, en este orden
 
-En este curso un asistente de IA entra siempre igual. Aquí son cinco momentos: **predices → le pides → lees →
-corres → explicas.**
+En este curso un asistente de IA entra de una sola manera: **predices → le pides → lees → corres → explicas.**
 
-1. **Predices.** Con lo que ya viste en `ls -lah`, anota en tu papel cuál es el archivo más grande de `bitacoras`.
-   Todavía no le preguntas nada a nadie.
-2. **Le pides.** En tu computadora, pídele a Claude Code algo así: «Dame un comando de `ls` que liste una carpeta
-   ordenada por tamaño, del archivo más grande al más chico, y explícame cada opción». Claude Code corre en tu
-   computadora, no adentro de tu terminal de práctica: no ve tu laberinto.
-3. **Lees.** Antes de correr lo que te dio, comprueba cada opción en la propia máquina, como en la lección 00. Si te
-   propone `ls -lhS`, busca la `S` en `ls --help`. Dice: `Sort by file size, largest first.` Si te da un comando con
-   piezas que todavía no conoces, pídele otro que solo use opciones de `ls`.
+1. **Predices.** Con tu `ls -lah` enfrente, anota en tu papel cuál es el archivo más grande de `bitacoras`.
+2. **Le pides.** En tu computadora, a Claude Code: «Dame un comando de `ls` que ordene una carpeta por tamaño, del
+   más grande al más chico, y explícame cada opción». Claude Code no ve tu laberinto: corre afuera.
+3. **Lees.** Antes de correr lo que te dio, busca cada opción en `ls --help`, como en la lección 00.
 4. **Corres.** El comando lo escribes tú, en tu terminal de práctica.
-5. **Explicas.** Con tus palabras: ¿por qué quedó en ese orden? ¿Coincide con lo que predijiste? ¿Y por qué el
-   archivo oculto no aparece en esa lista?
-
-Así salió `ls -lhS` en la prueba:
-
-```text
-total 2.2M
--rw-r--r-- 1 alumno alumno 1.2M Mar 31  2025 marzo.log
--rw-r--r-- 1 alumno alumno 975K Apr 30  2025 abril.log
--rw-r--r-- 1 alumno alumno 9.6K Feb 28  2025 febrero.log
-drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
--rw-r--r-- 1 alumno alumno  980 Jan 31  2025 enero.log
--rw-r--r-- 1 alumno alumno    0 May 31  2025 mayo.log
-```
-
-El orden es el paso que te ahorra el asistente. Leer la columna y saber por qué `viejas` quedó en medio sigue siendo
-trabajo tuyo.
+5. **Explicas.** Con tus palabras: ¿por qué quedó en ese orden? ¿Coincide con tu predicción?
 
 **Lo demuestra** (objetivo 1.2): ejercicio 1.2, abajo.
 
@@ -645,125 +463,75 @@ trabajo tuyo.
 ## Paso 5 · Anota tus respuestas y compruébalas
 
 Hasta aquí todo lo comprobaste tú, con el indicador y con `pwd`. Ahora le toca a `verifica`. Para que pueda revisar
-lo que encontraste, lo anotas en un archivo: tu **hoja de respuestas**, `~/practica/respuestas/01.md`.
+lo que encontraste, lo anotas en tu **hoja de respuestas**, `~/practica/respuestas/01.md`, que `prepara` ya te
+dejó. Es texto simple, con cuatro renglones: una clave, dos puntos y tu respuesta.
 
-Córrelo antes de anotar nada, para ver de dónde partes:
+| Clave | Qué va |
+|---|---|
+| `mas-grande` | El nombre del archivo más grande del laberinto. Solo el nombre, como lo escribe `ls`, sin su carpeta |
+| `oculto` | El nombre del archivo oculto del laberinto. Solo el nombre, con su punto |
+| `ruta-absoluta` | La ruta absoluta de la carpeta destino |
+| `ruta-relativa` | La ruta relativa a la carpeta destino, saliendo de `bitacoras` |
+
+Corre `verifica 01` antes de anotar nada, para ver de dónde partes. Los dos primeros renglones salen así:
+
+```text
+✅ Tu laberinto está completo (medí: las 22 carpetas y archivos de la lista existen en ~/practica/01, ninguno es un enlace y cada archivo tiene su tamaño)
+❌ Tu renglón «mas-grande:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 01 mas-grande  y el nombre del archivo
+```
+
+Siguen tres rojos iguales, uno por cada clave que falta. Es normal: la hoja está vacía.
+
+**Cómo se anota.** Todavía no has visto un editor de texto; llega en la lección 07. Por eso el curso trae un
+comando, `anota`: escribes el número de la lección, la clave y tu respuesta. Supón que crees que el más grande es
+`enero.log`:
 
 ```bash
-verifica 01
+anota 01 mas-grande enero.log
 ```
 
 ```text
-✅ Tu laberinto está completo (medí: las 22 carpetas y archivos de la lista existen en ~/practica/01, cada archivo con su tamaño)
-❌ Falta tu hoja de respuestas, ~/practica/respuestas/01.md (medí: que el archivo exista). Créala con el paso 5 de la lección. Sin ella no puedo revisar tus cuatro respuestas
-
-❌ Lección 01: falta lo marcado con ❌. Arréglalo y corre  verifica 01  otra vez.
+Anotado. Tu hoja quedó así:
+mas-grande: enero.log
+oculto:
+ruta-absoluta:
+ruta-relativa:
 ```
 
-Un verde y un rojo. El rojo es normal: la hoja todavía no existe.
-
-**El formato de la hoja.** Son cuatro renglones. Cada uno lleva una clave, dos puntos y tu respuesta:
+`anota` no sabe si acertaste: solo escribe. Eso lo dice `verifica 01`, que ahora cambia su segundo renglón:
 
 ```text
-mas-grande: el nombre del archivo más grande del laberinto
-oculto: el nombre del archivo oculto del laberinto
-ruta-absoluta: la ruta absoluta de la carpeta destino
-ruta-relativa: la ruta relativa a la carpeta destino, saliendo de bitacoras
+❌ «enero.log» no es el archivo más grande del laberinto (medí: comparé sus bytes contra los de los demás archivos de la lista; hay uno con más). Vuelve a leer la columna del tamaño con  ls -lh : fíjate en la letra, no solo en el número
 ```
 
-Las reglas, para que no haya sorpresas:
-
-- **Las claves se escriben tal cual:** `mas-grande`, `oculto`, `ruta-absoluta` y `ruta-relativa`. `verifica` busca
-  esas cuatro palabras al principio de un renglón, seguidas de dos puntos.
-- **En las dos primeras va solo el nombre del archivo,** como lo escribe `ls`: con sus minúsculas y con su punto, si
-  lo lleva.
-- **Si una clave aparece varias veces, vale la última.** Para corregir una respuesta no borras nada: la escribes otra
-  vez.
-- **Lo demás no estorba.** Renglones vacíos, notas tuyas o espacios de más no cambian el resultado.
-
-**Cómo se escribe en la hoja.** Todavía no has visto un editor de texto; llega en la lección 07. Hoy la hoja se
-llena con dos recetas dadas. La primera crea la carpeta de las respuestas:
-
-```bash
-mkdir ~/practica/respuestas
-```
-
-La segunda agrega un renglón a la hoja. Cambia `AQUI-TU-RESPUESTA` por lo que encontraste:
-
-```bash
-echo "mas-grande: AQUI-TU-RESPUESTA" >> ~/practica/respuestas/01.md
-```
-
-- `echo` repite en la pantalla lo que le escribas entre comillas.
-- `>>` manda esa respuesta al final de un archivo, en lugar de a la pantalla. Si el archivo no existe, lo crea.
-- Ojo con la diferencia: el `>` de la lección 00, uno solo, reemplaza todo el archivo. Con `>>`, dos, se agrega al
-  final. Aquí van dos. Las dos piezas se ven a detalle en la lección 06.
-
-Repite la receta con cada clave: `oculto`, `ruta-absoluta` y `ruta-relativa`. Para ver cómo va quedando tu hoja:
-
-```bash
-cat ~/practica/respuestas/01.md
-```
-
-En la lección 00, `cat` a secas repetía lo que escribías. Seguido de un archivo, te muestra lo que tiene adentro.
+Así se lee un rojo: dice qué anotaste, qué se midió y con qué comando volver a mirar. No dice la respuesta. Para
+corregir, anotas otra vez la misma clave: `anota` cambia ese renglón. Y `anota 01`, sin nada más, te muestra la
+hoja.
 
 **Las dos rutas del ejercicio 1.3.** La carpeta destino es `guardia`: está adentro de `entregas`, que está adentro
-de `pagos`. Búscala en el dibujo del paso 1. Tienes que llegar a ella de dos maneras:
-
-1. Con una **ruta absoluta**, que empiece en la raíz.
-2. Con una **ruta relativa**, saliendo de la carpeta `bitacoras`.
+de `pagos`. Búscala en el dibujo del paso 1. Tienes que llegar a ella de dos maneras: con una **ruta absoluta**, y
+con una **ruta relativa** que salga de la carpeta `bitacoras`.
 
 Antes de anotar cada ruta, recórrela: párate donde corresponde, entra con `cd` y pregunta con `pwd` si llegaste a
-`guardia`. Cuando una ruta te lleve, anótala en la hoja tal como la escribiste. `verifica` hace la misma prueba que
-tú: entra por tu ruta absoluta y mira a dónde llega; luego se para en `bitacoras`, entra por tu ruta relativa y
-mira a dónde llega.
+`guardia`. Cuando una ruta te lleve, anótala tal como la escribiste. `verifica` hace la misma prueba que tú.
 
-Cuando tengas los cuatro renglones, corre `verifica 01`. Cada marca dice qué midió. Si alguna sale en rojo, léela
-completa: dice qué anotaste, qué se midió y con qué comando volver a mirar. No dice la respuesta. Corrige con otro
-`echo` y repite hasta ver esto al final:
+Cuando tengas los cuatro renglones, corre `verifica 01`. Corrige y repite hasta ver esto al final:
 
 ```text
 ✅ Lección 01: todo en verde.
 ```
 
-Ya que tienes la hoja, mira su renglón:
-
-```bash
-ls -l ~/practica/respuestas
-```
+Ya que la hoja tiene tus respuestas, mira su renglón con `ls -l ~/practica/respuestas`:
 
 ```text
 total 4
--rw-r--r-- 1 alumno alumno 139 Nov 19 06:58 01.md
+-rw-r--r-- 1 alumno alumno 139 Nov 19 07:35 01.md
 ```
 
 Es el detalle que quedó pendiente en el paso 4: tu hoja es reciente, y en lugar del año trae la hora. El tamaño y la
 fecha de la tuya van a ser otros.
 
 **Lo demuestra** (objetivos 1.2 y 1.3): `verifica 01` todo en verde.
-
----
-
-## Una nota sobre el `ls` de esta terminal
-
-En la lección 00 viste que los comandos básicos de esta terminal vienen de `rust-coreutils`, un proyecto que también
-se llama uutils, y no del proyecto GNU, que es el clásico. El `ls` que usaste hoy es de esos: `ls --version`
-contesta `ls (uutils coreutils) 0.10.0`. Si comparas con un tutorial o con un servidor que tenga el `ls` de GNU,
-esto es lo que se midió:
-
-- **En lo que enseña esta lección, la salida es idéntica.** Ubuntu deja instalado el `ls` de GNU con otro nombre,
-  `gnuls`; lo dice su documentación. En la imagen de la prueba es la versión 9.7. Se compararon los dos en el
-  laberinto con `ls`, `ls -a`, `ls -l`, `ls -la`, `ls -lah` y `ls -lhS`: las seis salidas coincidieron letra por
-  letra. Puedes repetirlo tú: corre `gnuls -lah` en `bitacoras` y compáralo con tu `ls -lah`.
-- **Lo que sí cambia es el texto de la ayuda.** `ls --help` y `man ls` describen las opciones con otras palabras.
-  Para `-a`, el `ls` de esta terminal dice `Do not ignore hidden files (files with names that start with '.').` y el
-  de GNU dice `do not ignore entries starting with .`
-- **Y el mensaje cuando escribes una opción que no existe.** Con `ls -z`, el de esta terminal contesta
-  `error: unexpected argument '-z' found`; el de GNU, `invalid option -- 'z'`.
-
-La comparación vale para esas seis formas y para las versiones de la prueba, no para todas las opciones de `ls`. La
-propia documentación de Ubuntu dice que `rust-coreutils` todavía no es compatible del todo con GNU, y por eso deja
-los dos instalados.
 
 ---
 
@@ -774,37 +542,64 @@ El ejercicio 1.1 se hace **sin IA** y sin correr nada antes de predecir: solo tu
 | # | Haces | Está hecho cuando |
 |---|---|---|
 | 1.1 | Predices por escrito en qué carpeta quedas después de cada uno de los diez `cd` de abajo, y luego los corres | Tienes tus diez predicciones y las diez salidas de `pwd`, y sabes explicar cada una que no coincidió |
-| 1.2 | En `bitacoras`, encuentras el archivo más grande y el archivo oculto, y los anotas en tu hoja | `verifica 01` marca en verde `mas-grande` y `oculto` |
+| 1.2 | En `bitacoras`: encuentras el archivo más grande y el oculto y los anotas en tu hoja; y llenas en tu papel la tabla de columnas de abajo | `verifica 01` marca en verde `mas-grande` y `oculto`, y tu tabla coincide con «Compara tus respuestas» |
 | 1.3 | Llegas a la carpeta `guardia` con una ruta absoluta y con una relativa que sale de `bitacoras`, y anotas las dos | `verifica 01` sale todo en verde |
 
-**Los diez `cd` del 1.1.** Primero escribe las diez predicciones, todas, con la ruta completa que crees que va a
-contestar `pwd`. No corras nada todavía. Si crees que un `cd` va a fallar, escríbelo así, y escribe dónde te quedas.
+**Los diez `cd` del 1.1.** Primero escribe las diez predicciones, con la ruta completa que crees que va a contestar
+`pwd`. No corras nada todavía. Si crees que un `cd` va a fallar, escríbelo así, y escribe dónde te quedas. Empiezas
+parado en `~/practica/01`, y cada comando sale de donde te dejó el anterior.
 
-Empiezas parado en la entrada del laberinto, `~/practica/01`. Los comandos van en fila: cada uno sale de donde te
-dejó el anterior.
-
-| # | Comando |
-|---|---|
-| 1 | `cd pagos/config` |
-| 2 | `cd plantillas` |
-| 3 | `cd ../../bitacoras/viejas` |
-| 4 | `cd ../..` |
-| 5 | `cd /` |
-| 6 | `cd pagos` |
-| 7 | `cd home` |
-| 8 | `cd ~` |
-| 9 | `cd ../..` |
-| 10 | `cd ..` |
+| # | Comando | # | Comando |
+|---|---|---|---|
+| 1 | `cd pagos/config` | 6 | `cd pagos` |
+| 2 | `cd plantillas` | 7 | `cd home` |
+| 3 | `cd ../../bitacoras/viejas` | 8 | `cd ~` |
+| 4 | `cd ../..` | 9 | `cd ../..` |
+| 5 | `cd /` | 10 | `cd ..` |
 
 Cuando tengas las diez, ve a la entrada con `cd ~/practica/01` y corre los comandos uno por uno, con un `pwd`
-después de cada uno. Compara cada salida con tu papel. Las respuestas están en «Compara tus respuestas»; no las mires
-antes de predecir.
+después de cada uno. No hay un número para pasar: lo que cuenta es que, en cada una que fallaste, puedas decir qué
+leíste mal: si la ruta era absoluta o relativa, o en qué carpeta estabas parado.
 
-No hay un número para pasar. Lo que cuenta es que, en cada una que fallaste, puedas decir qué leíste mal: si la ruta
-era absoluta o relativa, o en qué carpeta estabas parado.
+**La tabla de columnas del 1.2.** Corre `ls -la` en `bitacoras` y llena en tu papel estos dos renglones. Esta parte
+no la revisa `verifica`: la comparas tú.
 
-**Tiempo (estimado):** de 60 a 90 minutos, sin contar la reconstrucción de la imagen. Es una estimación: se ajusta
-con el primer grupo que tome el curso.
+| Nombre | ¿Archivo o carpeta? | Permisos (las nueve letras) | Dueño | Tamaño en bytes | Fecha |
+|---|---|---|---|---|---|
+| `.pendiente` | | | | | |
+| `viejas` | | | | | |
+
+**Tiempo (estimado):** de 60 a 90 minutos. Es una estimación: se ajusta con el primer grupo que tome el curso.
+
+---
+
+## Si quieres más
+
+*Opcional. Nada de este recuadro se evalúa ni hace falta para los ejercicios.*
+
+- **`cd -` te regresa a la carpeta anterior.** Es un guion después de `cd`. Sirve para ir y venir entre dos
+  lugares, y contesta a dónde te regresó.
+- **La tecla Tab completa nombres.** En `pagos`, escribe `cd bit` y presiona Tab: la terminal completa
+  `bitacoras/`, porque es la única carpeta de ahí que empieza así. Menos letras, menos errores de dedo.
+- **`ls -lhS` ordena por tamaño.** Es una respuesta posible a lo que le pediste a Claude Code. En `ls --help`, la
+  `S` dice `Sort by file size, largest first.` Así salió en `bitacoras`:
+
+```text
+total 2.2M
+-rw-r--r-- 1 alumno alumno 1.2M Mar 31  2025 marzo.log
+-rw-r--r-- 1 alumno alumno 975K Apr 30  2025 abril.log
+-rw-r--r-- 1 alumno alumno 9.6K Feb 28  2025 febrero.log
+drwxr-xr-x 2 alumno alumno 4.0K Jan  2  2025 viejas
+-rw-r--r-- 1 alumno alumno  980 Jan 31  2025 enero.log
+-rw-r--r-- 1 alumno alumno    0 May 31  2025 mayo.log
+```
+
+  `viejas` queda en medio porque su renglón dice `4.0K`, el tamaño de la carpeta y no de lo que lleva adentro. Y el
+  archivo oculto no aparece, porque el comando no lleva `-a`.
+- **El `ls` de esta terminal y el de otros lados.** Aquí `ls` viene de `rust-coreutils` y no del proyecto GNU,
+  como viste en la lección 00. En las formas de esta lección la salida fue idéntica a la del `ls` de GNU, que
+  Ubuntu deja instalado como `gnuls`: compara `gnuls -lah` con tu `ls -lah`. Lo que cambia es el texto de
+  `ls --help` y de `man ls`.
 
 ---
 
@@ -812,20 +607,13 @@ con el primer grupo que tome el curso.
 
 | Ves | Causa probable | Qué haces |
 |---|---|---|
-| `bash: prepara: command not found` | Tu imagen es de antes de esta lección | Sal con `exit` y corre `./practicar reconstruir`, como en «Antes de empezar» |
-| `Todavía no hay verifica para la lección «01».` | Lo mismo: la imagen es de antes | `./practicar reconstruir` |
-| `❌ prepara corre dentro de la terminal de práctica…` | No estás como `alumno`, o no existe tu carpeta `~/practica` | Sal y entra con `./practicar` |
-| `Ya existe /home/alumno/practica/01.` y una pregunta | Ya habías armado el laberinto, y armarlo de nuevo lo borra | Si quieres empezar de cero, escribe `si`. Si no, presiona Enter: no se borra nada |
-| Después de `prepara 01`, `ls` no muestra nada | Estabas parado adentro del laberinto cuando se volvió a armar: esa carpeta se borró y tú sigues en la vieja | `cd ~/practica/01` |
+| `bash: prepara: command not found`, o `Todavía no hay verifica para la lección «01».` | Tu imagen es de antes de esta lección | Sal con `exit` y corre `./practicar reconstruir` |
+| `Ya existe /home/alumno/practica/01.` y una pregunta | Ya habías armado el laberinto, y armarlo de nuevo lo borra | Para empezar de cero, escribe `si`. Si no, presiona Enter: no se borra nada |
+| Después de `prepara 01`, `ls` no muestra nada, o sale `error retrieving current directory` | Estabas parado adentro del laberinto cuando se volvió a armar: esa carpeta ya no existe | `cd ~/practica/01` |
+| `❌ No preparo nada: … es un enlace…` | En tu carpeta de práctica hay un enlace donde debería ir una carpeta tuya | Desde tu computadora, `./practicar desde-cero` |
 | `bash: cd: …: No such file or directory` | La carpeta no existe con ese nombre en el lugar donde la pediste | `pwd` para saber dónde estás y `ls` para ver qué hay. Revisa las mayúsculas y si la ruta debía empezar con `/` |
-| `bash: cd: too many arguments` | Escribiste un espacio dentro de la ruta | Una ruta va sin espacios: `cd pagos/config` |
-| El indicador dice una carpeta que no esperabas | Un `cd` anterior te dejó en otro lado | `cd ~/practica/01` y empieza de ahí |
-| `mkdir: /home/alumno/practica/respuestas: File exists` | Ya habías creado la carpeta de las respuestas | No pasa nada: sigue con el `echo` |
-| `❌ No encontré tu respuesta «…»` | Falta ese renglón, la clave está mal escrita, o usaste `>` en lugar de `>>` y la hoja se reemplazó | `cat ~/practica/respuestas/01.md` para ver qué tiene, y agrega el renglón que falte |
-| `❌ … no es una ruta absoluta` | Tu ruta no empieza con `/`. Si la escribiste con `~`, es la abreviatura | Escríbela desde la raíz: `pwd`, parado en la carpeta destino, te la da completa |
-| `❌ Tu ruta relativa … no existe saliendo de …` | La probaste parado en otra carpeta | Ve a `bitacoras`, y desde ahí prueba tu ruta con `cd` y `pwd` |
-| `❌ Tu laberinto no está completo…` | Borraste o cambiaste algo del laberinto | `prepara 01`. Tus respuestas no se pierden: viven en otra carpeta |
-| Tu pantalla de `ls -l` no coincide con la de la lección | Si es el tamaño de una carpeta, es normal (nota de «Antes de empezar»). Si es otra cosa, el laberinto cambió | `prepara 01` y compara otra vez |
+| `❌ Tu ruta relativa … no existe saliendo de …` | La probaste parado en otra carpeta | Ve a `bitacoras` y prueba ahí tu ruta con `cd` y `pwd` |
+| `❌ Tu laberinto no está completo…` | Borraste o cambiaste algo del laberinto | `prepara 01`. Tu hoja de respuestas no se pierde |
 
 ---
 
@@ -885,27 +673,31 @@ hay: creas, copias, mueves y borras, en una terminal donde no hay papelera.
 | 9 | `cd ../..` | `/` | Sube dos: de `alumno` a `home`, y de `home` a la raíz |
 | 10 | `cd ..` | `/` | Arriba de la raíz no hay nada: `..` en la raíz es la misma raíz. No da error y no te mueve |
 
-Las que más se fallan son la 6 y la 10. La 6, por dar por hecho que un comando que ya funcionó va a funcionar otra
-vez: funcionó parado en otra carpeta. La 10, por esperar un error que no llega.
+**Ejercicio 1.2, el más grande y el oculto.** `verifica 01` te dice si acertaste. El razonamiento que debe haber
+detrás:
 
-**Ejercicio 1.2.** `verifica 01` te dice si acertaste. El razonamiento que debe haber detrás:
-
-- **El más grande** se lee en la columna del tamaño de `ls -lh`, primero la letra y después el número. El único
-  renglón con `M` le gana a todos los que traen `K`, aunque uno de ellos tenga un número mayor. Sin `-h` se llega a
-  lo mismo contando cifras: es el único tamaño de siete cifras.
+- **El más grande** se lee en la columna del tamaño de `ls -lh`, primero la letra y después el número: el único
+  renglón con `M` les gana a los que traen `K`. Sin `-h` se llega a lo mismo contando cifras.
 - **El oculto** solo aparece con `-a`. Es el único nombre que empieza con punto y no es ni `.` ni `..`. En tu hoja
   va con todo y su punto: el punto es parte del nombre.
 
-**Ejercicio 1.3.** Aquí tampoco va la respuesta escrita: el control es `verifica 01`. Para saber si vas bien:
+**Ejercicio 1.2, la tabla de columnas.**
+
+| Nombre | ¿Archivo o carpeta? | Permisos | Dueño | Tamaño en bytes | Fecha |
+|---|---|---|---|---|---|
+| `.pendiente` | Archivo: el renglón empieza con un guion | `rw-r--r--` | `alumno` | `48000` | `May 12  2025`: 12 de mayo de 2025 |
+| `viejas` | Carpeta: el renglón empieza con `d` | `rwxr-xr-x` | `alumno` | `4096` en la prueba; en tu computadora puede ser otro | `Jan  2  2025`: 2 de enero de 2025 |
+
+Si en el tamaño de `.pendiente` escribiste `47K`, corriste `ls -lah`: es el mismo archivo, con el tamaño abreviado.
+Si en dueño dudaste entre las dos columnas que dicen `alumno`: la primera es el dueño y la segunda es el grupo.
+
+**Ejercicio 1.3.** Aquí no va la respuesta escrita: el control es `verifica 01`. Para saber si vas bien:
 
 - Tu ruta absoluta empieza con `/` y es, letra por letra, lo que contesta `pwd` cuando estás parado en `guardia`.
   Después de la raíz lleva siete nombres.
 - Tu ruta relativa no empieza con `/` ni con `~`. La más corta sube un nivel y baja dos. Hay otras más largas que
-  también llegan, y `verifica` las da por buenas: lo que mide es a dónde llevan, no cómo están escritas.
-
-**Las preguntas del paso 4, con Claude Code.** `ls -lhS` ordena por el tamaño que cada renglón trae en su columna.
-`viejas` queda en medio porque su renglón dice `4.0K`, que es el tamaño de la carpeta y no el de lo que lleva
-adentro. El archivo oculto no aparece porque el comando no lleva `-a`: con `ls -lahS` sí sale.
+  también llegan, y `verifica` las da por buenas: lo que mide es que el camino escrito, carpeta por carpeta, lleve a
+  `guardia`.
 
 **Para cerrar.**
 
@@ -917,10 +709,9 @@ adentro. El archivo oculto no aparece porque el comando no lleva `-a`: con `ls -
 6. `../semana-2`: subes a `respaldos` y bajas a `semana-2`.
 7. Todavía no: `ls` a secas no lista lo oculto. Corres `ls -a`. Si solo salen `.` y `..`, ahora sí está vacía.
 8. El de `3.1M`. Se lee primero la letra: una M vale más de mil K.
-9. Que es una carpeta. Del contenido no dice nada: ese número es el tamaño de la carpeta misma, no de lo que lleva
-   adentro.
+9. Que es una carpeta. Del contenido no dice nada: ese número es el tamaño de la carpeta misma.
 10. Una absoluta. Una relativa solo sirve si los dos saben en qué carpeta está parado él; la absoluta sale de la
-    raíz y funciona desde cualquier lugar.
+    raíz.
 
 ---
 
@@ -928,17 +719,17 @@ adentro. El archivo oculto no aparece porque el comando no lleva `-a`: con `ls -
 
 Abiertas el 19-nov-2026. Todas están en inglés.
 
-- The Open Group. *POSIX.1-2024, Base Definitions, capítulo 3* (definiciones 3.2 «Absolute Pathname», 3.311 «Relative Pathname» y 3.111 «Dot-Dot»: una ruta absoluta empieza con diagonal; una relativa, no). https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap03.html
+- The Open Group. *POSIX.1-2024, Base Definitions, capítulo 3* (3.2 «Absolute Pathname», 3.311 «Relative Pathname» y 3.111 «Dot-Dot»). https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap03.html
 - The Open Group. *POSIX.1-2024, utilidad cd* (`cd` sin ruta usa la carpeta personal; `cd -` va a la carpeta anterior y la escribe). https://pubs.opengroup.org/onlinepubs/9799919799/utilities/cd.html
-- The Open Group. *POSIX.1-2024, utilidad ls* (el orden de las columnas de `-l`; la fecha lleva hora si el archivo se modificó en los últimos seis meses y año si no). https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html
+- The Open Group. *POSIX.1-2024, utilidad ls* (el orden de las columnas de `-l`; hora o año según los últimos seis meses). https://pubs.opengroup.org/onlinepubs/9799919799/utilities/ls.html
 - GNU. *Bash Reference Manual, «Bourne Shell Builtins»* (`cd` y `pwd`; `pwd` escribe la ruta absoluta de la carpeta actual). https://www.gnu.org/software/bash/manual/html_node/Bourne-Shell-Builtins.html
 - GNU. *Bash Reference Manual, «Tilde Expansion»* (`~` se cambia por la carpeta personal). https://www.gnu.org/software/bash/manual/html_node/Tilde-Expansion.html
 - GNU. *Coreutils, «What information is listed»* (las columnas de `-l`, las letras del tipo, el renglón `total` y `-h` con potencias de 1024). https://www.gnu.org/software/coreutils/manual/html_node/What-information-is-listed.html
 - GNU. *Coreutils, «Which files are listed»* (`ls` no lista los nombres que empiezan con punto; `-a` sí). https://www.gnu.org/software/coreutils/manual/html_node/Which-files-are-listed.html
-- Ubuntu Manpages. *ls(1)*, de Ubuntu 26.04 (la página del `ls` de `rust-coreutils` 0.10.0: `-a`, `-l`, `-h`, `-S`). https://manpages.ubuntu.com/manpages/resolute/en/man1/ls.1.html
+- Ubuntu Manpages. *ls(1)*, de Ubuntu 26.04 (el `ls` de `rust-coreutils` 0.10.0: `-a`, `-l`, `-h`, `-S`). https://manpages.ubuntu.com/manpages/resolute/en/man1/ls.1.html
 - Ubuntu Manpages. *hier(7)*, de Ubuntu 26.04 (las carpetas de la raíz de un sistema Linux; `/home`). https://manpages.ubuntu.com/manpages/resolute/en/man7/hier.7.html
-- Ubuntu. *Ubuntu 26.04 LTS: summary for LTS users*, sección «rust-coreutils» (los comandos de GNU siguen instalados con el prefijo `gnu`, como `gnuls`, porque `rust-coreutils` todavía no es compatible del todo). https://documentation.ubuntu.com/release-notes/26.04/summary-for-lts-users/
+- Ubuntu. *Ubuntu 26.04 LTS: summary for LTS users*, sección «rust-coreutils» (los comandos de GNU siguen instalados con el prefijo `gnu`, como `gnuls`). https://documentation.ubuntu.com/release-notes/26.04/summary-for-lts-users/
 - Medición propia, 19-nov-2026, en una Mac con Apple silicon (Docker 29.2.1 con Colima, linux/arm64), con la imagen
   del curso sobre Ubuntu 26.04.1: `ls` de uutils coreutils 0.10.0, `gnuls` de GNU coreutils 9.7 y bash 5.3.9. De ahí
-  salen las pantallas de la lección, la comparación de `ls` contra `gnuls`, el redondeo de `-h`, la tecla Tab, el
-  tiempo de `prepara 01` y sus dos corridas con el mismo resultado. En Linux esta lección todavía no se prueba.
+  salen las pantallas, la comparación de `ls` contra `gnuls`, el redondeo de `-h`, la tecla Tab y el tiempo de
+  `./practicar reconstruir`. En Linux esta lección todavía no se prueba.

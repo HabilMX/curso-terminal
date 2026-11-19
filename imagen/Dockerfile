@@ -46,14 +46,20 @@ ENV LANG=C.UTF-8
 # desde cualquier carpeta, y con permiso de ejecución (755).
 COPY --chmod=755 verifica /usr/local/bin/verifica
 
-# Desde la lección 01 hay un segundo comando, «prepara», que arma el escenario de
-# cada lección dentro de tu carpeta de práctica (para la 01, un laberinto de
-# carpetas). Va aparte de verifica porque verifica solo mira y prepara crea y
-# borra. La lista del laberinto queda en /usr/local/share/curso-terminal: la leen
-# los dos comandos, y así el laberinto tiene una sola definición. Este COPY no
-# lleva --chmod a propósito: se lo pondría también a la carpeta nueva, y una
-# carpeta con permiso 644 no deja entrar (medido el 19-nov-2026).
+# Desde la lección 01 hay dos comandos más. «prepara» arma el escenario de cada
+# lección dentro de tu carpeta de práctica (para la 01, un laberinto de carpetas)
+# y deja tu hoja de respuestas con sus claves vacías. Va aparte de verifica porque
+# verifica solo mira y prepara crea y borra. «anota» escribe una respuesta en esa
+# hoja, para que puedas llenarla antes de conocer un editor de texto.
+# La lista del laberinto queda en /usr/local/share/curso-terminal: la leen prepara
+# y verifica, y así el laberinto tiene una sola definición. Ese COPY no lleva
+# --chmod a propósito: se lo pondría también a la carpeta nueva, y una carpeta con
+# permiso 644 no deja entrar (medido el 19-nov-2026).
+# Estos COPY van DESPUÉS del RUN que instala los paquetes, también a propósito:
+# cuando una lección nueva cambia estos archivos, Docker reutiliza lo ya instalado
+# y solo repite desde aquí.
 COPY --chmod=755 prepara /usr/local/bin/prepara
+COPY --chmod=755 anota /usr/local/bin/anota
 COPY escenarios/01-laberinto.txt /usr/local/share/curso-terminal/01-laberinto.txt
 
 # La imagen de Ubuntu entra como root, el usuario que puede todo. En el curso

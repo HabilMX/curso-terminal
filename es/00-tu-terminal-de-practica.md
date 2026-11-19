@@ -75,7 +75,7 @@ Si lo pruebas en uno de éstos, cuéntanos cómo te fue.
 
 | Cifra | Cómo se midió |
 |---|---|
-| Construir la imagen: 42 segundos | Mac con Apple silicon, 18-nov-2026, con `time ./practicar reconstruir`: sin caché y con la imagen de Ubuntu ya descargada |
+| Construir la imagen: 42 segundos | Mac con Apple silicon, 18-nov-2026, con `time ./practicar reconstruir`, que ese día construía sin caché (hoy eso lo hace `./practicar reconstruir-limpio`), y con la imagen de Ubuntu ya descargada |
 | Construir la imagen: 1 minuto 38 segundos | La misma Mac, 18-nov-2026, con `docker build --no-cache`, sobre una versión anterior del Dockerfile |
 | Construir la imagen: unos 90 segundos | Linux Mint 22.3 (x86_64), 19-nov-2026, con `./practicar` |
 | Tamaño: 221 MB | Linux Mint, 18-nov-2026, con `docker image inspect` |
