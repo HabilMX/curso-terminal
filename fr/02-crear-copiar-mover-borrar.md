@@ -55,7 +55,7 @@ Et supprime les fichiers temporaires du cache, ce sont eux qui ont rempli le dis
 
 Dans le cache, il y a des fichiers qui se terminent par `.tmp`, et aussi un, `cache-indice.txt` (« cache-index.txt »),
 sans lequel le service ne redémarre pas. Lucía sait une chose de la commande pour supprimer : elle ne demande rien, et il
-n'y a pas de corbeille d'où ressortir ce qu'elle emporte.
+n'y a pas de corbeille où récupérer ce qu'elle efface.
 
 Cette leçon est cette demi-heure, dans un atelier où se tromper n'a pas de conséquences.
 

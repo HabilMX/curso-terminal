@@ -1,4 +1,4 @@
-# Lesson 02 — Create, copy, move and delete without fear
+# Lesson 02 — Creating, copying, moving and deleting without fear
 
 **By Dorian Chávez, founder of Hábil and integration architect.**
 

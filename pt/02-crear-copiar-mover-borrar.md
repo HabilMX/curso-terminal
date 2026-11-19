@@ -339,7 +339,7 @@ cp caja otra
 cp: -r not specified; omitting directory 'caja'
 ```
 
-«Não se pôs `-r`; pulo `caja`.» (`otra` é «outra».) Para copiar uma pasta com tudo o que ela tem, vai o `-r`, de
+«Faltou o `-r`; pulo `caja`.» (`otra` é «outra».) Para copiar uma pasta com tudo o que ela tem, vai o `-r`, de
 *recursive*, «até o fundo»:
 
 ```bash
@@ -649,7 +649,7 @@ rm -rf /bin /boot /dev /etc /home /lib /media /mnt /opt /proc /root /run /sbin /
 ```
 
 Cada pasta da raiz. Segundo o manual, o `rm` do GNU se recusa a apagar `/` assim, tal qual (`--preserve-root`); com o `*`
-ele já não recebe `/`, e sim esta lista. Não o testamos, e aqui também não se testa.
+ele já não recebe `/`, e sim esta lista. Não o testamos, e não é para testar.
 
 **Um caso relatado.** Em janeiro de 2015, o issue público #3671 do Steam para Linux descreveu uma perda de arquivos
 após a execução de `steam.sh`. Comentários do tópico apontaram `rm -rf "$STEAMROOT/"*` e o risco caso `STEAMROOT`
