@@ -37,7 +37,7 @@ Fazem-se em ordem: cada uma parte do que a anterior deixou. Comece pela
 |---|---|---|
 | 00 | [O terminal de prática](00-tu-terminal-de-practica.md) | Neste terminal não há área de trabalho nem janelas, só texto: ele diz quem se é e onde se está em cada linha, e se fala com ele por meio de comandos |
 | 01 | [Mover-se sem ver](01-moverte-sin-ver.md) | A árvore de pastas, e o caminho absoluto contra o relativo |
-| 02 | Criar, copiar, mover e apagar sem medo | No terminal não há lixeira: pensa-se antes de apagar |
+| 02 | [Criar, copiar, mover e apagar sem medo](02-crear-copiar-mover-borrar.md) | No terminal não há lixeira: pensa-se antes de apagar |
 | 03 | Ver o que há dentro | Quase tudo em um servidor é texto, e se lê sem abrir um editor |
 | 04 | Encontrar arquivos: find | O `find` percorre a árvore e filtra pelo que se mandar |
 | 05 | Buscar dentro: grep | O `grep` busca texto dentro dos arquivos; o `find` busca os arquivos |

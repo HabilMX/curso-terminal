@@ -42,7 +42,7 @@ Elles se font dans l'ordre : chacune part de ce que la précédente a laissé. C
 |---|---|---|
 | 00 | [Votre terminal d'entraînement](00-tu-terminal-de-practica.md) | Dans ce terminal, il n'y a ni bureau ni fenêtres, seulement du texte : il vous dit qui vous êtes et où vous êtes sur chaque ligne, et vous lui parlez avec des commandes |
 | 01 | [Se déplacer sans voir](01-moverte-sin-ver.md) | L'arbre des dossiers, et le chemin absolu face au chemin relatif |
-| 02 | Créer, copier, déplacer et supprimer sans crainte | Dans le terminal, il n'y a pas de corbeille : vous réfléchissez avant de supprimer |
+| 02 | [Créer, copier, déplacer et supprimer sans crainte](02-crear-copiar-mover-borrar.md) | Dans le terminal, il n'y a pas de corbeille : vous réfléchissez avant de supprimer |
 | 03 | Voir ce qu'il y a dedans | Presque tout, sur un serveur, est du texte, et vous le lisez sans ouvrir d'éditeur |
 | 04 | Trouver des fichiers : find | `find` parcourt l'arbre et filtre selon ce que vous lui dites |
 | 05 | Chercher à l'intérieur : grep | `grep` cherche du texte à l'intérieur des fichiers ; `find` cherche les fichiers |
