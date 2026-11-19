@@ -68,6 +68,8 @@ Tu carpeta `~/practica` no se toca. Después entra con `./practicar`.
 | Sistema | Estado |
 |---|---|
 | Mac con Apple silicon, Docker 29.2.1 corriendo con Colima | Probado el 19-nov-2026: `./practicar reconstruir`, `prepara 02` dos veces con el mismo resultado, cada comando de los pasos 1 a 6, y `verifica 02` en rojo y en verde |
+| Linux Mint 22.3 (x86_64), Docker Engine 29.10.0 | Probado el 19-nov-2026: `./practicar reconstruir`, `prepara 02` dos veces con el mismo resultado que en la Mac, los mensajes de `mkdir`, `touch` y `rmdir`, las preguntas de `cp -i`, `mv -i`, `rm -i` y `rm -I`, la lección completa como alumno, y `verifica 02` en verde y en rojo con un enlace duro |
+| Ubuntu, Mac con Docker Desktop, Windows con Docker Desktop y WSL 2 | Sin probar todavía con esta lección |
 
 **Qué va a coincidir con tu pantalla y qué no.** Coinciden los nombres, los contenidos, las fechas del taller y los
 mensajes de los comandos. Cambian la hora de lo que tú crees o toques, el acomodo en columnas y los colores.
