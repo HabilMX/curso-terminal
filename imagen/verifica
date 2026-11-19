@@ -1,0 +1,87 @@
+#!/usr/bin/env bash
+# verifica — revisa el ESTADO de tu terminal de práctica y te dice qué falta.
+# Corre ADENTRO del contenedor del curso. Uso:  verifica 00
+# Solo revisa cómo están las cosas: no califica predicciones ni explicaciones;
+# esas las comparas tú con «Compara tus respuestas» de la lección.
+# Solo lee, con una excepción que se dice en su marca: para saber si ~/practica
+# se puede escribir, crea un archivo vacío y lo borra enseguida.
+set -uo pipefail
+
+falta=0
+si()   { echo "✅ $1"; }
+no()   { echo "❌ $1"; falta=1; }
+
+# «hace 75» escribe «1 min 15 s»: los segundos, en palabras.
+hace() {
+  if [ "$1" -lt 60 ]; then echo "$1 s"; else echo "$(($1 / 60)) min $(($1 % 60)) s"; fi
+}
+
+verifica_00() {
+  local version usuario practica marca prueba
+  local ahora corriendo arranque escrito
+
+  # --- 0.1 · Estás en la terminal del curso -------------------------------------
+  version=$(. /etc/os-release 2>/dev/null && echo "${ID:-?} ${VERSION_ID:-?}")
+  if [ "$version" = "ubuntu 26.04" ]; then
+    si "Es Ubuntu 26.04 (medí: ID y VERSION_ID en /etc/os-release)"
+  else
+    no "No es Ubuntu 26.04: /etc/os-release dice «${version:-nada}». ¿Corriste verifica fuera del contenedor? Entra con ./practicar"
+  fi
+
+  usuario=$(id -un)
+  if [ "$usuario" = "alumno" ]; then
+    si "Eres el usuario alumno (medí: id -un)"
+  else
+    no "Eres «${usuario}», no alumno (medí: id -un). Sal con exit y vuelve a entrar con ./practicar"
+  fi
+
+  practica="$HOME/practica"
+  if [ -d "$practica" ]; then
+    si "$practica existe y es una carpeta (medí: que exista como carpeta)"
+  else
+    no "$practica no existe (medí: que exista como carpeta). Sal y vuelve a entrar con ./practicar"
+  fi
+
+  prueba="$practica/.verifica-prueba.$$"
+  if [ -d "$practica" ] && : 2>/dev/null > "$prueba"; then
+    rm -f "$prueba"
+    si "Puedes escribir en $practica (medí: creé un archivo vacío ahí y lo borré)"
+  else
+    no "No puedes escribir en $practica (medí: intenté crear un archivo vacío ahí). Sal y corre ./practicar desde-cero"
+  fi
+
+  # --- 0.1 · Saliste y volviste a entrar sin perder tu carpeta -------------------
+  marca="$practica/00/aqui-estuve.txt"
+  if [ ! -f "$marca" ]; then
+    no "Falta $marca (medí: que el archivo exista). Créalo con el paso 2 de la lección, sal con exit y vuelve a entrar"
+  else
+    # Docker escribe /etc/hostname cuando arranca el contenedor: su fecha es la
+    # hora en que empezó esta sesión. Se compara contra la fecha de tu archivo.
+    ahora=$(date +%s)
+    arranque=$(stat -c %Y /etc/hostname 2>/dev/null)
+    escrito=$(stat -c %Y "$marca" 2>/dev/null)
+    case "$arranque$escrito" in
+      ''|*[!0-9]*) no "No pude leer las fechas (medí: la de /etc/hostname dio «${arranque}» y la de tu archivo dio «${escrito}»): no sé si saliste y volviste"; return ;;
+    esac
+    corriendo=$((ahora - arranque))
+    if [ "$escrito" -lt "$arranque" ]; then
+      si "Saliste y volviste sin perder tu carpeta (medí: aqui-estuve.txt se escribió hace $(hace $((ahora - escrito))) y esta sesión arrancó después, hace $(hace "$corriendo"))"
+    else
+      no "aqui-estuve.txt existe, pero se escribió en ESTA sesión (medí: la sesión arrancó hace $(hace "$corriendo") y el archivo se escribió después, hace $(hace $((ahora - escrito)))). Te falta salir con exit, volver a entrar con ./practicar y correr  verifica 00  otra vez, sin tocar el archivo"
+    fi
+  fi
+}
+
+case "${1:-}" in
+  00) verifica_00 ;;
+  '') echo "Uso: verifica NN    (NN es el número de la lección; por ejemplo: verifica 00)"; exit 2 ;;
+  *)  echo "Todavía no hay verifica para la lección «$1». Por ahora existe: verifica 00"; exit 2 ;;
+esac
+
+echo
+if [ "$falta" -eq 0 ]; then
+  echo "✅ Lección ${1}: todo en verde."
+else
+  echo "❌ Lección ${1}: falta lo marcado con ❌. Arréglalo y corre  verifica ${1}  otra vez."
+fi
+exit "$falta"

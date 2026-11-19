@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+# practicar — levanta tu terminal de práctica del curso «La terminal desde cero».
+#
+#   ./practicar              entra a la terminal (la primera vez construye la imagen)
+#   ./practicar desde-cero   borra tu carpeta de práctica, con confirmación
+#   ./practicar reconstruir  vuelve a construir la imagen (cuando el curso se actualiza)
+#
+# Corre en macOS (también con el bash 3.2 que trae) y en Linux. Necesita Docker.
+set -u
+
+IMAGEN="curso-terminal"
+VOLUMEN="curso-terminal-practica"
+AQUI="$(cd "$(dirname "$0")" && pwd)"
+
+revisar_docker() {
+  if ! command -v docker >/dev/null 2>&1; then
+    echo "❌ No encuentro el comando «docker» en esta computadora."
+    echo "   Instala Docker primero: la lección 00, en «Antes de empezar», dice cómo en cada sistema."
+    exit 1
+  fi
+  if ! docker info >/dev/null 2>&1; then
+    echo "❌ Docker está instalado, pero no responde. Revisa esto:"
+    case "$(uname -s)" in
+      Darwin)
+        echo "   • En Mac, Docker corre dentro de un programa que tiene que estar abierto."
+        echo "     Abre Docker Desktop (o el que uses), espera a que diga que está corriendo y repite." ;;
+      *)
+        echo "   • ¿El servicio está encendido?   sudo systemctl start docker"
+        echo "   • ¿Tu usuario está en el grupo docker?   El comando «groups» debe mostrar «docker»."
+        echo "     Si te acabas de agregar al grupo, cierra tu sesión y vuelve a entrar."
+        echo "   • En Windows con WSL2: abre Docker Desktop y enciende la integración con tu distribución." ;;
+    esac
+    echo "   Para ver el error completo, corre:   docker info"
+    exit 1
+  fi
+}
+
+construir() {
+  echo "Construyendo la imagen «${IMAGEN}». Descarga Ubuntu y unos paquetes: tarda un par de minutos."
+  if ! docker build ${1+"$@"} -t "$IMAGEN" "$AQUI/imagen"; then
+    echo "❌ La imagen no se pudo construir. Lee el error de arriba: casi siempre es la red."
+    echo "   Revisa tu conexión y vuelve a correr ./practicar"
+    exit 1
+  fi
+  echo "✅ Imagen lista."
+}
+
+case "${1:-}" in
+  "")
+    revisar_docker
+    if [ ! -t 0 ] || [ ! -t 1 ]; then
+      echo "❌ ./practicar abre una terminal interactiva: córrelo directo en tu terminal,"
+      echo "   sin tuberías (|) ni redirecciones (< >)."
+      exit 1
+    fi
+    if ! docker image inspect "$IMAGEN" >/dev/null 2>&1; then
+      construir
+    fi
+    echo "Entrando a tu terminal de práctica. Para salir, escribe  exit  (o Ctrl+D)."
+    docker run -it --rm -h practica -v "$VOLUMEN:/home/alumno/practica" "$IMAGEN"
+    rc=$?
+    # 125 es de Docker: no pudo arrancar el contenedor. Cualquier otro número es
+    # solo el del último comando que corriste adentro, y no es un error de aquí.
+    if [ "$rc" -eq 125 ]; then
+      echo "❌ Docker no pudo abrir la terminal de práctica. Lee el error de arriba."
+      echo "   Si no se entiende, corre  ./practicar reconstruir  y vuelve a intentar."
+      exit 1
+    fi
+    echo "Saliste de la terminal de práctica. Tu carpeta ~/practica quedó guardada."
+    echo "Para volver a entrar:  ./practicar"
+    exit 0
+    ;;
+  desde-cero)
+    revisar_docker
+    if ! docker volume inspect "$VOLUMEN" >/dev/null 2>&1; then
+      echo "No hay nada que borrar: tu carpeta de práctica todavía no existe."
+      exit 0
+    fi
+    echo "Esto BORRA todo lo que hay en ~/practica dentro de tu terminal de práctica."
+    echo "No se puede deshacer. Tu computadora no se toca: solo esa carpeta."
+    printf "Para confirmar, escribe  si  y presiona Enter: "
+    read -r respuesta || respuesta=""
+    case "$respuesta" in
+      si|sí|SI|SÍ|Si|Sí) ;;
+      *) echo "No se borró nada."; exit 0 ;;
+    esac
+    # Si cerraste la ventana sin escribir exit, la terminal de práctica puede seguir
+    # abierta por dentro, y Docker no borra una carpeta en uso. Se cierran primero
+    # las terminales de práctica que la estén usando (solo esas, ninguna otra cosa).
+    abiertas="$(docker ps -aq --filter "volume=$VOLUMEN")"
+    if [ -n "$abiertas" ]; then
+      echo "Había una terminal de práctica abierta. La cierro para poder borrar la carpeta."
+      # shellcheck disable=SC2086
+      docker rm -f $abiertas >/dev/null 2>&1
+    fi
+    if docker volume rm "$VOLUMEN" >/dev/null 2>&1; then
+      echo "✅ Carpeta de práctica borrada. La próxima vez que entres con ./practicar, ~/practica estará vacía."
+    else
+      echo "❌ No se pudo borrar la carpeta de práctica. Para ver por qué, corre:"
+      echo "   docker volume rm $VOLUMEN"
+      exit 1
+    fi
+    ;;
+  reconstruir)
+    revisar_docker
+    construir --pull --no-cache
+    ;;
+  *)
+    echo "No conozco «$1». Uso:"
+    echo "  ./practicar              entra a tu terminal de práctica"
+    echo "  ./practicar desde-cero   borra tu carpeta de práctica (pide confirmación)"
+    echo "  ./practicar reconstruir  vuelve a construir la imagen"
+    exit 2
+    ;;
+esac
