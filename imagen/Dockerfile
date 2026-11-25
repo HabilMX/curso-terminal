@@ -26,7 +26,7 @@ FROM ubuntu:26.04
 #      groff     el formateador completo del manual. La página man(7) de «manpages»
 #                remite a groff_man(7), que viene en este paquete y no en groff-base.
 #                Sin él, «man man» muestra la página pero avisa «can't resolve
-#                man7/groff_man.7» (medido el 25-nov-2026 en Ubuntu 26.04.1). Trae
+#                man7/groff_man.7» (medido el 24-nov-2026 en Ubuntu 26.04.1). Trae
 #                librerías de X11 y suma unos 27 MB: es el precio de un manual sin avisos.
 # 4. Se reinstalan los paquetes que ya venían. Hace falta: se instalaron ANTES de
 #    quitar la regla del paso 1, así que llegaron sin su página de manual. Sin este
