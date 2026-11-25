@@ -1,0 +1,13 @@
+# Las listas de patrones se quedan en GitLab: deletrean nombres internos y el
+# revisor no puede revisarse a si mismo (se excluyen para no cazarse siempre).
+.publicable-prohibido.txt export-ignore
+.publicable-interno.txt export-ignore
+
+# GitHub mide el lenguaje del repositorio con Linguist: el guion que revisa lo
+# publicable no es lo que se ensena, asi que no cuenta para esa medida.
+verificar-publicable.sh linguist-detectable=false
+
+# El guion de esa revision tampoco viaja: alla no puede correr -su lista interna no
+# se publica- y ademas describe como funciona la puerta. Vive en el repositorio de
+# trabajo, que es donde se usa.
+verificar-publicable.sh export-ignore

@@ -1,0 +1,76 @@
+name: Verificar el curso
+
+# En cada cambio se revisa lo que el alumno usa: que las lecciones existan en los
+# cinco idiomas, que ninguna liga relativa apunte a un archivo que no existe, que
+# los guiones de la terminal de práctica no tengan errores de sintaxis y que la
+# imagen se construya. Solo se construye: no se publica en ningún registro. Esta
+# corrida es pública: cualquiera puede abrirla y ver el resultado de cada paso.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Las mismas lecciones en los cinco idiomas, y ninguna liga relativa rota
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          idiomas = ["es", "en", "fr", "pt", "bg"]
+          lecciones = {l: sorted(f for f in os.listdir(l) if re.match(r"\d\d-.*\.md$", f)) for l in idiomas}
+          fallas = 0
+          if not lecciones["es"]:
+              print("❌ No hay lecciones en es/: este paso no revisó nada."); sys.exit(1)
+          for l in idiomas[1:]:
+              if lecciones[l] != lecciones["es"]:
+                  faltan = sorted(set(lecciones["es"]) - set(lecciones[l]))
+                  sobran = sorted(set(lecciones[l]) - set(lecciones["es"]))
+                  print(f"❌ {l}/ no tiene las mismas lecciones que es/. Faltan: {faltan}. Sobran: {sobran}"); fallas += 1
+          revisadas = 0
+          archivos = ["README.md"] + [f"{l}/{f}" for l in idiomas for f in lecciones[l] + ["README.md"]]
+          for a in archivos:
+              texto = open(a, encoding="utf-8").read()
+              for destino in re.findall(r"\]\(([^)\s]+)\)", texto):
+                  if re.match(r"(https?:|mailto:|#)", destino):
+                      continue
+                  ruta = os.path.normpath(os.path.join(os.path.dirname(a), destino.split("#")[0]))
+                  revisadas += 1
+                  if not os.path.exists(ruta):
+                      print(f"❌ {a}: la liga «{destino}» apunta a {ruta}, que no existe"); fallas += 1
+          print(f"Lecciones por idioma: {len(lecciones['es'])} · ligas relativas revisadas: {revisadas}")
+          if revisadas == 0:
+              print("❌ No se revisó ninguna liga relativa: el paso no midió nada."); sys.exit(1)
+          sys.exit(1 if fallas else 0)
+          PY
+
+      - name: Los guiones de la terminal de práctica no tienen errores de sintaxis
+        run: |
+          set -euo pipefail
+          n=0
+          for f in practicar imagen/anota imagen/prepara imagen/simula imagen/verifica; do
+            bash -n "$f" && echo "✅ $f" && n=$((n + 1))
+          done
+          [ "$n" -eq 5 ] || { echo "❌ Se revisaron $n de 5 guiones"; exit 1; }
+
+      - name: Revisar el Dockerfile con las comprobaciones de BuildKit (docker build --check)
+        run: docker build --check imagen
+
+      - name: Construir la imagen de la terminal de práctica, sin publicarla
+        run: |
+          docker build --progress=plain -t curso-terminal:ci imagen
+          docker run --rm --network none curso-terminal:ci bash -c 'command -v verifica prepara anota simula'
+
+      - name: Nota sobre la revisión previa a publicar
+        run: |
+          echo "La revisión de material no publicable (rutas internas, nombres reservados,"
+          echo "direcciones de la infraestructura) se corre ANTES de publicar, con la lista"
+          echo "de patrones que vive en el repositorio de trabajo y no se publica."
