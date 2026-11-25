@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+# simula — hace como si un servicio estuviera escribiendo su bitácora, para que la veas
+# crecer. Corre ADENTRO del contenedor del curso. Uso:  simula 03
+#
+# En la lección 03 agrega a ~/practica/03/pagos/arranque.log los renglones «crece» de la
+# lista de la sala de guardia (/usr/local/share/curso-terminal/03-guardia.txt), uno cada
+# tres segundos, después de una espera de cinco. Te regresa el indicador enseguida y
+# escribe por su cuenta: así puedes mirar el archivo con  tail -f  mientras crece.
+#
+# Solo escribe en ese archivo, y solo si está tal como lo dejó  prepara 03: con los
+# renglones del arranque y nada más. Si ya corriste simula, no repite: para volver a
+# verlo, arma la sala de nuevo con  prepara 03 . No borra nada.
+set -u
+
+LISTA="/usr/local/share/curso-terminal/03-guardia.txt"
+PRACTICA="/home/alumno/practica"
+RAIZ="$PRACTICA/03"
+ESPERA_INICIAL=5
+ENTRE_RENGLONES=3
+
+simula_03() {
+  local tipo ruta texto archivo destino="" inicial="" candado
+  local -a nuevos=()
+
+  if [ ! -r "$LISTA" ]; then
+    echo "❌ No encuentro la lista de la sala de guardia (medí: que $LISTA se pueda leer)."
+    echo "   Tu imagen es de antes de esta lección. Sal y corre  ./practicar reconstruir"
+    exit 1
+  fi
+  # De la lista: a qué archivo se agrega, qué tiene al armarse y qué se le agrega.
+  while IFS=$'\t' read -r tipo ruta texto _ || [ -n "$tipo" ]; do
+    case "$tipo" in
+      crece) destino=$ruta; nuevos+=("$texto") ;;
+    esac
+  done < "$LISTA"
+  if [ -z "$destino" ] || [ "${#nuevos[@]}" -eq 0 ]; then
+    echo "❌ La lista no dice qué escribir (medí: los renglones «crece» de $LISTA). Sal y corre  ./practicar reconstruir"
+    exit 1
+  fi
+  while IFS=$'\t' read -r tipo ruta texto _ || [ -n "$tipo" ]; do
+    [ "$tipo" = "linea" ] && [ "$ruta" = "$destino" ] && inicial+="$texto"$'\n'
+  done < "$LISTA"
+  archivo="$RAIZ/$destino"
+
+  # La misma cautela que prepara: nada a través de un enlace.
+  if [ "$(realpath -e -P -- "$archivo" 2>/dev/null)" != "$archivo" ] || [ ! -f "$archivo" ]; then
+    echo "❌ No encuentro $archivo como archivo de verdad (medí: que exista, que sea un archivo y que"
+    echo "   ni él ni sus carpetas sean un enlace). Arma la sala con  prepara 03"
+    exit 1
+  fi
+  candado="$RAIZ/.simula-en-curso"
+  if [ -e "$candado" ]; then
+    echo "❌ simula ya está escribiendo en $destino (medí: la carpeta $candado ya existe)."
+    echo "   Míralo con  tail -f . Si no termina en un minuto, arma la sala con  prepara 03"
+    exit 1
+  fi
+  if ! cmp -s -- "$archivo" <(printf '%s' "$inicial"); then
+    echo "❌ $destino ya no está como lo dejó prepara (medí: lo comparé, renglón por renglón, con la lista)."
+    echo "   ¿Ya habías corrido simula? Para verlo crecer otra vez, arma la sala con  prepara 03"
+    exit 1
+  fi
+  # Un candado para no correr dos veces a la vez: mkdir falla si la carpeta ya existe.
+  if ! mkdir -- "$candado" 2>/dev/null; then
+    echo "❌ simula ya está escribiendo en $destino (medí: la carpeta $candado ya existe)."
+    echo "   Míralo con  tail -f . Si no termina en un minuto, arma la sala con  prepara 03"
+    exit 1
+  fi
+
+  echo "Empiezo en $ESPERA_INICIAL segundos: agrego ${#nuevos[@]} renglones a ~/practica/03/$destino,"
+  echo "uno cada $ENTRE_RENGLONES segundos. Termino solo, en menos de un minuto. Ya puedes mirarlo."
+
+  # El que escribe corre aparte, sin la terminal: no escribe en tu pantalla y no lo detiene
+  # el Ctrl+C con el que sales de tail.
+  (
+    trap '' INT
+    sleep "$ESPERA_INICIAL"
+    for texto in "${nuevos[@]}"; do
+      # Si mientras tanto armaste la sala de nuevo, el candado ya no está: me detengo.
+      [ -d "$candado" ] || exit 0
+      printf '%s\n' "$texto" >> "$archivo"
+      sleep "$ENTRE_RENGLONES"
+    done
+    rmdir -- "$candado"
+  ) < /dev/null > /dev/null 2>&1 &
+}
+
+case "${1:-}" in
+  03) simula_03 ;;
+  '') echo "Uso: simula NN    (NN es el número de la lección; por ejemplo: simula 03)"; exit 2 ;;
+  *)  echo "No hay simula para la lección «$1». Por ahora existe: simula 03"; exit 2 ;;
+esac

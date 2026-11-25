@@ -45,7 +45,7 @@ Elles se font dans l'ordre : chacune part de ce que la précédente a laissé. C
 | 00 | [Ton terminal d'entraînement](00-tu-terminal-de-practica.md) | Dans ce terminal, il n'y a ni bureau ni fenêtres, seulement du texte : il te dit qui tu es et où tu es sur chaque ligne, et tu lui parles avec des commandes |
 | 01 | [Se déplacer sans voir](01-moverte-sin-ver.md) | L'arbre des dossiers, et le chemin absolu face au chemin relatif |
 | 02 | [Créer, copier, déplacer et supprimer sans crainte](02-crear-copiar-mover-borrar.md) | Dans le terminal, il n'y a pas de corbeille : tu réfléchis avant de supprimer |
-| 03 | Voir ce qu'il y a dedans | Presque tout, sur un serveur, est du texte, et tu le lis sans ouvrir d'éditeur |
+| 03 | [Voir ce qu'il y a dedans](03-ver-lo-que-hay-dentro.md) | Presque tout, sur un serveur, est du texte, et tu le lis sans ouvrir d'éditeur |
 | 04 | Trouver des fichiers : find | `find` parcourt l'arbre et filtre selon ce que tu lui dis |
 | 05 | Chercher à l'intérieur : grep | `grep` cherche du texte à l'intérieur des fichiers ; `find` cherche les fichiers |
 | 06 | Tubes et redirection | La sortie d'une commande peut être l'entrée de la suivante |

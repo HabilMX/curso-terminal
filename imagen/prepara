@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # prepara — arma el escenario de una lección en tu carpeta de práctica.
-# Corre ADENTRO del contenedor del curso. Uso:  prepara 01   ·   prepara 02
+# Corre ADENTRO del contenedor del curso. Uso:  prepara 01   ·   prepara 02   ·   prepara 03
 #
 # Es un comando aparte de «verifica», a propósito: verifica solo mira; prepara
 # crea y BORRA. Toca dos cosas y nada más:
@@ -17,10 +17,13 @@
 #
 # Los escenarios no tienen azar. Los nombres, los tamaños, los contenidos y las
 # fechas vienen de una lista fija por lección, la misma que lee verifica:
-# /usr/local/share/curso-terminal/01-laberinto.txt y 02-taller.txt
+# /usr/local/share/curso-terminal/01-laberinto.txt, 02-taller.txt y 03-guardia.txt
 # La lista se lee COMPLETA y se revisa antes de borrar o crear nada: si una ruta
 # se saliera de la carpeta de la lección, prepara no toca nada.
 set -u
+# Las horas de los escenarios están en UTC, la hora de la terminal de práctica. Se fija
+# aquí para que no dependan de cómo esté configurado el reloj.
+TZ=UTC; export TZ
 
 LISTAS="/usr/local/share/curso-terminal"
 PRACTICA="/home/alumno/practica"
@@ -280,9 +283,196 @@ prepara_02() {
   echo "   Empieza por ahí:  cd ~/practica/02"
 }
 
+# --- Lección 03 ---------------------------------------------------------------------
+# La sala de guardia: archivos para LEER. Una bitácora larga, la de ayer comprimida, una
+# configuración, un CSV y dos archivos de ensayo. Las bitácoras no se escriben en la lista
+# renglón por renglón: se arman con una regla fija (está explicada en la lista) y al final
+# se comprueba su huella, el sha256 que la lista dice que deben tener.
+
+# Segundos desde 1970-01-01 00:00 UTC de una fecha «AAAA-MM-DDThh:mm:ss», sin llamar a
+# date: es la cuenta de días del calendario civil. Así la hora de cada renglón sale igual
+# en cualquier máquina, con cualquier versión de date.
+segundos_utc() {
+  local f="$1" a m d mp era aa dia
+  a=$((10#${f:0:4})); m=$((10#${f:5:2})); d=$((10#${f:8:2}))
+  [ "$m" -le 2 ] && a=$((a - 1))
+  era=$((a / 400)); aa=$((a - era * 400)); mp=$(((m + 9) % 12))
+  dia=$(((153 * mp + 2) / 5 + d - 1))
+  dia=$((era * 146097 + aa * 365 + aa / 4 - aa / 100 + dia - 719468))
+  echo $((dia * 86400 + 10#${f:11:2} * 3600 + 10#${f:14:2} * 60 + 10#${f:17:2}))
+}
+
+# Escribe a la salida el texto de una bitácora: la ruta (para buscar sus eventos), el
+# inicio, el paso en segundos, cuántos renglones, la semilla y desde qué renglón se rechaza.
+# Los eventos de esa ruta ya están en EVENTO_03 («ruta|n» → «NIVEL<tab>mensaje»).
+armar_bitacora() {
+  local ruta="$1" paso="$3" total="$4" semilla="$5" rechaza="$6"
+  local inicio n t hora nivel mensaje folio centavos resultado
+  local -a renglones=()
+  inicio=$(segundos_utc "$2")
+  for ((n = 1; n <= total; n++)); do
+    t=$((inicio + (n - 1) * paso))
+    printf -v hora '%(%Y-%m-%d %H:%M:%S)T' "$t"
+    if [ -n "${EVENTO_03["$ruta|$n"]+x}" ]; then
+      IFS=$'\t' read -r nivel mensaje <<< "${EVENTO_03["$ruta|$n"]}"
+      printf -v "renglones[n]" '%s %-5s %s' "$hora" "$nivel" "$mensaje"
+      continue
+    fi
+    folio=$((100000 + (n * 7919 + semilla) % 89999))
+    centavos=$((2000 + (n * 7351 + semilla * 13) % 148000))
+    if [ "$rechaza" -ne 0 ] && [ "$n" -gt "$rechaza" ]; then
+      resultado="rechazado motivo=sin-lote"
+    else
+      resultado="aprobado"
+    fi
+    printf -v "renglones[n]" '%s INFO  cobro F-%06d monto=%d.%02d resultado=%s' \
+      "$hora" "$folio" $((centavos / 100)) $((centavos % 100)) "$resultado"
+  done
+  printf '%s\n' "${renglones[@]}"
+}
+
+# El texto de un «numerado»: «renglón 001 de 100» y así hasta N.
+armar_numerado() {
+  local n total="$1"
+  for ((n = 1; n <= total; n++)); do printf 'renglón %03d de %d\n' "$n" "$total"; done
+}
+
+huella() { sha256sum | { read -r h _; echo "$h"; }; }
+
+prepara_03() {
+  local lista="$LISTAS/03-guardia.txt" raiz="$PRACTICA/03"
+  local i tipo ruta resto carpetas=0 archivos=0 mal=0 claves=()
+  local inicio paso total semilla rechaza esperada
+  local -A ES_TEXTO=() ES_BITACORA=() TEXTO_03=()
+  declare -gA EVENTO_03=()
+
+  if [ ! -r "$lista" ]; then
+    echo "❌ No encuentro la lista de la sala de guardia (medí: que $lista se pueda leer)."
+    echo "   Tu imagen es de antes de esta lección. Sal y corre  ./practicar reconstruir"
+    exit 1
+  fi
+  cargar_lista "$lista" "$raiz" \
+    "carpeta texto linea numerado bitacora bitacora-gz evento crece pregunta" ""
+
+  # Segunda revisión, todavía sin tocar nada: cada «linea», «evento» y «crece» tiene que
+  # ser de un archivo que la lista arma, y los números tienen que ser números.
+  for i in "${!L_TIPO[@]}"; do
+    case "${L_TIPO[i]}" in
+      texto) ES_TEXTO[${L_RUTA[i]}]=1 ;;
+      bitacora|bitacora-gz) ES_BITACORA[${L_RUTA[i]}]=1 ;;
+    esac
+  done
+  for i in "${!L_TIPO[@]}"; do
+    tipo=${L_TIPO[i]}; ruta=${L_RUTA[i]}; resto=${L_RESTO[i]}
+    case "$tipo" in
+      linea|crece) [ -n "${ES_TEXTO[$ruta]+x}" ] || mal="$ruta (un «$tipo» de un archivo que la lista no arma)" ;;
+      evento)
+        [ -n "${ES_BITACORA[$ruta]+x}" ] || mal="$ruta (un evento de una bitácora que la lista no arma)"
+        [[ ${L_FECHA[i]} =~ ^[1-9][0-9]*$ ]] || mal="$ruta (un evento sin número de renglón)"
+        EVENTO_03["$ruta|${L_FECHA[i]}"]=$resto ;;
+      numerado) [[ $resto =~ ^[1-9][0-9]*$ ]] || mal="$ruta (sin cuántos renglones)" ;;
+      bitacora|bitacora-gz)
+        IFS=$'\t' read -r inicio paso total semilla rechaza esperada <<< "$resto"
+        [[ $inicio =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$ ]] \
+          && [[ "$paso $total $semilla $rechaza" =~ ^[0-9]+\ [1-9][0-9]*\ [0-9]+\ [0-9]+$ ]] \
+          && [[ $esperada =~ ^[0-9a-f]{64}$ ]] || mal="$ruta (una bitácora con columnas que no entiendo)" ;;
+      pregunta) claves+=("${L_FECHA[i]}") ;;
+    esac
+    [ "$mal" = 0 ] || break
+  done
+  # Y cada bitácora se arma primero en memoria, para comprobar su huella ANTES de borrar
+  # la sala: si la regla no da el texto que la lista espera, no se toca nada.
+  if [ "$mal" = 0 ]; then
+    for i in "${!L_TIPO[@]}"; do
+      case "${L_TIPO[i]}" in bitacora|bitacora-gz) ;; *) continue ;; esac
+      IFS=$'\t' read -r inicio paso total semilla rechaza esperada <<< "${L_RESTO[i]}"
+      if [ "$(armar_bitacora "${L_RUTA[i]}" "$inicio" "$paso" "$total" "$semilla" "$rechaza" | huella)" != "$esperada" ]; then
+        mal="${L_RUTA[i]} (la bitácora no sale con la huella que dice la lista)"
+        break
+      fi
+    done
+  fi
+  if [ "$mal" != 0 ]; then
+    echo "❌ Escenario inválido: $mal."
+    echo "   No preparé ni borré nada. Sal y corre  ./practicar reconstruir"
+    exit 1
+  fi
+
+  sin_enlaces "$raiz" "$PRACTICA/respuestas" "$PRACTICA/respuestas/03.md"
+  confirmar_borrado "$raiz"
+  mkdir "$raiz" || { echo "❌ No pude crear $raiz. Sal y corre ./practicar desde-cero"; exit 1; }
+
+  # Primera vuelta: carpetas y archivos, con permisos fijos. Los renglones de cada texto
+  # se juntan antes, en orden, y el archivo se escribe de una vez.
+  for i in "${!L_TIPO[@]}"; do
+    [ "${L_TIPO[i]}" = "linea" ] && TEXTO_03[${L_RUTA[i]}]+="${L_FECHA[i]}"$'\n'
+  done
+  for i in "${!L_TIPO[@]}"; do
+    ruta="$raiz/${L_RUTA[i]}"; resto=${L_RESTO[i]}
+    case "${L_TIPO[i]}" in
+      carpeta)  mkdir "$ruta" && chmod 755 "$ruta" ;;
+      texto)    printf '%s' "${TEXTO_03[${L_RUTA[i]}]-}" > "$ruta" && chmod 644 "$ruta" ;;
+      numerado) armar_numerado "$resto" > "$ruta" && chmod 644 "$ruta" ;;
+      bitacora|bitacora-gz)
+        IFS=$'\t' read -r inicio paso total semilla rechaza esperada <<< "$resto"
+        if [ "${L_TIPO[i]}" = "bitacora" ]; then
+          armar_bitacora "${L_RUTA[i]}" "$inicio" "$paso" "$total" "$semilla" "$rechaza" > "$ruta"
+        else
+          # -n: sin el nombre ni la hora del archivo original adentro, para que el .gz no
+          # dependa de cuándo se armó.
+          armar_bitacora "${L_RUTA[i]}" "$inicio" "$paso" "$total" "$semilla" "$rechaza" | gzip -n -9 > "$ruta"
+        fi
+        chmod 644 "$ruta" ;;
+    esac
+  done
+
+  # Segunda vuelta: las fechas, al final, porque crear algo dentro de una carpeta le
+  # cambia la fecha a la carpeta.
+  for i in "${!L_TIPO[@]}"; do
+    case "${L_TIPO[i]}" in
+      carpeta|texto|numerado|bitacora|bitacora-gz) touch -d "${L_FECHA[i]/T/ }" "$raiz/${L_RUTA[i]}" ;;
+    esac
+  done
+  touch -d "2025-06-12 03:12" "$raiz"
+
+  # Tercera vuelta: se mide lo que quedó, contra la misma lista.
+  for i in "${!L_TIPO[@]}"; do
+    ruta="$raiz/${L_RUTA[i]}"; resto=${L_RESTO[i]}
+    case "${L_TIPO[i]}" in
+      carpeta)
+        if [ -d "$ruta" ] && [ ! -L "$ruta" ]; then carpetas=$((carpetas + 1)); else mal=1; fi ;;
+      texto|numerado|bitacora|bitacora-gz)
+        if [ ! -f "$ruta" ] || [ -L "$ruta" ]; then mal=1; continue; fi
+        case "${L_TIPO[i]}" in
+          texto)    cmp -s -- "$ruta" <(printf '%s' "${TEXTO_03[${L_RUTA[i]}]-}") || mal=1 ;;
+          numerado) cmp -s -- "$ruta" <(armar_numerado "$resto") || mal=1 ;;
+          bitacora)
+            IFS=$'\t' read -r _ _ _ _ _ esperada <<< "$resto"
+            [ "$(huella < "$ruta")" = "$esperada" ] || mal=1 ;;
+          bitacora-gz)
+            IFS=$'\t' read -r _ _ _ _ _ esperada <<< "$resto"
+            [ "$(gzip -dc -- "$ruta" | huella)" = "$esperada" ] || mal=1 ;;
+        esac
+        [ "$mal" -eq 0 ] && archivos=$((archivos + 1)) ;;
+    esac
+  done
+
+  if [ "$mal" -ne 0 ]; then
+    echo "❌ La sala no quedó completa (medí: cada carpeta y cada archivo de la lista; los textos, renglón"
+    echo "   por renglón, y las bitácoras, por su huella). Corre  prepara 03  otra vez. Si se repite, sal"
+    echo "   y corre ./practicar reconstruir"
+    exit 1
+  fi
+  echo "✅ Sala de guardia lista en $raiz (medí: $carpetas carpetas y $archivos archivos, cada uno con"
+  echo "   su contenido; las dos bitácoras, por su huella)."
+  dejar_hoja 03 "${claves[@]}"
+  echo "   Empieza por ahí:  cd ~/practica/03"
+}
+
 case "${1:-}" in
   01) revisar_lugar; prepara_01 ;;
   02) revisar_lugar; prepara_02 ;;
-  '') echo "Uso: prepara NN    (NN es el número de la lección; por ejemplo: prepara 02)"; exit 2 ;;
-  *)  echo "Todavía no hay prepara para la lección «$1». Por ahora existen: prepara 01 y prepara 02"; exit 2 ;;
+  03) revisar_lugar; prepara_03 ;;
+  '') echo "Uso: prepara NN    (NN es el número de la lección; por ejemplo: prepara 03)"; exit 2 ;;
+  *)  echo "Todavía no hay prepara para la lección «$1». Por ahora existen: prepara 01, prepara 02 y prepara 03"; exit 2 ;;
 esac
