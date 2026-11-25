@@ -516,11 +516,11 @@ escribes. Según su manual, `reset` regresa la terminal a su forma normal despu�
 estado anormal, y avisa que a veces Enter no responde: en ese caso, usa **Ctrl+J**.
 
 Ahora sí, una muestra segura. La barra `|` pasa lo que escribe un comando al siguiente; la verás a fondo en la lección
-06. `head -c 300` deja pasar solo los primeros 300 bytes, y `cat -v` cambia cada byte que no es letra por signos que
-sí se pueden escribir. **Predice:** ¿qué vas a ver?
+06. `head -c 300` saca solo los primeros 300 bytes del archivo y la barra se los pasa a `cat -v`, que cambia cada
+byte que no es letra por signos que sí se pueden escribir. **Predice:** ¿qué vas a ver?
 
 ```bash
-cat ../pagos/pagos.log.1.gz | head -c 300 | cat -v
+head -c 300 ../pagos/pagos.log.1.gz | cat -v
 ```
 
 Salida recortada: el principio de un solo renglón muy largo.
