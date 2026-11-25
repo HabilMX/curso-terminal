@@ -74,7 +74,7 @@ en la 02. Debe terminar con `✅ Imagen lista.` Tu carpeta `~/practica` no se to
 
 | Sistema | Estado |
 |---|---|
-| Linux (mx1) | Probada el 25-nov-2026 en la rama `leccion/03` (3bf1787), medida por master: host x86_64, Docker 29.10.0; la imagen se construyó en 9 s y pesa 232,656,309 bytes; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 y `file-5.46`. Corrieron `prepara 03`, cada comando de los pasos 1 a 6, y `verifica 03` en rojo y en verde, cuando la hoja tenía ocho claves. `verifica 03` con las siete claves de ahora: [pendiente de medir en mx1]. Sin medir: `./practicar reconstruir` (la imagen se construyó con `docker build`) y `prepara 03` sobre una sala ya armada |
+| Linux (mx1) | Probada el 25-nov-2026 en la rama `leccion/03` (3bf1787), medida por master: host x86_64, Docker 29.10.0; la imagen se construyó en 9 s y pesa 232,656,309 bytes; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 y `file-5.46`. Corrieron `prepara 03`, cada comando de los pasos 1 a 6, y `verifica 03` en rojo y en verde, cuando la hoja tenía ocho claves. `verifica 03` con las siete claves de ahora se volvió a medir el mismo día (rama en 1a3a7b5): rojo con 7 ❌, verde con 7 ✅, verde también después de `simula 03`, y `anota 03 arranque` se niega. Sin medir: `./practicar reconstruir` (la imagen se construyó con `docker build`) y `prepara 03` sobre una sala ya armada |
 | Mac con Apple silicon, Ubuntu, Windows con Docker Desktop y WSL 2 | Sin probar todavía con esta lección |
 
 **Qué va a coincidir con tu pantalla y qué no.** Coinciden los nombres, los contenidos y las fechas de la sala, y los
