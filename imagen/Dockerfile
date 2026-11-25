@@ -23,6 +23,11 @@ FROM ubuntu:26.04
 #      man-db    el comando man          manpages   páginas generales del manual
 #      vim-tiny  el editor vi            htop       el visor de procesos
 #      less      el paginador            procps     ps, kill y compañía
+#      groff     el formateador completo del manual. La página man(7) de «manpages»
+#                remite a groff_man(7), que viene en este paquete y no en groff-base.
+#                Sin él, «man man» muestra la página pero avisa «can't resolve
+#                man7/groff_man.7» (medido el 25-nov-2026 en Ubuntu 26.04.1). Trae
+#                librerías de X11 y suma unos 27 MB: es el precio de un manual sin avisos.
 # 4. Se reinstalan los paquetes que ya venían. Hace falta: se instalaron ANTES de
 #    quitar la regla del paso 1, así que llegaron sin su página de manual. Sin este
 #    paso, «man ls» contestaba «No manual entry for ls» (medido el 18-nov-2026).
@@ -31,7 +36,7 @@ FROM ubuntu:26.04
 # 6. Se borra la lista de paquetes del paso 2: ya no se usa y ocupa espacio.
 RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes \
  && apt-get update \
- && apt-get install -y --no-install-recommends man-db manpages vim-tiny htop less procps \
+ && apt-get install -y --no-install-recommends man-db manpages groff vim-tiny htop less procps \
  && apt-get install -y --reinstall $(dpkg-query -W -f='${Package} ') \
  && rm -f /usr/bin/man && dpkg-divert --quiet --remove --rename /usr/bin/man \
  && rm -rf /var/lib/apt/lists/*
