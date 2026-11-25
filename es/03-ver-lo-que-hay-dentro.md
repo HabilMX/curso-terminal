@@ -31,8 +31,7 @@ hojear buscando algo. La pregunta no es qué comandos existen, sino qué pedazo 
 
 ## La escena
 
-*Escenario inventado. Las pantallas de la lección se copian de la terminal de práctica; las que todavía dicen
-«pendiente de medir» se llenan antes de publicarla.*
+*Escenario inventado. Las pantallas de la lección se copiaron de la terminal de práctica.*
 
 Jueves, 03:12. El teléfono de Lucía vibra sobre la mesa.
 
@@ -75,7 +74,7 @@ terminar con `✅ Imagen lista.` Tu carpeta `~/practica` no se toca. Después en
 
 | Sistema | Estado |
 |---|---|
-| Linux (mx1) | Pendiente: `./practicar reconstruir`, `prepara 03` dos veces, cada comando de los pasos 1 a 7, `simula 03`, y `verifica 03` en rojo y en verde |
+| Linux (mx1) | Probada el 25-nov-2026 en la rama `leccion/03` (3bf1787), medida por master: host x86_64, Docker 29.10.0; la imagen se construyó en 9 s y pesa 232,656,309 bytes; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 y `file-5.46`. Corrieron `prepara 03`, cada comando de los pasos 1 a 7, `simula 03`, y `verifica 03` en rojo y en verde. Sin medir: `./practicar reconstruir` (la imagen se construyó con `docker build`), `prepara 03` sobre una sala ya armada, y `zless` |
 | Mac con Apple silicon, Ubuntu, Windows con Docker Desktop y WSL 2 | Sin probar todavía con esta lección |
 
 **Qué va a coincidir con tu pantalla y qué no.** Coinciden los nombres, los contenidos y las fechas de la sala, y los
@@ -93,7 +92,6 @@ prepara 03
 ```
 
 ```text
-[pendiente de medir en mx1]
 ✅ Sala de guardia lista en /home/alumno/practica/03 (medí: 3 carpetas y 8 archivos, cada uno con
    su contenido; las dos bitácoras, por su huella).
    Te dejé la hoja de respuestas, con sus claves vacías: /home/alumno/practica/respuestas/03.md
@@ -148,7 +146,6 @@ cat corto.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
 primer renglón
 segundo renglón
 tercer renglón, el último
@@ -159,7 +156,6 @@ En la lección 00, sin archivo, se quedaba esperando. Con un archivo lo suelta t
 **Con dos archivos, los encadena.** **Predice:** ¿qué sale con `cat corto.txt corto.txt`?
 
 ```text
-[pendiente de medir en mx1]
 primer renglón
 segundo renglón
 tercer renglón, el último
@@ -179,7 +175,6 @@ cat -n corto.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
      1	primer renglón
      2	segundo renglón
      3	tercer renglón, el último
@@ -198,7 +193,29 @@ cat cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
+renglón 078 de 100
+renglón 079 de 100
+renglón 080 de 100
+renglón 081 de 100
+renglón 082 de 100
+renglón 083 de 100
+renglón 084 de 100
+renglón 085 de 100
+renglón 086 de 100
+renglón 087 de 100
+renglón 088 de 100
+renglón 089 de 100
+renglón 090 de 100
+renglón 091 de 100
+renglón 092 de 100
+renglón 093 de 100
+renglón 094 de 100
+renglón 095 de 100
+renglón 096 de 100
+renglón 097 de 100
+renglón 098 de 100
+renglón 099 de 100
+renglón 100 de 100
 ```
 
 Ves el final, hasta el `renglón 100 de 100`. El principio se fue de la pantalla: `cat` no sabe de pantallas, escribe
@@ -244,7 +261,16 @@ head cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
+renglón 001 de 100
+renglón 002 de 100
+renglón 003 de 100
+renglón 004 de 100
+renglón 005 de 100
+renglón 006 de 100
+renglón 007 de 100
+renglón 008 de 100
+renglón 009 de 100
+renglón 010 de 100
 ```
 
 Del `renglón 001` al `renglón 010`. Diez, como dice el manual. Con `-n` y un número le dices cuántos:
@@ -254,7 +280,6 @@ head -n 3 cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
 renglón 001 de 100
 renglón 002 de 100
 renglón 003 de 100
@@ -270,7 +295,6 @@ tail -n 2 cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
 renglón 099 de 100
 renglón 100 de 100
 ```
@@ -287,7 +311,10 @@ head -n 42 cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
+…
+renglón 040 de 100
+renglón 041 de 100
+renglón 042 de 100
 ```
 
 El último que aparece es el `renglón 042 de 100`. `head -n 42` escribe los renglones del 1 al 42, así que el que
@@ -304,7 +331,7 @@ wc cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
+ 100  400 2000 cien.txt
 ```
 
 **Predice antes de leer la explicación:** `cien.txt` tiene cien renglones, y cada uno dice algo como
@@ -328,7 +355,7 @@ wc -l cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
+100 cien.txt
 ```
 
 **Cómo cuenta los renglones.** El manual de `wc` dice que `-l` cuenta los **saltos de renglón**. Si el último renglón
@@ -377,7 +404,30 @@ less cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
+renglón 001 de 100
+renglón 002 de 100
+renglón 003 de 100
+renglón 004 de 100
+renglón 005 de 100
+renglón 006 de 100
+renglón 007 de 100
+renglón 008 de 100
+renglón 009 de 100
+renglón 010 de 100
+renglón 011 de 100
+renglón 012 de 100
+renglón 013 de 100
+renglón 014 de 100
+renglón 015 de 100
+renglón 016 de 100
+renglón 017 de 100
+renglón 018 de 100
+renglón 019 de 100
+renglón 020 de 100
+renglón 021 de 100
+renglón 022 de 100
+renglón 023 de 100
+cien.txt
 ```
 
 La pantalla se llena con el principio del archivo. Estás **adentro** de
@@ -413,7 +463,30 @@ less -N cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
+      1 renglón 001 de 100
+      2 renglón 002 de 100
+      3 renglón 003 de 100
+      4 renglón 004 de 100
+      5 renglón 005 de 100
+      6 renglón 006 de 100
+      7 renglón 007 de 100
+      8 renglón 008 de 100
+      9 renglón 009 de 100
+     10 renglón 010 de 100
+     11 renglón 011 de 100
+     12 renglón 012 de 100
+     13 renglón 013 de 100
+     14 renglón 014 de 100
+     15 renglón 015 de 100
+     16 renglón 016 de 100
+     17 renglón 017 de 100
+     18 renglón 018 de 100
+     19 renglón 019 de 100
+     20 renglón 020 de 100
+     21 renglón 021 de 100
+     22 renglón 022 de 100
+     23 renglón 023 de 100
+cien.txt
 ```
 
 Ya no cuentas: el número de cada renglón está a la izquierda.
@@ -425,7 +498,30 @@ Adentro de `less -N cien.txt`, teclea `/042` y Enter. Salta al renglón 42. Tecl
 **Predice:** ¿qué pasa si buscas `/RENGLÓN`, en mayúsculas?
 
 ```text
-[pendiente de medir en mx1]
+      1 renglón 001 de 100
+      2 renglón 002 de 100
+      3 renglón 003 de 100
+      4 renglón 004 de 100
+      5 renglón 005 de 100
+      6 renglón 006 de 100
+      7 renglón 007 de 100
+      8 renglón 008 de 100
+      9 renglón 009 de 100
+     10 renglón 010 de 100
+     11 renglón 011 de 100
+     12 renglón 012 de 100
+     13 renglón 013 de 100
+     14 renglón 014 de 100
+     15 renglón 015 de 100
+     16 renglón 016 de 100
+     17 renglón 017 de 100
+     18 renglón 018 de 100
+     19 renglón 019 de 100
+     20 renglón 020 de 100
+     21 renglón 021 de 100
+     22 renglón 022 de 100
+     23 renglón 023 de 100
+Pattern not found  (press RETURN)
 ```
 
 No lo encuentra, aunque la palabra está en los cien renglones. El manual de `less` lo dice: **por omisión, la
@@ -468,7 +564,6 @@ tail pagos/arranque.log
 ```
 
 ```text
-[pendiente de medir en mx1]
 2025-06-12 03:20:00 INFO  pagos: me pidieron reiniciar; me detengo
 2025-06-12 03:20:01 INFO  pagos: detenido
 ```
@@ -487,7 +582,17 @@ tail -f pagos/arranque.log
 ```
 
 ```text
-[pendiente de medir en mx1]
+Empiezo en 5 segundos: agrego 7 renglones a ~/practica/03/pagos/arranque.log,
+uno cada 3 segundos. Termino solo, en menos de un minuto. Ya puedes mirarlo.
+2025-06-12 03:20:00 INFO  pagos: me pidieron reiniciar; me detengo
+2025-06-12 03:20:01 INFO  pagos: detenido
+2025-06-12 03:21:10 INFO  pagos: arranco con la versión 4.11.2
+2025-06-12 03:21:11 INFO  pagos: leo la configuración de pagos.conf
+2025-06-12 03:21:12 INFO  conciliacion: busco el lote del 11 de junio
+2025-06-12 03:21:14 INFO  conciliacion: el lote del 11 de junio ya llegó (03:16); lo reviso
+2025-06-12 03:21:19 INFO  conciliacion: el lote cuadra; los 168 rechazos quedan para cobrarse de nuevo
+2025-06-12 03:21:20 INFO  pagos: conecto con el banco
+2025-06-12 03:21:22 INFO  pagos: listo para cobrar; código de arranque A-7731
 ```
 
 Primero `simula` te dice qué va a hacer. Después `tail -f` muestra los dos renglones que ya había, y se queda ahí.
@@ -530,7 +635,8 @@ file corto.txt cien.txt
 ```
 
 ```text
-[pendiente de medir en mx1]
+corto.txt: Unicode text, UTF-8 text
+cien.txt:  Unicode text, UTF-8 text
 ```
 
 En los dos aparece la palabra **text**. Según el manual de `file`, esa palabra quiere decir que el archivo solo tiene
@@ -542,7 +648,11 @@ file ../pagos/* ../reportes/*
 ```
 
 ```text
-[pendiente de medir en mx1]
+../pagos/arranque.log:      Unicode text, UTF-8 text
+../pagos/pagos.conf:        Unicode text, UTF-8 text
+../pagos/pagos.log:         Unicode text, UTF-8 text
+../pagos/pagos.log.1.gz:    gzip compressed data, max compression, from Unix, original size modulo 2^32 52807
+../reportes/sucursales.csv: CSV Unicode text, UTF-8 text
 ```
 
 `../pagos/*` es un patrón, como los de la lección 02: la terminal lo cambia por todos los nombres de `pagos`. Todos
@@ -562,10 +672,12 @@ cat ../pagos/pagos.log.1.gz
 ```
 
 ```text
-[pendiente de medir en mx1]
+^_M-^K^H^@^@^@^@^@^B^CM-^LM-^]]M-.^^7vEM-_3M-^J;^A^WM-HM-sM-CshM…
 ```
 
-Basura: símbolos sueltos, cuadritos, quizá un pitido. A veces, además, la terminal queda **descompuesta**: lo que
+Arriba van solo los primeros bytes, y no como los ve tu pantalla: en la prueba pasaron por `cat -v`, que cambia
+cada byte que no es letra por signos que sí se pueden escribir. Sin eso, en tu pantalla es basura: símbolos sueltos,
+cuadritos, quizá un pitido. A veces, además, la terminal queda **descompuesta**: lo que
 escribes sale en símbolos raros, o no se ve, o Enter deja de bajar de renglón. No se rompió el archivo ni la máquina:
 entre esos bytes iban algunos que la terminal entiende como órdenes.
 
@@ -578,9 +690,8 @@ Enter, usa **Ctrl+J**. Si tu terminal quedó bien después del `cat`, corre `res
 reset
 ```
 
-```text
-[pendiente de medir en mx1]
-```
+No escribe nada. En la prueba, lo único que mandó fueron las órdenes que regresan la terminal a su forma
+normal, y la primera borra la pantalla: te queda el indicador, hasta arriba.
 
 Dos hábitos salen de aquí: antes de abrir un archivo que no conoces, `file`; y si no dice *text*, no le haces `cat`,
 averiguas con qué se lee. La de ayer se lee descomprimiéndola: lo ves en «Si quieres más».
@@ -606,7 +717,17 @@ un rojo cuando la respuesta está mal y no vacía; por ejemplo, si a `ultima-hor
 renglón:
 
 ```text
-[pendiente de medir en mx1]
+✅ La sala está intacta (medí: los 8 archivos de la lista existen, ninguno es un enlace, cada texto tiene sus renglones y cada bitácora su huella)
+❌ espera · Tu renglón «espera:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 03 espera  y tu respuesta
+❌ folio-137 · Tu renglón «folio-137:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 03 folio-137  y tu respuesta
+❌ ultima-hora · 00:00:04 es la hora del PRIMER renglón (medí: la hora del renglón 1). head muestra el principio; el final lo muestra otro comando
+❌ renglones · Tu renglón «renglones:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 03 renglones  y tu respuesta
+❌ sucursales · Tu renglón «sucursales:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 03 sucursales  y tu respuesta
+❌ primer-error · Tu renglón «primer-error:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 03 primer-error  y tu respuesta
+❌ arranque · Tu renglón «arranque:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 03 arranque  y tu respuesta
+❌ tipo-respaldo · Tu renglón «tipo-respaldo:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 03 tipo-respaldo  y tu respuesta
+
+❌ Lección 03: falta lo marcado con ❌. Arréglalo y corre  verifica 03  otra vez.
 ```
 
 Dice qué anotaste, qué midió y en qué te confundiste, pero no cuál es la respuesta buena.
@@ -614,7 +735,6 @@ Dice qué anotaste, qué midió y en qué te confundiste, pero no cuál es la re
 Corrige y repite hasta ver esto al final:
 
 ```text
-[pendiente de medir en mx1]
 ✅ Lección 03: todo en verde.
 ```
 
@@ -646,7 +766,12 @@ El ejercicio 3.3 se hace **solo con tu terminal**: sin buscador y sin que nadie 
   `q`. Lo que pasó en la prueba:
 
   ```text
-  [pendiente de medir en mx1]
+  $ zcat pagos/pagos.log.1.gz | head -n 3
+  2025-06-11 00:00:04 INFO  pagos: arranco el día con la versión 4.11.2 y la configuración de pagos.conf
+  2025-06-11 00:02:04 INFO  conciliacion: el lote del 10 de junio llegó y cuadra
+  2025-06-11 00:04:04 INFO  cobro F-127999 monto=791.99 resultado=aprobado
+  $ zcat pagos/pagos.log.1.gz | wc -l
+  720
   ```
 
 - **Bytes no es lo mismo que letras.** `wc -m` cuenta caracteres, y `wc -c`, bytes. En `cien.txt` no dan lo mismo:
