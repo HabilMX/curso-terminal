@@ -43,7 +43,7 @@ Do them in order: each one starts from what the previous one left. Start with
 | 00 | [Your practice terminal](00-tu-terminal-de-practica.md) | This terminal has no desktop and no windows, only text: it tells you who you are and where you are on every line, and you talk to it with commands |
 | 01 | [Moving around without seeing](01-moverte-sin-ver.md) | The folder tree, and the absolute path versus the relative one |
 | 02 | [Creating, copying, moving and deleting without fear](02-crear-copiar-mover-borrar.md) | The terminal has no trash can: you think before you delete |
-| 03 | Seeing what is inside | Almost everything on a server is text, and you read it without opening an editor |
+| 03 | [Seeing what is inside](03-ver-lo-que-hay-dentro.md) | Almost everything on a server is text, and you read it without opening an editor |
 | 04 | Finding files: find | `find` walks the tree and filters by whatever you tell it |
 | 05 | Searching inside: grep | `grep` searches for text inside files; `find` searches for the files |
 | 06 | Pipes and redirection | The output of one command can be the input of the next |
