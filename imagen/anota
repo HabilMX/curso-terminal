@@ -21,7 +21,7 @@ claves_de() {
   case "$1" in
     01) echo "mas-grande oculto ruta-absoluta ruta-relativa" ;;
     02) echo "patron" ;;
-    03) echo "espera folio-137 ultima-hora renglones sucursales primer-error arranque tipo-respaldo" ;;
+    03) echo "espera folio-137 ultima-hora renglones sucursales primer-error tipo-respaldo" ;;
     *)  return 1 ;;
   esac
 }

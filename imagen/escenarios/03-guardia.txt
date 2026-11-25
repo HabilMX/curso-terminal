@@ -41,7 +41,8 @@
 #              hora-final   la hora (hh:mm:ss) del último renglón
 #              renglones    cuántos renglones tiene el archivo
 #              registros    cuántos renglones tiene, sin contar el encabezado
-#              codigo-final la última palabra del último renglón «crece»
+#              codigo-final la última palabra del último renglón «crece» (hoy ninguna
+#                           pregunta de la 03 la usa: tail -f y simula se enseñan en la 10)
 #              tipo         lo que contesta file; basta con que traiga «dato»
 #
 # Las fechas son fijas y están en UTC, como en la 01 y la 02: todas de 2025, así que la
@@ -134,5 +135,4 @@ pregunta	pagos/pagos.log	ultima-hora	hora-final
 pregunta	pagos/pagos.log	renglones	renglones
 pregunta	reportes/sucursales.csv	sucursales	registros
 pregunta	pagos/pagos.log	primer-error	renglon-de	ERROR
-pregunta	pagos/arranque.log	arranque	codigo-final
 pregunta	pagos/pagos.log.1.gz	tipo-respaldo	tipo	gzip
