@@ -1,0 +1,138 @@
+# La sala de guardia de la lección 03, «Ver lo que hay dentro».
+#
+# Esta lista es la única definición de la sala. La leen tres comandos:
+#   prepara 03    arma en ~/practica/03/ lo que dicen los renglones de archivos
+#   simula 03     agrega a arranque.log los renglones «crece», uno cada pocos segundos
+#   verifica 03   revisa que la sala siga intacta y compara tus respuestas con lo que
+#                 dicen los archivos
+# Así no hay dos copias que se puedan contradecir.
+#
+# Las columnas van separadas por UN tabulador, no por espacios, igual que en la 02.
+# prepara revisa TODA la lista antes de borrar o crear nada: cada ruta tiene que quedar
+# adentro de ~/practica/03/ solo por cómo está escrita (no vacía, no absoluta, sin «.»
+# ni «..» ni tramos vacíos). Si una no, no prepara nada.
+#
+# Lo que prepara arma. Las rutas van dentro de ~/practica/03/:
+#   carpeta      ruta   fecha
+#   texto        ruta   fecha        un archivo de texto: sus renglones son los «linea»
+#                                    con la misma ruta, en el orden en que aparecen aquí
+#   linea        ruta   texto        un renglón de ese archivo (sin tabuladores adentro)
+#   numerado     ruta   fecha   N    N renglones: «renglón 001 de N», «renglón 002 de N»…
+#   bitacora     ruta   fecha   inicio   paso   renglones   semilla   rechaza   huella
+#   bitacora-gz  (las mismas columnas)   la bitácora, comprimida con gzip
+#   evento       ruta   n   nivel   mensaje   el renglón n de esa bitácora no es un cobro:
+#                                           es este aviso
+#
+# Cómo se arma una bitácora, sin azar. El renglón n lleva la hora inicio + (n-1)·paso
+# segundos. Si no es un evento, es un cobro con
+#   folio  F-(100000 + (n·7919 + semilla) mod 89999)        seis cifras, todos distintos
+#   monto  (2000 + (n·7351 + semilla·13) mod 148000) / 100    en pesos, con centavos
+# y queda «rechazado» si rechaza no es 0 y n > rechaza; si no, «aprobado».
+# La huella es el sha256 del texto de la bitácora (en la -gz, del texto ya descomprimido):
+# prepara la comprueba al terminar y verifica la usa para saber que nadie la cambió.
+#
+# Lo que agrega simula 03:
+#   crece        ruta   texto        un renglón, en orden, tres segundos después del anterior
+#
+# Lo que pregunta la hoja de respuestas. verifica saca la respuesta buena del archivo:
+#   pregunta   ruta   clave   forma       dato
+#   formas:    renglon-de   el número del primer renglón que contiene «dato», tal cual
+#              folio-en     el folio que trae el renglón número «dato»
+#              hora-final   la hora (hh:mm:ss) del último renglón
+#              renglones    cuántos renglones tiene el archivo
+#              registros    cuántos renglones tiene, sin contar el encabezado
+#              codigo-final la última palabra del último renglón «crece»
+#              tipo         lo que contesta file; basta con que traiga «dato»
+#
+# Las fechas son fijas y están en UTC, como en la 01 y la 02: todas de 2025, así que la
+# sala se ve igual hoy que dentro de un año. Nada de esto es de una persona ni de una
+# empresa reales.
+
+# --- La sala ----------------------------------------------------------------------------
+texto	LEEME.txt	2025-06-12T03:12
+linea	LEEME.txt	Sala de guardia de la lección 03 de «La terminal desde cero».
+linea	LEEME.txt	Aquí todo se lee: nada se edita ni se borra.
+linea	LEEME.txt	Si algo cambia por accidente, corre  prepara 03  y la sala vuelve a quedar como el primer día.
+carpeta	ensayo	2025-06-12T03:00
+texto	ensayo/corto.txt	2025-06-12T03:00
+linea	ensayo/corto.txt	primer renglón
+linea	ensayo/corto.txt	segundo renglón
+linea	ensayo/corto.txt	tercer renglón, el último
+numerado	ensayo/cien.txt	2025-06-12T03:00	100
+carpeta	pagos	2025-06-12T03:12
+texto	pagos/pagos.conf	2025-06-10T18:30
+linea	pagos/pagos.conf	# pagos.conf: la configuración del servicio de pagos.
+linea	pagos/pagos.conf	# Los renglones que empiezan con # son comentarios: el servicio no los lee.
+linea	pagos/pagos.conf	servicio=pagos
+linea	pagos/pagos.conf	version=4.11.2
+linea	pagos/pagos.conf	puerto=8443
+linea	pagos/pagos.conf	# Conciliación: cada noche el banco manda el lote con los cobros del día anterior.
+linea	pagos/pagos.conf	conciliacion.lote=/srv/pagos/lotes/lote-{fecha}.csv
+linea	pagos/pagos.conf	conciliacion.reintentos=3
+linea	pagos/pagos.conf	conciliacion.espera_segundos=1800
+linea	pagos/pagos.conf	# Sin el lote conciliado, ¿se aprueban cobros nuevos? (si / no)
+linea	pagos/pagos.conf	conciliacion.aprobar_sin_lote=no
+linea	pagos/pagos.conf	bitacora=/var/log/pagos/pagos.log
+linea	pagos/pagos.conf	bitacora.rotar=diario
+linea	pagos/pagos.conf	bitacora.comprimir_viejas=gzip
+bitacora	pagos/pagos.log	2025-06-12T03:05	2025-06-12T00:00:04	19	587	0	418	41704245b767b46b72d12f165401ffb02cd8c005d29a9fd7fd4745374d0c6e28
+evento	pagos/pagos.log	1	INFO	pagos: arranco el día con la versión 4.11.2 y la configuración de pagos.conf
+evento	pagos/pagos.log	2	INFO	conciliacion: espero el lote del 11 de junio
+evento	pagos/pagos.log	130	WARN	conciliacion: el lote del 11 de junio no ha llegado; reintento 1 de 3 en 1800 segundos
+evento	pagos/pagos.log	226	WARN	conciliacion: el lote del 11 de junio no ha llegado; reintento 2 de 3 en 1800 segundos
+evento	pagos/pagos.log	250	INFO	red: la conexión con el banco se cortó 2 segundos por un error de red; ya volvió
+evento	pagos/pagos.log	322	WARN	conciliacion: el lote del 11 de junio no ha llegado; reintento 3 de 3 en 1800 segundos
+evento	pagos/pagos.log	418	ERROR	conciliacion: el lote del 11 de junio no llegó tras 3 reintentos; sin lote no apruebo cobros
+evento	pagos/pagos.log	587	ERROR	pagos: 168 cobros rechazados seguidos; sigo así hasta que alguien revise la conciliación
+bitacora-gz	pagos/pagos.log.1.gz	2025-06-12T00:00	2025-06-11T00:00:04	120	720	4242	0	b1511e81bd87c8888f6fd4e84c8c59e52dafa12596c2399cdb7ea2a18f47a6b9
+evento	pagos/pagos.log.1.gz	1	INFO	pagos: arranco el día con la versión 4.11.2 y la configuración de pagos.conf
+evento	pagos/pagos.log.1.gz	2	INFO	conciliacion: el lote del 10 de junio llegó y cuadra
+evento	pagos/pagos.log.1.gz	720	INFO	pagos: cierro el día con 718 cobros aprobados
+texto	pagos/arranque.log	2025-06-12T03:20
+linea	pagos/arranque.log	2025-06-12 03:20:00 INFO  pagos: me pidieron reiniciar; me detengo
+linea	pagos/arranque.log	2025-06-12 03:20:01 INFO  pagos: detenido
+carpeta	reportes	2025-06-12T03:10
+texto	reportes/sucursales.csv	2025-06-12T03:10
+linea	reportes/sucursales.csv	sucursal,ciudad,terminales,hora_del_reporte
+linea	reportes/sucursales.csv	SUC-0412,Monterrey,14,02:14
+linea	reportes/sucursales.csv	SUC-0127,Guadalajara,11,02:16
+linea	reportes/sucursales.csv	SUC-0388,Puebla,6,02:19
+linea	reportes/sucursales.csv	SUC-0203,Querétaro,8,02:21
+linea	reportes/sucursales.csv	SUC-0561,Mérida,5,02:22
+linea	reportes/sucursales.csv	SUC-0094,León,7,02:25
+linea	reportes/sucursales.csv	SUC-0730,Toluca,4,02:27
+linea	reportes/sucursales.csv	SUC-0315,Saltillo,6,02:30
+linea	reportes/sucursales.csv	SUC-0642,Chihuahua,5,02:31
+linea	reportes/sucursales.csv	SUC-0158,Hermosillo,4,02:34
+linea	reportes/sucursales.csv	SUC-0477,Morelia,6,02:36
+linea	reportes/sucursales.csv	SUC-0269,Oaxaca,3,02:39
+linea	reportes/sucursales.csv	SUC-0803,Veracruz,7,02:41
+linea	reportes/sucursales.csv	SUC-0346,Aguascalientes,5,02:44
+linea	reportes/sucursales.csv	SUC-0591,Culiacán,4,02:47
+linea	reportes/sucursales.csv	SUC-0112,Tijuana,9,02:49
+linea	reportes/sucursales.csv	SUC-0725,Durango,3,02:52
+linea	reportes/sucursales.csv	SUC-0438,Zacatecas,2,02:55
+linea	reportes/sucursales.csv	SUC-0284,Pachuca,4,02:58
+linea	reportes/sucursales.csv	SUC-0667,Cancún,8,03:01
+linea	reportes/sucursales.csv	SUC-0199,Tampico,4,03:04
+linea	reportes/sucursales.csv	SUC-0752,Colima,2,03:06
+linea	reportes/sucursales.csv	SUC-0505,Tepic,3,03:09
+
+# --- Lo que agrega simula 03 --------------------------------------------------------------
+crece	pagos/arranque.log	2025-06-12 03:21:10 INFO  pagos: arranco con la versión 4.11.2
+crece	pagos/arranque.log	2025-06-12 03:21:11 INFO  pagos: leo la configuración de pagos.conf
+crece	pagos/arranque.log	2025-06-12 03:21:12 INFO  conciliacion: busco el lote del 11 de junio
+crece	pagos/arranque.log	2025-06-12 03:21:14 INFO  conciliacion: el lote del 11 de junio ya llegó (03:16); lo reviso
+crece	pagos/arranque.log	2025-06-12 03:21:19 INFO  conciliacion: el lote cuadra; los 168 rechazos quedan para cobrarse de nuevo
+crece	pagos/arranque.log	2025-06-12 03:21:20 INFO  pagos: conecto con el banco
+crece	pagos/arranque.log	2025-06-12 03:21:22 INFO  pagos: listo para cobrar; código de arranque A-7731
+
+# --- La hoja de respuestas, en el orden de la lección ----------------------------------
+pregunta	pagos/pagos.conf	espera	renglon-de	espera_segundos
+pregunta	pagos/pagos.log	folio-137	folio-en	137
+pregunta	pagos/pagos.log	ultima-hora	hora-final
+pregunta	pagos/pagos.log	renglones	renglones
+pregunta	reportes/sucursales.csv	sucursales	registros
+pregunta	pagos/pagos.log	primer-error	renglon-de	ERROR
+pregunta	pagos/arranque.log	arranque	codigo-final
+pregunta	pagos/pagos.log.1.gz	tipo-respaldo	tipo	gzip

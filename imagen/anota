@@ -5,6 +5,7 @@
 #   anota 01 mas-grande marzo.log   anota (o corrige) la respuesta «mas-grande»
 #   anota 02 patron 'algo*'         en la 02, el patrón va entre comillas simples, para
 #                                   que la terminal no lo cambie por los nombres que atrapa
+#   anota 03 folio-137 F-123456     en la 03, lo que leíste en los archivos de la sala
 #
 # Existe para que puedas llenar la hoja antes de conocer un editor de texto, que
 # llega en la lección 07. Solo toca un archivo: /home/alumno/practica/respuestas/NN.md.
@@ -20,6 +21,7 @@ claves_de() {
   case "$1" in
     01) echo "mas-grande oculto ruta-absoluta ruta-relativa" ;;
     02) echo "patron" ;;
+    03) echo "espera folio-137 ultima-hora renglones sucursales primer-error arranque tipo-respaldo" ;;
     *)  return 1 ;;
   esac
 }
@@ -33,7 +35,7 @@ uso() {
 [ $# -ge 1 ] || uso
 leccion="$1"; shift
 if ! claves=$(claves_de "$leccion"); then
-  echo "Todavía no hay hoja de respuestas para la lección «$leccion». Por ahora existen: anota 01 y anota 02"
+  echo "Todavía no hay hoja de respuestas para la lección «$leccion». Por ahora existen: anota 01, anota 02 y anota 03"
   exit 2
 fi
 carpeta="$PRACTICA/respuestas"
@@ -56,9 +58,9 @@ if [ $# -eq 0 ]; then
   exit 0
 fi
 
-# La clave se acepta con o sin acento: «más-grande» es «mas-grande», «patrón» es «patron».
+# La clave se acepta con o sin acento: «más-grande» es «mas-grande», «última-hora» es «ultima-hora».
 clave="$1"; shift
-clave=${clave//á/a}; clave=${clave//ó/o}
+clave=${clave//á/a}; clave=${clave//é/e}; clave=${clave//í/i}; clave=${clave//ó/o}; clave=${clave//ú/u}
 valor="$*"
 case " $claves " in
   *" $clave "*) ;;
@@ -78,7 +80,8 @@ nueva=$(CLAVE="$clave" VALOR="$valor" awk '
     renglon = $0; sub(/\r$/, "", renglon); sub(/^[ \t]+/, "", renglon)
     corte = index(renglon, ":")
     k = (corte > 0) ? tolower(substr(renglon, 1, corte - 1)) : ""
-    gsub(/[ \t]+$/, "", k); gsub(/á|Á/, "a", k); gsub(/ó|Ó/, "o", k)
+    gsub(/[ \t]+$/, "", k); gsub(/á|Á/, "a", k); gsub(/é|É/, "e", k); gsub(/í|Í/, "i", k)
+    gsub(/ó|Ó/, "o", k); gsub(/ú|Ú/, "u", k)
     if (corte > 0 && k == clave) { if (!puesta) { print clave ": " valor; puesta = 1 } next }
     print
   }

@@ -36,6 +36,20 @@ RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes \
  && rm -f /usr/bin/man && dpkg-divert --quiet --remove --rename /usr/bin/man \
  && rm -rf /var/lib/apt/lists/*
 
+# Desde la lección 03, tres paquetes más, en un RUN aparte y no en el de arriba, a
+# propósito: si se agregaran a ese RUN, Docker lo repetiría completo y quien ya tiene la
+# imagen tendría que volver a bajar todos los paquetes. Así reutiliza lo de arriba y solo
+# baja estos. Como el RUN de arriba ya quitó la regla de «no instales manuales», estos
+# llegan con su página de manual.
+#      file        dice qué es un archivo mirando su contenido, no su nombre
+#      gzip        comprime y descomprime; prepara 03 lo usa para la bitácora de ayer
+#      ncurses-bin trae reset, que regresa la terminal a la normalidad si se descompone
+# gzip y ncurses-bin suelen venir ya en Ubuntu; se nombran porque la lección depende de
+# ellos, y si ya están, apt no los cambia.
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends file gzip ncurses-bin \
+ && rm -rf /var/lib/apt/lists/*
+
 # ENV: una variable que queda puesta para todo lo que corra adentro. Esta le dice a
 # la terminal que el texto va en UTF-8, para que la ñ y los acentos se vean y se
 # escriban bien.
@@ -59,10 +73,15 @@ COPY --chmod=755 verifica /usr/local/bin/verifica
 # Estos COPY van DESPUÉS del RUN que instala los paquetes, también a propósito:
 # cuando una lección nueva cambia estos archivos, Docker reutiliza lo ya instalado
 # y solo repite desde aquí.
+# Desde la lección 03 hay uno más, «simula»: escribe renglones en una bitácora poco a
+# poco, para que la veas crecer. Va aparte de prepara porque no arma ni borra nada: solo
+# agrega renglones al final de un archivo.
 COPY --chmod=755 prepara /usr/local/bin/prepara
 COPY --chmod=755 anota /usr/local/bin/anota
+COPY --chmod=755 simula /usr/local/bin/simula
 COPY escenarios/01-laberinto.txt /usr/local/share/curso-terminal/01-laberinto.txt
 COPY escenarios/02-taller.txt /usr/local/share/curso-terminal/02-taller.txt
+COPY escenarios/03-guardia.txt /usr/local/share/curso-terminal/03-guardia.txt
 
 # La imagen de Ubuntu entra como root, el usuario que puede todo. En el curso
 # trabajas como un usuario normal, «alumno», igual que en un servidor bien cuidado.

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # verifica — revisa el ESTADO de tu terminal de práctica y te dice qué falta.
-# Corre ADENTRO del contenedor del curso. Uso:  verifica 00   ·   verifica 01   ·   verifica 02
+# Corre ADENTRO del contenedor del curso. Uso:  verifica 00   ·   verifica 01   ·   verifica 02   ·   verifica 03
 # Solo revisa cómo están las cosas: no califica predicciones ni explicaciones;
 # esas las comparas tú con «Compara tus respuestas» de la lección.
 # En la 00 escribe solo dos cosas, y las dos se dicen en su marca: para saber si
 # ~/practica se puede escribir, crea un archivo vacío y lo borra enseguida; y para
 # saber si saliste y volviste, anota en ~/practica/00/.sesion-verifica en qué sesión
-# vio tu marca por primera vez. En la 01 y en la 02 no escribe nada: solo lee.
+# vio tu marca por primera vez. En la 01, la 02 y la 03 no escribe nada: solo lee.
 # Las respuestas las escribes tú, con «anota».
 set -uo pipefail
 
@@ -625,12 +625,257 @@ verifica_02() {
   marca_queda_02
 }
 
+# --- Lección 03 -------------------------------------------------------------------
+# La sala de guardia tiene una sola definición: la lista que leen «prepara 03» y
+# «simula 03». verifica no vuelve a armar las bitácoras: comprueba que siguen intactas
+# (por su huella) y saca la respuesta buena de cada pregunta leyendo el archivo mismo.
+LISTA_03="/usr/local/share/curso-terminal/03-guardia.txt"
+PRACTICA_03="/home/alumno/practica"
+RAIZ_03="$PRACTICA_03/03"
+
+declare -A TIPO_03=() TEXTO_03=() HUELLA_03=()
+ORDEN_03=()                           # los archivos de la lista, en su orden
+CRECE_03=()                           # lo que agrega simula, en orden
+CRECE_EN_03=""                        # a qué archivo
+PREG_RUTA_03=() PREG_CLAVE_03=() PREG_FORMA_03=() PREG_DATO_03=()
+cargar_03() {
+  local tipo a b c
+  while IFS=$'\t' read -r tipo a b c || [ -n "$tipo" ]; do
+    [[ $tipo =~ ^[[:space:]]*(#|$) ]] && continue
+    case "$tipo" in
+      texto)    TIPO_03[$a]=texto; TEXTO_03[$a]=""; ORDEN_03+=("$a") ;;
+      linea)    TEXTO_03[$a]+="$b"$'\n' ;;
+      numerado) TIPO_03[$a]=numerado; ORDEN_03+=("$a") ;;
+      bitacora|bitacora-gz)
+        TIPO_03[$a]=$tipo; HUELLA_03[$a]=${c##*$'\t'}; ORDEN_03+=("$a") ;;
+      crece)    CRECE_EN_03=$a; CRECE_03+=("$b") ;;
+      pregunta)
+        PREG_RUTA_03+=("$a"); PREG_CLAVE_03+=("$b")
+        PREG_FORMA_03+=("${c%%$'\t'*}")
+        if [ "${c#*$'\t'}" != "$c" ]; then PREG_DATO_03+=("${c#*$'\t'}"); else PREG_DATO_03+=(""); fi ;;
+    esac
+  done < "$LISTA_03"
+}
+
+real_03() { [ -e "$1" ] && [ "$(realpath -e -P -- "$1" 2>/dev/null)" = "$1" ]; }
+huella_03() { sha256sum | { read -r h _; echo "$h"; }; }
+
+# Lee de tu hoja el valor de una clave; si está varias veces, vale la última.
+respuesta_03() {
+  awk -v clave="$1" '
+    { sub(/\r$/, "") }
+    {
+      renglon = $0
+      sub(/^[ \t]+/, "", renglon)
+      corte = index(renglon, ":")
+      if (corte == 0) next
+      k = tolower(substr(renglon, 1, corte - 1))
+      gsub(/[ \t]+$/, "", k); gsub(/á|Á/, "a", k); gsub(/é|É/, "e", k); gsub(/í|Í/, "i", k)
+      gsub(/ó|Ó/, "o", k); gsub(/ú|Ú/, "u", k)
+      if (k != clave) next
+      v = substr(renglon, corte + 1)
+      gsub(/^[ \t]+|[ \t]+$/, "", v)
+      valor = v; hay = 1
+    }
+    END { if (!hay) exit 1; print valor }
+  ' "$PRACTICA_03/respuestas/03.md"
+}
+
+# El renglón n de un archivo, y cuántos renglones tiene. Se cuentan como wc -l: cada
+# salto de renglón es uno.
+renglon_03() { awk -v n="$2" 'NR == n { print; exit }' "$1"; }
+cuantos_03() { awk 'END { print NR }' "$1"; }
+# El número del primer renglón que contiene el texto tal cual (con sus mayúsculas), o
+# sin distinguir mayúsculas si el tercer argumento es «sin-mayusculas».
+primero_03() {
+  awk -v t="$2" -v m="${3:-}" '{ r = $0 } m == "sin-mayusculas" { r = tolower(r); t = tolower(t) } index(r, t) { print NR; exit }' "$1"
+}
+folio_03() { renglon_03 "$1" "$2" | grep -o 'F-[0-9]\{6\}' | head -n 1; }
+hora_03() { renglon_03 "$1" "$2" | awk '{ print $2 }'; }
+
+# --- La sala sigue intacta --------------------------------------------------------
+# Esta lección solo lee. Si un archivo cambió, las respuestas ya no se pueden comparar.
+# arranque.log es el único que puede crecer: con lo que agrega simula, y nada más.
+ARRANQUE_03=""   # cómo está arranque.log: sin-correr · a-medias · completo
+marca_sala_03() {
+  local ruta p cambio="" hueco="" enlace="" cuantos=0 todo="" i
+  for ruta in "${ORDEN_03[@]}"; do
+    p="$RAIZ_03/$ruta"
+    if [ -L "$p" ] || { [ -e "$p" ] && ! real_03 "$p"; }; then enlace=${enlace:-$ruta}; continue; fi
+    if [ ! -f "$p" ]; then hueco=${hueco:-$ruta}; continue; fi
+    case "${TIPO_03[$ruta]}" in
+      texto)
+        if [ "$ruta" = "$CRECE_EN_03" ]; then
+          todo=${TEXTO_03[$ruta]}
+          if cmp -s -- "$p" <(printf '%s' "$todo"); then ARRANQUE_03="sin-correr"; cuantos=$((cuantos + 1)); continue; fi
+          for i in "${!CRECE_03[@]}"; do
+            todo+="${CRECE_03[i]}"$'\n'
+            if cmp -s -- "$p" <(printf '%s' "$todo"); then
+              if [ "$i" -eq $((${#CRECE_03[@]} - 1)) ]; then ARRANQUE_03="completo"; else ARRANQUE_03="a-medias"; fi
+              break
+            fi
+          done
+          if [ -n "$ARRANQUE_03" ]; then cuantos=$((cuantos + 1)); else cambio=${cambio:-$ruta}; fi
+        elif cmp -s -- "$p" <(printf '%s' "${TEXTO_03[$ruta]}"); then cuantos=$((cuantos + 1))
+        else cambio=${cambio:-$ruta}; fi ;;
+      numerado) cuantos=$((cuantos + 1)) ;;   # el ensayo es para jugar: no se revisa su contenido
+      bitacora)
+        if [ "$(huella_03 < "$p")" = "${HUELLA_03[$ruta]}" ]; then cuantos=$((cuantos + 1)); else cambio=${cambio:-$ruta}; fi ;;
+      bitacora-gz)
+        if [ "$(gzip -dc -- "$p" 2>/dev/null | huella_03)" = "${HUELLA_03[$ruta]}" ]; then cuantos=$((cuantos + 1)); else cambio=${cambio:-$ruta}; fi ;;
+    esac
+  done
+  if [ -n "$enlace" ]; then
+    no "La sala no está intacta: «$enlace» es un enlace, o se llega a él pasando por un enlace (medí: la ruta real de cada archivo de la lista). Ármala de nuevo con  prepara 03"
+  elif [ -n "$hueco" ]; then
+    no "La sala no está intacta: falta «$hueco» (medí: cada archivo de la lista, en ~/practica/03). Ármala de nuevo con  prepara 03"
+  elif [ -n "$cambio" ]; then
+    no "La sala no está intacta: «$cambio» cambió (medí: su contenido contra la lista; las bitácoras, por su huella). En esta lección nada se edita. Ármala de nuevo con  prepara 03  y vuelve a leer"
+  else
+    si "La sala está intacta (medí: los $cuantos archivos de la lista existen, ninguno es un enlace, cada texto tiene sus renglones y cada bitácora su huella)"
+    return 0
+  fi
+  return 1
+}
+
+# --- Una pregunta de la hoja ---------------------------------------------------------
+# Cada forma de pregunta saca la respuesta buena del archivo y, si la tuya no coincide,
+# busca la confusión más probable para decírtela sin darte la respuesta.
+marca_pregunta_03() {
+  local ruta="$1" clave="$2" forma="$3" dato="$4" p="$RAIZ_03/$1" dicho buena total n
+  local nombre=${ruta##*/}
+  if ! dicho=$(respuesta_03 "$clave"); then
+    no "$clave · No encontré tu respuesta (medí: busqué en respuestas/03.md un renglón que empiece con  $clave: )"
+    return
+  fi
+  if [ -z "$dicho" ]; then
+    no "$clave · Tu renglón «$clave:» está vacío (medí: lo que hay después de los dos puntos). Anótalo con  anota 03 $clave  y tu respuesta"
+    return
+  fi
+  total=$(cuantos_03 "$p")
+  case "$forma" in
+    renglon-de)
+      buena=$(primero_03 "$p" "$dato")
+      if ! [[ $dicho =~ ^[0-9]+$ ]]; then
+        no "$clave · «$dicho» no es un número de renglón (medí: que sean solo cifras). Anota el número, como lo muestran  cat -n  o  less -N"
+      elif [ "$dicho" = "$buena" ]; then
+        si "$clave · El renglón $dicho de $nombre es el primero que dice «$dato» (medí: busqué «$dato», tal cual, renglón por renglón)"
+      elif [ "$dicho" = "$(primero_03 "$p" "$dato" sin-mayusculas)" ]; then
+        no "$clave · El renglón $dicho dice «$dato», pero con otras mayúsculas (medí: lo comparé letra por letra). La búsqueda de less distingue mayúsculas de minúsculas: busca exactamente lo que pide el ejercicio"
+      elif [ "$dicho" -ge 1 ] && [ "$dicho" -le "$total" ] && renglon_03 "$p" "$dicho" | grep -qF -- "$dato"; then
+        no "$clave · El renglón $dicho sí dice «$dato», pero hay otro antes (medí: busqué «$dato» desde el primer renglón). Empieza a buscar desde arriba: en less, g te lleva al principio"
+      elif [ "$dicho" = $((buena + 1)) ] || [ "$dicho" = $((buena - 1)) ]; then
+        no "$clave · Te fuiste por uno: «$dato» está en un renglón vecino del que anotaste (medí: el contenido de los renglones de junto). Cuenta como cat -n y less -N: el primer renglón es el 1"
+      else
+        no "$clave · El renglón $dicho de $nombre no dice «$dato» (medí: el contenido de ese renglón). Ábrelo con números de renglón y busca"
+      fi ;;
+    folio-en)
+      buena=$(folio_03 "$p" "$dato")
+      if ! [[ $dicho =~ ^F-[0-9]{6}$ ]]; then
+        no "$clave · «$dicho» no tiene la forma de un folio (medí: una F, un guion y seis cifras, como F-123456). Anótalo tal como sale en la bitácora"
+      elif [ "$dicho" = "$buena" ]; then
+        si "$clave · $dicho es el folio del renglón $dato de $nombre (medí: el folio que trae ese renglón)"
+      else
+        n=$(awk -v f="$dicho" 'index($0, f) { print NR; exit }' "$p")
+        if [ -n "$n" ]; then
+          no "$clave · $dicho es el folio del renglón $n, no del $dato (medí: en qué renglón aparece tu folio). Pide justo $dato renglones con head y lee el último que te muestra"
+        else
+          no "$clave · $dicho no aparece en $nombre (medí: lo busqué en toda la bitácora). Revísalo cifra por cifra"
+        fi
+      fi ;;
+    hora-final)
+      buena=$(hora_03 "$p" "$total")
+      if ! [[ $dicho =~ ^[0-9]{2}:[0-9]{2}:[0-9]{2}$ ]]; then
+        no "$clave · «$dicho» no tiene la forma de una hora (medí: hh:mm:ss, como 01:02:03). Anota solo la hora, sin la fecha"
+      elif [ "$dicho" = "$buena" ]; then
+        si "$clave · $dicho es la hora del último renglón de $nombre (medí: la hora del renglón $total, el último)"
+      elif [ "$dicho" = "$(hora_03 "$p" 1)" ]; then
+        no "$clave · $dicho es la hora del PRIMER renglón (medí: la hora del renglón 1). head muestra el principio; el final lo muestra otro comando"
+      else
+        no "$clave · $dicho no es la hora del último renglón de $nombre (medí: la hora del renglón $total, el último). Pide solo un renglón, el último"
+      fi ;;
+    renglones)
+      buena=$total
+      if ! [[ $dicho =~ ^[0-9]+$ ]]; then
+        no "$clave · «$dicho» no es un número (medí: que sean solo cifras). Anota solo el número que da wc, sin el nombre del archivo"
+      elif [ "$dicho" = "$buena" ]; then
+        si "$clave · $nombre tiene $dicho renglones (medí: conté sus saltos de renglón, como wc -l)"
+      elif [ "$dicho" = "$(wc -w < "$p" | tr -d ' ')" ]; then
+        no "$clave · $dicho es cuántas PALABRAS tiene $nombre (medí: las conté). Se pedían renglones: wc tiene una opción para cada cosa"
+      elif [ "$dicho" = "$(wc -c < "$p" | tr -d ' ')" ]; then
+        no "$clave · $dicho es cuántos BYTES pesa $nombre (medí: los conté). Se pedían renglones: wc tiene una opción para cada cosa"
+      else
+        no "$clave · $nombre no tiene $dicho renglones (medí: conté sus saltos de renglón). Cuéntalos con wc, no a ojo"
+      fi ;;
+    registros)
+      buena=$((total - 1))
+      if ! [[ $dicho =~ ^[0-9]+$ ]]; then
+        no "$clave · «$dicho» no es un número (medí: que sean solo cifras). Anota solo el número"
+      elif [ "$dicho" = "$buena" ]; then
+        si "$clave · $nombre trae $dicho registros (medí: sus $total renglones menos el del encabezado)"
+      elif [ "$dicho" = "$total" ]; then
+        no "$clave · $dicho son TODOS los renglones de $nombre, con el encabezado (medí: el primer renglón no es un registro: dice cómo se llama cada columna). Míralo con head y vuelve a contar"
+      else
+        no "$clave · $nombre no trae $dicho registros (medí: sus renglones, sin el encabezado). Cuéntalos con wc, no a ojo"
+      fi ;;
+    codigo-final)
+      # Primero, que simula haya terminado: el código solo existe en el archivo cuando
+      # el servicio terminó de arrancar.
+      buena=${CRECE_03[${#CRECE_03[@]} - 1]##* }
+      if [ "$ARRANQUE_03" = "completo" ] && [ "$dicho" = "$buena" ]; then
+        si "$clave · $dicho es el código con el que arrancó el servicio (medí: la última palabra del último renglón de $nombre, que simula ya terminó de escribir)"
+      elif [ "$ARRANQUE_03" = "sin-correr" ]; then
+        no "$clave · Todavía no corres  simula 03  (medí: $nombre tiene solo los renglones que dejó prepara). Córrelo y mira el archivo crecer con tail -f"
+      elif [ "$ARRANQUE_03" = "a-medias" ]; then
+        no "$clave · simula todavía está escribiendo en $nombre (medí: le faltan renglones de los que agrega). Espera a que diga «listo para cobrar»"
+      else
+        no "$clave · «$dicho» no es el código de arranque (medí: la última palabra del último renglón de $nombre). Anótalo tal cual, con su letra y su guion"
+      fi ;;
+    tipo)
+      shopt -s nocasematch
+      if [[ $dicho == *"$dato"* ]]; then
+        si "$clave · Es un archivo comprimido con $dato (medí: tu respuesta dice «$dato», como lo que contesta file)"
+      elif [[ $dicho == *text* || $dicho == *texto* ]]; then
+        no "$clave · «$dicho»: file no dice que sea texto (medí: tu respuesta contra lo que file reconoce en ese archivo). El nombre termina en .log.1.gz; pregúntale a file qué es de verdad"
+      else
+        no "$clave · «$dicho» no es lo que contesta file para $nombre (medí: si tu respuesta trae el formato que file reconoce). Copia la primera palabra que dice file"
+      fi
+      shopt -u nocasematch ;;
+  esac
+}
+
+verifica_03() {
+  local i hoja="$PRACTICA_03/respuestas/03.md"
+  if [ ! -r "$LISTA_03" ]; then
+    no "No encuentro la lista de la sala de guardia (medí: que $LISTA_03 se pueda leer). Tu imagen es de antes de esta lección: sal y corre  ./practicar reconstruir"
+    return
+  fi
+  cargar_03
+  if [ -L "$RAIZ_03" ] || { [ -e "$RAIZ_03" ] && ! real_03 "$RAIZ_03"; }; then
+    no "Tu sala, ~/practica/03, es un enlace a otro lugar (medí: su ruta real). No reviso nada a través de un enlace. Ármala de nuevo con  prepara 03"
+    return
+  fi
+  if [ ! -d "$RAIZ_03" ]; then
+    no "No encuentro tu sala de guardia (medí: que ~/practica/03 exista como carpeta). Ármala con  prepara 03"
+    return
+  fi
+  marca_sala_03 || return
+  if [ ! -f "$hoja" ] || [ -L "$hoja" ] || ! real_03 "$hoja"; then
+    no "Falta tu hoja de respuestas, ~/practica/respuestas/03.md (medí: que exista como archivo y no sea un enlace). La crea  prepara 03"
+    return
+  fi
+  for i in "${!PREG_CLAVE_03[@]}"; do
+    marca_pregunta_03 "${PREG_RUTA_03[i]}" "${PREG_CLAVE_03[i]}" "${PREG_FORMA_03[i]}" "${PREG_DATO_03[i]}"
+  done
+}
+
 case "${1:-}" in
   00) verifica_00 ;;
   01) verifica_01 ;;
   02) verifica_02 ;;
-  '') echo "Uso: verifica NN    (NN es el número de la lección; por ejemplo: verifica 01)"; exit 2 ;;
-  *)  echo "Todavía no hay verifica para la lección «$1». Por ahora existen: verifica 00, verifica 01 y verifica 02"; exit 2 ;;
+  03) verifica_03 ;;
+  '') echo "Uso: verifica NN    (NN es el número de la lección; por ejemplo: verifica 03)"; exit 2 ;;
+  *)  echo "Todavía no hay verifica para la lección «$1». Por ahora existen: verifica 00, verifica 01, verifica 02 y verifica 03"; exit 2 ;;
 esac
 
 echo
