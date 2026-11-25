@@ -42,13 +42,14 @@ Lucía ya sabe llegar a la carpeta sin verla, y que ahí no se borra nada sin mi
 un archivo en una máquina sin ventanas. No hay doble clic. Está la misma línea de siempre, esperando.
 
 La bitácora tiene cientos de renglones, y en un servidor de verdad podría tener millones. En algún lugar de ese
-archivo está la respuesta: el renglón donde todo empezó, y el último, que dice qué está pasando ahorita. Junto a ella
+archivo está la respuesta: el renglón donde todo empezó, y el último, lo más reciente que quedó escrito. Junto a ella
 hay otra, la de ayer, con un nombre que termina en `.gz` y que no se deja leer como las demás. Del otro lado,
 alguien espera una hora, un número y una frase para decidir qué hacer con cientos de cobros.
 
 Hay algo a su favor: las bitácoras suelen ser texto. *The Twelve-Factor App*, la guía de Adam Wiggins sobre cómo
-construir aplicaciones que corren en servidores, lo describe así: en crudo, una bitácora es normalmente texto, con un
-evento por renglón y en orden de tiempo. Si es texto, se lee con los comandos de esta lección.
+construir aplicaciones que corren en servidores, lo describe así: en crudo, muchas bitácoras son texto, en orden de
+tiempo, y suelen traer un evento por renglón; una excepción común es una traza de error, que puede ocupar varios. Si
+es texto, se lee con los comandos de esta lección.
 
 Esta lección es esa media hora, en una sala de guardia hecha para leer sin consecuencias.
 
@@ -66,9 +67,9 @@ git pull
 ./practicar reconstruir
 ```
 
-Esta vez la imagen trae tres paquetes nuevos (`file`, `gzip` y `ncurses-bin`), así que `./practicar reconstruir`
-necesita red y tarda un poco más que en la 02: reutiliza Ubuntu y los paquetes de antes, y solo baja los nuevos. Debe
-terminar con `✅ Imagen lista.` Tu carpeta `~/practica` no se toca. Después entra con `./practicar`.
+Esta vez la imagen incorpora tres paquetes nuevos: `file`, `gzip` y `ncurses-bin`. En esta versión no se midió la
+reconstrucción desde cero: según Docker y lo que ya tengas guardado en tu máquina, puede requerir red y tardar más que
+en la 02. Debe terminar con `✅ Imagen lista.` Tu carpeta `~/practica` no se toca. Después entra con `./practicar`.
 
 **Dónde se probó esta lección:**
 
@@ -98,8 +99,8 @@ prepara 03
    Empieza por ahí:  cd ~/practica/03
 ```
 
-`prepara 03` funciona como el de la 02: no tiene azar, toca solo `~/practica/03` y tu hoja de respuestas, y si la
-sala ya existe te pide escribir `si` antes de borrarla. Las bitácoras no vienen escritas renglón por renglón: salen
+`prepara 03` funciona como el de la 02: no tiene azar y toca solo `~/practica/03` y tu hoja de respuestas. Si la
+sala ya existe, `prepara 03` te explicará antes de reemplazarla; ese caso no se midió en esta versión. Las bitácoras no vienen escritas renglón por renglón: salen
 de una regla fija, y `prepara` comprueba al final que cada una tenga su *huella*, una especie de firma del contenido.
 Si un solo carácter cambia, la huella ya no coincide.
 
@@ -222,9 +223,9 @@ Ves el final, hasta el `renglón 100 de 100`. El principio se fue de la pantalla
 todo y lo que no cabe se va hacia arriba. Con cien renglones puedes subir con la rueda del ratón; con un millón, no.
 
 **De aquí sale la regla de esta lección:** `cat` es para archivos cortos, los que sabes que caben. Para los largos,
-pides un pedazo (paso 3) o los hojeas (paso 4). Y en un servidor, **no abres una bitácora en un editor para leerla**.
-Es regla del curso, por dos razones: un editor puede cambiar el archivo si tocas una tecla de más, y un archivo
-enorme puede tardar mucho en abrir. Para leer, se usa un comando que solo lee.
+pides un pedazo (paso 3) o los hojeas (paso 4). Y para leer una bitácora en un servidor, **elige un comando de
+lectura**: no modifica el archivo y arranca mejor con bitácoras largas. Un editor puede cambiar el archivo si tocas una
+tecla de más, y uno enorme puede tardar mucho en abrir.
 
 ### Tu turno: la configuración
 
@@ -299,8 +300,9 @@ renglón 099 de 100
 renglón 100 de 100
 ```
 
-En una bitácora, el final es lo más reciente. **`tail` es casi siempre lo primero que se corre en una guardia**: lo
-último que pasó es lo que está pasando.
+En una bitácora ordenada, el final es lo más reciente, y **`tail` suele ser el primer vistazo en una guardia**: te dice
+lo último que *se registró*. Léelo con su hora y úsalo como pista; en una guardia real, luego confirmas el estado con la
+señal que corresponda al servicio.
 
 ### Un renglón exacto, con lo que ya tienes
 
@@ -310,8 +312,9 @@ Te piden el renglón 42. **Predice:** ¿cuál es el último renglón que escribe
 head -n 42 cien.txt
 ```
 
+Salida recortada: los últimos tres de los 42 renglones.
+
 ```text
-…
 renglón 040 de 100
 renglón 041 de 100
 renglón 042 de 100
@@ -363,8 +366,10 @@ de un archivo no termina con su salto, `wc -l` no lo cuenta. En esta sala todos 
 pero en un servidor no siempre: si `wc -l` te da uno menos de lo que ves, esa es la causa.
 
 **Tu comando, no el del manual.** Aquí `cat`, `head`, `tail` y `wc` son de `rust-coreutils`, como `ls` en la lección
-01; según la documentación de Ubuntu, solo `cp`, `mv` y `rm` siguen siendo de GNU. Los manuales que cita esta lección
-son los de GNU. Si algo no coincide con un tutorial, `cat --help` te dice lo que acepta **tu** `cat`.
+01; según la documentación de Ubuntu, solo `cp`, `mv` y `rm` siguen siendo de GNU. En esta imagen se probaron las
+formas que ves en esta lección y dieron la salida que aparece aquí. Los manuales GNU que cita la lección explican la
+idea, pero Ubuntu usa uutils/rust-coreutils: si pruebas otra opción, mira primero `comando --help` en **ese**
+contenedor; por ejemplo, `cat --help` te dice lo que acepta **tu** `cat`.
 
 ### Tu turno: la bitácora y el reporte
 
@@ -388,8 +393,8 @@ y tu predicción D, que comparas tú al final.
 ## Paso 4 · Hojear y buscar: `less`
 
 `head` y `tail` sirven cuando sabes dónde está lo que buscas. Cuando no, hojeas con `less`, un *paginador*: según su
-autor, un programa que muestra archivos de texto y **no un editor**. No puedes descomponer el archivo con una tecla de
-más.
+autor, un programa que muestra archivos de texto y **no un editor**. `less archivo` sirve para mirar y no cambia ese
+archivo. Quédate en las teclas de la tabla de abajo; evita `v` y `!`, que pueden abrir otros programas.
 
 Su manual dice otra cosa que importa en un servidor: `less` no necesita leer el archivo completo antes de empezar, así
 que con archivos grandes arranca más rápido que un editor.
@@ -528,10 +533,10 @@ No lo encuentra, aunque la palabra está en los cien renglones. El manual de `le
 búsqueda distingue mayúsculas de minúsculas**. `RENGLÓN` y `renglón` son, para `less`, dos cosas distintas. En una
 bitácora eso importa: `ERROR` y `error` no tienen por qué ser lo mismo. Sal con `q`.
 
-### Tu turno, sin ayuda: el primer `ERROR`
+### Tu turno: el primer `ERROR`
 
-Este ejercicio se hace **solo con tu terminal**: sin buscador y sin que nadie te dicte la tecla. Lo que necesitas está
-en la tabla de arriba y en la ayuda de `less`, con `h`.
+Lo que necesitas está en la tabla de arriba y en la ayuda de `less`, con `h`. Inténtalo primero con eso; si te atoras,
+explica qué buscaste y qué pantalla viste antes de pedir una pista.
 
 1. Vuelve a la sala, `cd ~/practica/03`, y abre `pagos/pagos.log` en `less`, **con números de renglón**.
 2. Antes de buscar, hojea: unas cuantas pantallas con la barra, el final con `G`, el principio con `g`. Mira cómo
@@ -662,39 +667,48 @@ contenido, y dice qué formato es. No dice *text*.
 ### Por qué no se le hace `cat` a un binario
 
 `cat` no pregunta qué es un archivo: escribe sus bytes en la pantalla, tal cual. Con un archivo de texto eso son
-letras. Con uno binario son bytes que no son letras, y la terminal intenta mostrarlos como pueda. Por eso `file`
-dice «seguro de leer» solo de los de texto.
+letras. Con uno binario son bytes que no son letras, y la terminal intenta mostrarlos como pueda. En tu pantalla sería
+basura: símbolos sueltos, cuadritos, quizá un pitido. Y entre esos bytes puede haber algunos que la terminal entiende
+como órdenes.
 
-Vas a verlo una vez, a propósito, en un lugar donde no pasa nada. **Predice:** ¿qué vas a ver?
+`file` es una primera señal, no una garantía de seguridad: su manual dice que lo que marca como *text* probablemente
+se puede leer sin problema. Si dice *text*, normalmente puedes leerlo; si no, no uses `cat` hasta saber qué formato es.
+Para este archivo, `file` confirma gzip.
+
+**No ejecutes `cat` directamente sobre este `.gz`, ni lo hagas en una terminal de producción.** Antes de ver qué hay
+dentro, el remedio, por si alguna vez lo necesitas: a veces la terminal queda **descompuesta**: lo que escribes sale en
+símbolos raros, o no se ve, o Enter deja de bajar de renglón. No se rompió el archivo ni la máquina. **Si te pasa,
+escribe `reset` y presiona Enter**, aunque no veas lo que escribes. `reset` regresa la terminal a su forma normal:
+según su manual, sirve justo después de que un programa la deja en un estado anormal. El mismo manual avisa dos cosas
+que pueden pasarte: que no se vea lo que tecleas, y que Enter no funcione; en ese caso, en lugar de Enter, usa
+**Ctrl+J**.
+
+Ahora sí, una muestra segura. La barra `|` pasa lo que escribe un comando al siguiente; la verás a fondo más adelante.
+`head -c 300` deja pasar solo los primeros 300 bytes, y `cat -v` vuelve visibles los bytes de control: cambia cada byte
+que no es letra por signos que sí se pueden escribir. **Predice:** ¿qué vas a ver?
 
 ```bash
-cat ../pagos/pagos.log.1.gz
+cat ../pagos/pagos.log.1.gz | head -c 300 | cat -v
 ```
+
+Salida recortada: el principio de un solo renglón muy largo.
 
 ```text
-^_M-^K^H^@^@^@^@^@^B^CM-^LM-^]]M-.^^7vEM-_3M-^J;^A^WM-HM-sM-CshM…
+^_M-^K^H^@^@^@^@^@^B^CM-^LM-^]]M-.^^7vEM-_3M-^J;^A^WM-HM-sM-Csh
 ```
 
-Arriba van solo los primeros bytes, y no como los ve tu pantalla: en la prueba pasaron por `cat -v`, que cambia
-cada byte que no es letra por signos que sí se pueden escribir. Sin eso, en tu pantalla es basura: símbolos sueltos,
-cuadritos, quizá un pitido. A veces, además, la terminal queda **descompuesta**: lo que
-escribes sale en símbolos raros, o no se ve, o Enter deja de bajar de renglón. No se rompió el archivo ni la máquina:
-entre esos bytes iban algunos que la terminal entiende como órdenes.
-
-**Si te pasa, escribe `reset` y presiona Enter**, aunque no veas lo que escribes. `reset` regresa la terminal a su
-forma normal: según su manual, sirve justo después de que un programa la deja en un estado anormal. El mismo manual
-avisa dos cosas que pueden pasarte: que no se vea lo que tecleas, y que Enter no funcione; en ese caso, en lugar de
-Enter, usa **Ctrl+J**. Si tu terminal quedó bien después del `cat`, corre `reset` de todos modos, para conocerlo.
+Nada de eso son letras de una bitácora: son los bytes comprimidos, ya traducidos a signos. Aunque tu terminal haya
+quedado bien, corre `reset` una vez, para conocerlo:
 
 ```bash
 reset
 ```
 
-No escribe nada. En la prueba, lo único que mandó fueron las órdenes que regresan la terminal a su forma
-normal, y la primera borra la pantalla: te queda el indicador, hasta arriba.
+No verás texto de respuesta: `reset` envía órdenes de control a la terminal y puede limpiar la pantalla; luego vuelve
+el indicador.
 
-Dos hábitos salen de aquí: antes de abrir un archivo que no conoces, `file`; y si no dice *text*, no le haces `cat`,
-averiguas con qué se lee. La de ayer se lee descomprimiéndola: lo ves en «Si quieres más».
+Dos hábitos salen de aquí: antes de abrir un archivo que no conoces, `file`; y si no dice *text*, no uses `cat` hasta
+saber qué formato es: averiguas con qué se lee. La de ayer se lee descomprimiéndola: lo ves en «Si quieres más».
 
 ### Tu turno: qué es la bitácora de ayer
 
@@ -742,7 +756,8 @@ Corrige y repite hasta ver esto al final:
 
 ## Tus ejercicios
 
-El ejercicio 3.3 se hace **solo con tu terminal**: sin buscador y sin que nadie te dicte la tecla.
+El ejercicio 3.3 se intenta primero con la tabla de `less` y su ayuda, con `h`; si te atoras, explica qué buscaste y
+qué pantalla viste antes de pedir una pista.
 
 | # | Haces | Está hecho cuando |
 |---|---|---|
@@ -750,7 +765,7 @@ El ejercicio 3.3 se hace **solo con tu terminal**: sin buscador y sin que nadie 
 | 3.2 | Sacas el renglón 137, el último renglón y el total de la bitácora, y cuentas las sucursales del CSV, con tus predicciones escritas antes | `verifica 03` marca en verde las cuatro, y comparaste tu predicción D |
 | 3.3 | Hojeas la bitácora en `less` y encuentras el primer `ERROR` | `verifica 03` marca en verde `primer-error`, y comparaste tu predicción E |
 | 3.4 | Miras crecer la bitácora del arranque con `tail -f` y sales con Ctrl+C | `verifica 03` marca en verde `arranque` |
-| 3.5 | Preguntas con `file` qué es la bitácora de ayer, ves qué hace `cat` con ella y usas `reset` | `verifica 03` sale todo en verde, y contestaste las preguntas 9 y 10 de «Para cerrar» |
+| 3.5 | Preguntas con `file` qué es la bitácora de ayer, miras una muestra segura con `head -c 300` y `cat -v`, y usas `reset` | `verifica 03` sale todo en verde, y contestaste las preguntas 9 y 10 de «Para cerrar» |
 
 **Tiempo (estimado):** de 60 a 90 minutos. Es una estimación: se ajusta con el primer grupo que tome el curso.
 
@@ -760,10 +775,10 @@ El ejercicio 3.3 se hace **solo con tu terminal**: sin buscador y sin que nadie 
 
 *Opcional. Nada de este recuadro se evalúa ni hace falta para los ejercicios.*
 
-- **Leer la bitácora de ayer sin descomprimirla en el disco.** Junto con `gzip` vienen `zcat`, que hace lo que `cat`
-  pero descomprimiendo, y `zless`, lo mismo para `less`; `man zcat` te dice cómo se usan. **Predice** primero qué sale con
-  `zcat pagos/pagos.log.1.gz`, y por qué no conviene sin más; luego prueba `zless pagos/pagos.log.1.gz` y sal con
-  `q`. Lo que pasó en la prueba:
+- **Leer la bitácora de ayer sin descomprimirla en el disco.** Junto con `gzip` viene `zcat`, que hace lo que `cat`
+  pero descomprimiendo. **Predice** primero qué sale con `zcat pagos/pagos.log.1.gz`, y por qué no conviene sin más.
+  *Opcional y sin medir aún en esta imagen:* `zless pagos/pagos.log.1.gz`; consulta `man zcat` y `man zless` antes de
+  probarlo. No forma parte de la lección ni de la evaluación. Lo que pasó en la prueba con `zcat`:
 
   ```text
   $ zcat pagos/pagos.log.1.gz | head -n 3
@@ -854,8 +869,8 @@ sin contar.
 
 **Para cerrar.**
 
-1. El final: `tail` sobre la bitácora, o `tail -n` con los renglones que quieras. Lo último que se escribió es lo que
-   está pasando.
+1. El final: `tail` sobre la bitácora, o `tail -n` con los renglones que quieras. Te dice lo último que se registró:
+   léelo con su hora, úsalo como pista y luego confirma el estado con la señal que corresponda al servicio.
 2. Todo: `cat`, mejor con `-n`. Quince renglones caben en la pantalla.
 3. Cuántos son: `wc -l`, menos uno por el encabezado. Antes, `head` para confirmar que el primer renglón es el
    encabezado.
@@ -866,7 +881,7 @@ sin contar.
    Prueba con otra forma, o revisa la ayuda de `less` con `h`.
 8. Al último renglón le falta su salto de renglón. `wc -l` cuenta saltos, no renglones a la vista.
 9. `file respaldo.txt`. El nombre lo pone una persona y puede no decir la verdad; `file` mira el contenido. Si no
-   dice *text*, no le haces `cat`.
+   dice *text*, no uses `cat` hasta saber qué formato es.
 10. Escribes `reset` y Enter, aunque no lo veas. Si Enter no responde, Ctrl+J en su lugar.
 
 ---
