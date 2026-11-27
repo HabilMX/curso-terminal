@@ -83,7 +83,7 @@ touched. After that, get in with `./practicar`.
 
 | System | Status |
 |---|---|
-| Linux (mx1) | Tested on Nov 25, 2026 on the `leccion/03` branch (3bf1787), measured by master: x86_64 host, Docker 29.10.0; the image was built in 9 s and weighs 232,656,309 bytes; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 and `file-5.46`. `prepara 03` ran, and so did every command of steps 1 to 6, and `verifica 03` in red and in green, back when the sheet had eight keys. `verifica 03` with today's seven keys was measured again the same day (branch at 1a3a7b5): red with 7 ❌, green with 7 ✅, green also after `simula 03`, and `anota 03 arranque` refuses. Not measured: `./practicar reconstruir` (the image was built with `docker build`) and `prepara 03` on a room that is already set up |
+| Linux | Tested on Nov 25, 2026 on the `leccion/03` branch (3bf1787), measured on a Linux server: x86_64 host, Docker 29.10.0; the image was built in 9 s and weighs 232,656,309 bytes; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 and `file-5.46`. `prepara 03` ran, and so did every command of steps 1 to 6, and `verifica 03` in red and in green, back when the sheet had eight keys. `verifica 03` with today's seven keys was measured again the same day (branch at 1a3a7b5): red with 7 ❌, green with 7 ✅, green also after `simula 03`, and `anota 03 arranque` refuses. Not measured: `./practicar reconstruir` (the image was built with `docker build`) and `prepara 03` on a room that is already set up |
 | Mac with Apple silicon, Ubuntu, Windows with Docker Desktop and WSL 2 | Not tested yet with this lesson |
 
 **What will match your screen and what will not.** The names, the contents and the dates of the room match, and so do

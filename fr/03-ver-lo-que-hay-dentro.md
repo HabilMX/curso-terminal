@@ -91,7 +91,7 @@ pas touché. Ensuite, entre avec `./practicar`.
 
 | Système | État |
 |---|---|
-| Linux (mx1) | Testé le 25 nov. 2026 sur la branche `leccion/03` (3bf1787), mesuré par master : hôte x86_64, Docker 29.10.0 ; l'image s'est construite en 9 s et pèse 232 656 309 octets ; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 et `file-5.46`. Ont tourné `prepara 03`, chaque commande des étapes 1 à 6, et `verifica 03` en rouge et en vert, quand la feuille avait huit clés. `verifica 03` avec les sept clés actuelles a été mesuré de nouveau le même jour (branche en 1a3a7b5) : rouge avec 7 ❌, vert avec 7 ✅, vert aussi après `simula 03`, et `anota 03 arranque` se refuse. Non mesuré : `./practicar reconstruir` (l'image a été construite avec `docker build`) et `prepara 03` sur une salle déjà montée |
+| Linux | Testé le 25 nov. 2026 sur la branche `leccion/03` (3bf1787), mesuré sur un serveur Linux : hôte x86_64, Docker 29.10.0 ; l'image s'est construite en 9 s et pèse 232 656 309 octets ; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 et `file-5.46`. Ont tourné `prepara 03`, chaque commande des étapes 1 à 6, et `verifica 03` en rouge et en vert, quand la feuille avait huit clés. `verifica 03` avec les sept clés actuelles a été mesuré de nouveau le même jour (branche en 1a3a7b5) : rouge avec 7 ❌, vert avec 7 ✅, vert aussi après `simula 03`, et `anota 03 arranque` se refuse. Non mesuré : `./practicar reconstruir` (l'image a été construite avec `docker build`) et `prepara 03` sur une salle déjà montée |
 | Mac avec Apple silicon, Ubuntu, Windows avec Docker Desktop et WSL 2 | Pas encore testé avec cette leçon |
 
 **Ce qui va coïncider avec ton écran et ce qui ne le fera pas.** Les noms, les contenus et les dates de la salle, ainsi

@@ -80,7 +80,7 @@ com `./practicar`.
 
 | Sistema | Estado |
 |---|---|
-| Linux (mx1) | Testada em 25/11/2026 na ramificação `leccion/03` (3bf1787), medida pelo master: host x86_64, Docker 29.10.0; a imagem foi construída em 9 s e pesa 232.656.309 bytes; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 e `file-5.46`. Rodaram `prepara 03`, cada comando dos passos 1 a 6, e `verifica 03` em vermelho e em verde, quando a folha tinha oito chaves. O `verifica 03` com as sete chaves de agora foi medido de novo no mesmo dia (ramificação em 1a3a7b5): vermelho com 7 ❌, verde com 7 ✅, verde também depois de `simula 03`, e o `anota 03 arranque` se recusa. Sem medir: `./practicar reconstruir` (a imagem foi construída com `docker build`) e `prepara 03` sobre uma sala já montada |
+| Linux | Testada em 25/11/2026 na ramificação `leccion/03` (3bf1787), medida em um servidor Linux: host x86_64, Docker 29.10.0; a imagem foi construída em 9 s e pesa 232.656.309 bytes; Ubuntu 26.04, `cat` (uutils coreutils) 0.10.0, `less` 668 e `file-5.46`. Rodaram `prepara 03`, cada comando dos passos 1 a 6, e `verifica 03` em vermelho e em verde, quando a folha tinha oito chaves. O `verifica 03` com as sete chaves de agora foi medido de novo no mesmo dia (ramificação em 1a3a7b5): vermelho com 7 ❌, verde com 7 ✅, verde também depois de `simula 03`, e o `anota 03 arranque` se recusa. Sem medir: `./practicar reconstruir` (a imagem foi construída com `docker build`) e `prepara 03` sobre uma sala já montada |
 | Mac com Apple silicon, Ubuntu, Windows com Docker Desktop e WSL 2 | Ainda sem testar com esta lição |
 
 **O que vai coincidir com a tela e o que não.** Coincidem os nomes, os conteúdos e as datas da sala, e as mensagens dos
